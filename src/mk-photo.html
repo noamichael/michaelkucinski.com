@@ -1,0 +1,38 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./mk-photo-viewer-behavior.html">
+
+
+<dom-module id="mk-photo">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+        </style>
+        <iron-ajax id="flickrRequest" on-response="handleFlickrResponse" auto url="https://api.flickr.com/services/rest" params="{{findSinlgePhotoParams(photoId)}}"
+            handle-as="json" debounce-duration="300">
+        </iron-ajax>
+        <h2>[[photo.title._content]]</h2>
+        <img id="viewer">
+        <div class="buttons">
+            <paper-button dialog-dismiss raised>Cancel</paper-button>
+            <paper-button dialog-confirm raised autofocus>Accept</paper-button>
+        </div>
+    </template>
+
+    <script>
+    Polymer({
+      is: 'mk-photo',
+      properties: {
+          photoId: String
+      },
+      behaviors: [PhotoViewerBehavior],
+      handleFlickrResponse: function(event){
+          this.photo = event.detail.response.photo;
+          this.$.viewer.src = this.getImageUrl(this.photo, 'z');
+      }  
+    });
+  </script>
+</dom-module>

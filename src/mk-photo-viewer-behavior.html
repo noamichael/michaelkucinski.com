@@ -1,0 +1,38 @@
+<script>
+    (function(){
+        var API_KEY = 'e64d91b72c3934917da3554a69c98ef3';
+        window.PhotoViewerBehavior = {
+            getAllPhotoParams: function(){
+                return {
+                    method: 'flickr.people.getPublicPhotos',
+                    api_key: API_KEY,
+                    user_id:'89564538@N00',
+                    format: 'json',
+                    nojsoncallback: 1
+                };
+            },
+            findSinlgePhotoParams: function(photoId){
+                 return {
+                    method: 'flickr.photos.getInfo',
+                    api_key: API_KEY,
+                    photo_id:photoId,
+                    format: 'json',
+                    nojsoncallback: 1
+                };
+            },
+            getImageListStyle: function(image){
+                if(!image){
+                    return '';
+                }
+                return `background-image: url(` + this.getImageUrl(image) + '); cursor: pointer';
+            },
+            getImageUrl: function(image, size){
+                if(!image){
+                    return '';
+                }
+                size = size || 'z';
+                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.secret +'_' + size + '.jpg';
+            },
+        };
+    })();
+</script>

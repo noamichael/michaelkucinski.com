@@ -1,0 +1,116 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="./fotomoto-plugin.html">
+<link rel="import" href="./mk-photo-viewer-behavior.html">
+<link rel="import" href="./mk-photo.html">
+
+
+<dom-module id="mk-shop">
+    <template>
+        <style include="app-grid-style shared-styles">
+            :host {
+                display: block;
+                --app-grid-columns: 4;
+                --app-grid-gutter: 5px;
+                --app-grid-item-height: 250px;
+                --app-grid-expandible-item-columns: 4;
+            }
+            
+            ul {
+                padding: 0;
+                list-style: none;
+            }
+            
+            paper-dialog {
+                position: fixed;
+                top: 25%;
+                left: 25%;
+                bottom: 25%;
+                right: 25%;
+                margin: 0px;
+            }
+            
+            .item {
+                background-color: white;
+                background-size: cover;
+                background-position: center center;
+            }
+            
+            @media(max-width: 799px) {
+                :host {
+                    --app-grid-columns: 2;
+                    --app-grid-expandible-item-columns: 2;
+                }
+            }
+        </style>
+        <fotomoto-plugin id="fotomoto">
+            <pre>{{toJson(route)}}</pre>
+            <pre>{{toJson(routeData)}}</pre>
+            <app-route route="{{route}}" pattern="/"></app-route>
+            <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
+            <iron-ajax id="flickrRequest" auto url="https://api.flickr.com/services/rest" params="{{getAllPhotoParams()}}" handle-as="json"
+                on-response="handleFlickrResponse" debounce-duration="300">
+            </iron-ajax>
+            <template is="dom-if" if="{{!singleActive}}">
+                Click on an image below to see full details.
+                <ul class="app-grid">
+                    <template is="dom-repeat" items="{{images}}" as="image">
+                        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]"></li>
+                    </template>
+                </ul>
+            </template>
+            <template is="dom-if" if="{{singleActive}}">
+                <paper-button raised on-tap="goBack">
+                    <iron-icon icon="arrow-back"></iron-icon>Back
+                </paper-button>
+                <mk-photo photo-id="{{currentImage.id}}"></mk-photo>
+            </template>
+        </fotomoto-plugin>
+    </template>
+
+    <script>
+    Polymer({
+      is: 'mk-shop',
+      behaviors: [PhotoViewerBehavior],
+      properties: {
+          route: {
+              notify: true
+          }
+      },
+      ready: function(){
+          this.$.fotomoto.load().then(function(){
+              console.log('done loaded script');
+          });
+      },
+      goBack: function(){
+          this.set('route.path', '/');
+      },
+      selectImage: function(event){
+          this.currentImage = this.get('images')[event.target.dataset.index];
+          this.async(function() {
+               this.set('route.path', '/photos/' + this.currentImage.id);
+          });
+      },
+      deselectImage: function(){
+          this.currentImage = undefined;
+      },
+      toJson: function(o){
+          return JSON.stringify(o);
+      },
+      handleFlickrResponse: function(event){
+          var photos = event.detail.response.photos.photo;
+          var shop = this;
+        //   photos.forEach(function(photo){
+        //       FOTOMOTO.API.checkinImage(shop.getImageUrl(photo, 'o'));
+        //   });
+          this.set('images', event.detail.response.photos.photo);
+      }      
+    });
+  </script>
+</dom-module>

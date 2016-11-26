@@ -1,0 +1,29 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<dom-module id="fotomoto-plugin">
+  <template>
+    <style></style>
+    <content></content>
+    <script type="text/javascript" id="fotomoto"></script>
+    <noscript>If Javascript is disabled in your browser, to place orders please visit the page where I <a href=' http://my.fotomoto.com/store/8b7cd976d995f4b705789ca85c609c13619f0031'>sell my photos</a>,
+      powered by <a href='http://my.fotomoto.com'>Fotomoto</a>.</noscript>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'fotomoto-plugin',
+      load: function(){
+        if(this._loaded){
+          return Promise.resolve('done');
+
+        }
+        var script = this.$.fotomoto;
+        script.src = '//widget.fotomoto.com/stores/script/8b7cd976d995f4b705789ca85c609c13619f0031.js?api=true';
+        return new Promise(function(resolve, reject){
+          script.addEventListener('load', function(){
+            resolve('done');
+          });
+        });
+      }
+    });
+  </script>
+</dom-module>

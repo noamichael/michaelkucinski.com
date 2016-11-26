@@ -1,0 +1,50 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="mk-home">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      
+      img {
+        float: left;
+        margin: 0 1em;
+        border: 1em solid gainsboro;
+        box-shadow: 0px 0px 3px black;
+        height: 400px;
+      }
+      
+      section {
+        max-width: 90%;
+      }
+    </style>
+
+    <div class="card">
+      <img src="/images/me.jpg">
+      <section>
+        Hey. I’m Michael – a college student and junior programmer from Northern New Jersey. I love to program, with my current languages
+        being Java(EE), JavaScript (jQuery, Angular 1/2, Polymer), HTML(5), CSS(3), and SQL (SQLServer). I’m also super into
+        hiking and photography.You can see some of my pictures (which include some of my hiking!) under the photos section,
+        and all of my personal programming projects are on GitHub. Free free to contact me if you have any questions!
+      </section>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'mk-home'
+    });
+  </script>
+</dom-module>
