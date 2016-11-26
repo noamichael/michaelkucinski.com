@@ -1,5 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
 <link rel="import" href="shared-styles.html">
 
@@ -9,6 +12,27 @@
         <style include="shared-styles">
             :host {
                 display: block;
+                --paper-card-header-text {
+                    background: rgba(0, 0, 0, 0.75);
+                    color: white;
+                    font-size: initial;
+                }
+            }
+            
+            paper-button.add-to-card {
+                background: green;
+                color: white;
+            }
+            
+            .card-content {
+                font-size: initial;
+            }
+            
+            .image-container {
+                margin-top: 0.5em;
+                display: flex;
+                align-content: center;
+                justify-content: center;
             }
         </style>
         <iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
@@ -17,11 +41,20 @@
         <paper-button raised on-tap="goBack">
             <iron-icon icon="arrow-back"></iron-icon>Back
         </paper-button>
-        <h2>[[photo.title._content]]</h2>
-        <img id="viewer">
-        <div class="buttons">
-            <paper-button dialog-dismiss raised>Cancel</paper-button>
-            <paper-button dialog-confirm raised autofocus>Accept</paper-button>
+        <div class="image-container">
+            <paper-card heading="[[photo.title._content]]" id="viewer" alt="Sailboat Harbor" class="white">
+                <div class="card-content">
+                    Taken [[photo.dates.taken]]
+                </div>
+                <div class="card-actions">
+                    <paper-button raised>
+                        <iron-icon icon="social:share"></iron-icon>Share
+                    </paper-button>
+                    <paper-button class="add-to-card" raised on-tap="_addToCart">
+                        <iron-icon icon="add-shopping-cart"></iron-icon> Add to Cart
+                    </paper-button>
+                </div>
+            </paper-card>
         </div>
     </template>
 
@@ -32,11 +65,18 @@
       properties: {
           photoId: {
               type: String,
-              observer: '_photoChanged'
+              observer: '_photoChanged',
+              reflectToAttribute: true
           }
       },
       _getImageUrl(){
           return this.photo ? this.getImageUrl(this.photo, 'z') : '';
+      },
+      _addToCart: function(){
+          this.fire('add-to-cart', {
+              photo: this.photo,
+              url: this.getOriginalImageUrl(this.photo)
+          });
       },
       goBack(){
           this._photoChanged();
@@ -44,12 +84,12 @@
       },
       handleFlickrResponse: function(event){
           this.photo = event.detail.response.photo;
-          this.$.viewer.src = this._getImageUrl();
+          this.$.viewer.image = this._getImageUrl();
 
       },
       _photoChanged: function(){
           this.photo = undefined;
-          this.$.viewer.src = '';
+          this.$.viewer.image = '';
           this.$.flickrRequest.generateRequest();
       }
     });

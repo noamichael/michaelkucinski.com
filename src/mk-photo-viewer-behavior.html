@@ -31,7 +31,7 @@
                 if(!image){
                     return '';
                 }
-                return `background-image: url(` + this.getImageUrl(image) + '); cursor: pointer';
+                return 'background-image: url(' + this.getImageUrl(image) + '); cursor: pointer';
             },
             getImageUrl: function(image, size){
                 if(!image){
@@ -40,11 +40,10 @@
                 size = size || 'z';
                 return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.secret +'_' + size + '.jpg';
             },
-            getOriginalImageUrl: function(image, size){
+            getOriginalImageUrl: function(image){
                 if(!image){
                     return '';
                 }
-                size = size || 'z';
                 return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.originalsecret +'_o.' + image.originalformat;
             },
         };

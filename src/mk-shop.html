@@ -42,6 +42,16 @@
                 background-position: center center;
             }
             
+            .photo-title {
+                background: rgba(0, 0, 0, 0.75);
+                color: white;
+                font-size: .6em;
+            }
+            
+            li .photo-title:hover {
+                display: block !important;
+            }
+            
             @media(max-width: 799px) {
                 :host {
                     --app-grid-columns: 2;
@@ -59,12 +69,16 @@
                 Click on an image below to see full details.
                 <ul class="app-grid">
                     <template is="dom-repeat" items="{{images}}" as="image">
-                        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]"></li>
+                        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
+                            <div class="photo-title">
+                                [[image.title]]
+                            </div>
+                        </li>
                     </template>
                 </ul>
             </template>
             <template is="dom-if" if="{{singleActive}}">
-                <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}"></mk-photo>
+                <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-add-to-cart="addToCart"></mk-photo>
             </template>
         </fotomoto-plugin>
     </template>
@@ -94,6 +108,9 @@
       },
       deselectImage: function(){
           this.currentImage = undefined;
+      },
+      addToCart: function(event){
+          FOTOMOTO.API.showWindow(FOTOMOTO.API.PRINT, event.detail.url);
       },
       toJson: function(o){
           return JSON.stringify(o);
