@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="shared-styles.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
+<link rel="import" href="shared-styles.html">
 
 
 <dom-module id="mk-photo">
@@ -11,9 +11,12 @@
                 display: block;
             }
         </style>
-        <iron-ajax id="flickrRequest" on-response="handleFlickrResponse" auto url="https://api.flickr.com/services/rest" params="{{findSinlgePhotoParams(photoId)}}"
-            handle-as="json" debounce-duration="300">
+        <iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
+            params="{{findSinlgePhotoParams(photoId)}}" handle-as="json" debounce-duration="300">
         </iron-ajax>
+        <paper-button raised on-tap="goBack">
+            <iron-icon icon="arrow-back"></iron-icon>Back
+        </paper-button>
         <h2>[[photo.title._content]]</h2>
         <img id="viewer">
         <div class="buttons">
@@ -25,14 +28,30 @@
     <script>
     Polymer({
       is: 'mk-photo',
-      properties: {
-          photoId: String
-      },
       behaviors: [PhotoViewerBehavior],
+      properties: {
+          photoId: {
+              type: String,
+              observer: '_photoChanged'
+          }
+      },
+      _getImageUrl(){
+          return this.photo ? this.getImageUrl(this.photo, 'z') : '';
+      },
+      goBack(){
+          this._photoChanged();
+          this.fire('back');
+      },
       handleFlickrResponse: function(event){
           this.photo = event.detail.response.photo;
-          this.$.viewer.src = this.getImageUrl(this.photo, 'z');
-      }  
+          this.$.viewer.src = this._getImageUrl();
+
+      },
+      _photoChanged: function(){
+          this.photo = undefined;
+          this.$.viewer.src = '';
+          this.$.flickrRequest.generateRequest();
+      }
     });
   </script>
 </dom-module>

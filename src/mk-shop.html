@@ -50,8 +50,6 @@
             }
         </style>
         <fotomoto-plugin id="fotomoto">
-            <pre>{{toJson(route)}}</pre>
-            <pre>{{toJson(routeData)}}</pre>
             <app-route route="{{route}}" pattern="/"></app-route>
             <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
             <iron-ajax id="flickrRequest" auto url="https://api.flickr.com/services/rest" params="{{getAllPhotoParams()}}" handle-as="json"
@@ -66,10 +64,7 @@
                 </ul>
             </template>
             <template is="dom-if" if="{{singleActive}}">
-                <paper-button raised on-tap="goBack">
-                    <iron-icon icon="arrow-back"></iron-icon>Back
-                </paper-button>
-                <mk-photo photo-id="{{currentImage.id}}"></mk-photo>
+                <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}"></mk-photo>
             </template>
         </fotomoto-plugin>
     </template>

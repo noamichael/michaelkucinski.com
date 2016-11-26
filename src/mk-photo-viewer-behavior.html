@@ -2,6 +2,13 @@
     (function(){
         var API_KEY = 'e64d91b72c3934917da3554a69c98ef3';
         window.PhotoViewerBehavior = {
+            properties: {
+                loading: {
+                    type: Boolean,
+                    default: false,
+                    notify: true
+                }
+            },
             getAllPhotoParams: function(){
                 return {
                     method: 'flickr.people.getPublicPhotos',
@@ -32,6 +39,13 @@
                 }
                 size = size || 'z';
                 return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.secret +'_' + size + '.jpg';
+            },
+            getOriginalImageUrl: function(image, size){
+                if(!image){
+                    return '';
+                }
+                size = size || 'z';
+                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.originalsecret +'_o.' + image.originalformat;
             },
         };
     })();

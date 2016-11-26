@@ -20,6 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="mk-icons.html">
 <link rel="import" href="shared-styles.html">
 
@@ -30,6 +31,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-primary-color: #000;
         --app-secondary-color: orangered;
         display: block;
+      }
+      
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: white;
+      }
+      
+      .overlay[hidden] {
+        display: none;
       }
       
       app-toolbar h3 {
@@ -93,13 +111,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
           </app-toolbar>
         </app-header>
-
         <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="view404" role="main">
           <mk-home name="home"></mk-home>
           <mk-blog name="blog"></mk-blog>
-          <mk-shop name="shop" route="{{subroute}}"></mk-shop>
+          <mk-shop name="shop" route="{{subroute}}" loading="{{loading}}"></mk-shop>
           <mk-view404 name="view404"></mk-view404>
         </iron-pages>
+        <div class="overlay" hidden$="[[!loading]]">
+          <paper-spinner active></paper-spinner>
+        </div>
       </app-header-layout>
     </app-drawer-layout>
   </template>
@@ -114,6 +134,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           reflectToAttribute: true,
           observer: '_pageChanged'
         }
+      },
+
+      ready: function() {
+        this.loading = false;
       },
 
       observers: [
