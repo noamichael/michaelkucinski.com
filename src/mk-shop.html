@@ -2,10 +2,14 @@
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="./fotomoto-plugin.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
 <link rel="import" href="./mk-photo.html">
@@ -20,6 +24,17 @@
                 --app-grid-gutter: 5px;
                 --app-grid-item-height: 250px;
                 --app-grid-expandible-item-columns: 4;
+            }
+            
+            .instructions {
+                display: flex;
+                justify-content: center;
+            }
+            
+            .filters {
+                display: flex;
+                justify-content: space-between;
+                flex-flow: row wrap;
             }
             
             ul {
@@ -62,23 +77,46 @@
         <fotomoto-plugin id="fotomoto">
             <app-route route="{{route}}" pattern="/"></app-route>
             <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
-            <iron-ajax id="flickrRequest" auto url="https://api.flickr.com/services/rest" params="{{getAllPhotoParams()}}" handle-as="json"
-                on-response="handleFlickrResponse" debounce-duration="300">
+            <iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" handle-as="json" on-response="handleFlickrResponse"
+                debounce-duration="300">
             </iron-ajax>
+
             <template is="dom-if" if="{{!singleActive}}">
-                Click on an image below to see full details.
-                <ul class="app-grid">
-                    <template is="dom-repeat" items="{{images}}" as="image">
-                        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
-                            <div class="photo-title">
-                                [[image.title]]
-                            </div>
-                        </li>
+                <div class="filters">
+                    <template is="dom-repeat" as="catagory" items="{{categories}}">
+                        <paper-checkbox data-catagory$="{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
                     </template>
-                </ul>
+                </div>
+                <div style="display: flex;">
+                    <paper-input type="text" label="Search" value="{{text}}" on-input="onSearchTextChange"></paper-input>
+                </div>
+                <div class="instructions">
+                    Click on an image below to see full details. [[tags]]
+                </div>
+                <iron-scroll-threshold id="ironScrollTheshold" lower-threshold="500" scroll-target="document">
+                    <ul class="app-grid">
+                        <template is="dom-repeat" items="{{images}}" as="image">
+                            <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
+                                <div class="photo-title">
+                                    [[image.title]]
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                    <div style="display: flex; justify-content: center;">
+                        <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev()}}">
+                            <icon-icon icon="icons:add"></icon-icon>
+                            Prev
+                        </paper-button>
+                        <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext()}}">
+                            <icon-icon icon="icons:add"></icon-icon>
+                            Next
+                        </paper-button>
+                    </div>
+                </iron-scroll-threshold>
             </template>
             <template is="dom-if" if="{{singleActive}}">
-                <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-add-to-cart="addToCart"></mk-photo>
+                <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-buy="onBuy"></mk-photo>
             </template>
         </fotomoto-plugin>
     </template>
@@ -93,9 +131,35 @@
           }
       },
       ready: function(){
-          this.$.fotomoto.load().then(function(){
-              console.log('done loaded script');
+          var shop = this;
+          shop.set('tags', []);
+          shop.set('loading', true);
+          shop.categories =  [
+              {label: 'Landscapes', value: 'landscape'},
+              {label: 'Portraits', value: 'portrait'},
+              {label: 'Abstract', value: 'abstract'},
+              {label: 'Sunrise', value: 'sunrise'},
+              {label: 'Sunset', value: 'sunset'}
+          ];
+          shop.$.fotomoto.load().then(function(){
+               shop.set('loading', false);
+               shop._requestImages();
           });
+      },
+      onSearchTextChange: function(event){
+         this.debounce('onSearchTextChange',function(){
+              this._requestImages();
+         }, 300);
+      },
+      onCatagoryChange: function(event){
+          var catagory = event.path[0].dataset.catagory;
+          var index = this.tags.indexOf(catagory);
+          if(index < 0){
+              this.push('tags', catagory);
+          }else{
+              this.splice('tags', index, 1);
+          }
+          this._requestImages();
       },
       goBack: function(){
           this.set('route.path', '/');
@@ -106,23 +170,45 @@
                this.set('route.path', '/photos/' + this.currentImage.id);
           });
       },
-      deselectImage: function(){
-          this.currentImage = undefined;
-      },
-      addToCart: function(event){
-          FOTOMOTO.API.showWindow(FOTOMOTO.API.PRINT, event.detail.url);
+      onBuy: function(event){
+          var windowToOpen = FOTOMOTO.API[event.detail.buy];
+          FOTOMOTO.API.showWindow(windowToOpen, event.detail.url);
       },
       toJson: function(o){
           return JSON.stringify(o);
       },
+      loadPreviousPhotos: function(){
+        if(!this.meta){
+              this.meta = {page: 1};
+        }else{
+            this.meta.page = this.meta.page - 1;
+        }
+        this._requestImages();
+      },
+      loadNextPhotos: function(){
+          if(!this.meta){
+              this.meta = {page: 0};
+          } else {
+              this.meta.page = this.meta.page + 1;
+          }
+          this._requestImages();
+      },
       handleFlickrResponse: function(event){
-          var photos = event.detail.response.photos.photo;
-          var shop = this;
-        //   photos.forEach(function(photo){
-        //       FOTOMOTO.API.checkinImage(shop.getImageUrl(photo, 'o'));
-        //   });
+          this.set('meta', event.detail.response.photos);
+          var photos = this.meta.photo;
           this.set('images', event.detail.response.photos.photo);
-      }      
+      }  ,
+      _requestImages(){
+          var page = this.meta ? this.meta.page: 1;
+          this.$.flickrRequest.params = this.getAllPhotoParams(page, this.tags, this.text);
+          this.$.flickrRequest.generateRequest();
+      },
+      _hasNext: function(){
+          return !this.meta ? false: this.meta.pages > this.meta.page;
+      },
+      _hasPrev: function(){
+           return !this.meta ? false: this.meta.page > 1;
+      }    
     });
   </script>
 </dom-module>

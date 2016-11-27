@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
@@ -12,15 +13,20 @@
         <style include="shared-styles">
             :host {
                 display: block;
-                --paper-card-header-text {
+                --paper-card-header-text: {
                     background: rgba(0, 0, 0, 0.75);
                     color: white;
                     font-size: initial;
                 }
             }
             
-            paper-button.add-to-card {
+            paper-button.print {
                 background: green;
+                color: white;
+            }
+
+             paper-button.digital-download {
+                background: #09478D;
                 color: white;
             }
             
@@ -50,8 +56,11 @@
                     <paper-button raised>
                         <iron-icon icon="social:share"></iron-icon>Share
                     </paper-button>
-                    <paper-button class="add-to-card" raised on-tap="_addToCart">
-                        <iron-icon icon="add-shopping-cart"></iron-icon> Add to Cart
+                    <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
+                        <iron-icon icon="add-shopping-cart"></iron-icon> Buy Print
+                    </paper-button>
+                    <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
+                        <iron-icon icon="file-download"></iron-icon> Digital Download
                     </paper-button>
                 </div>
             </paper-card>
@@ -72,10 +81,11 @@
       _getImageUrl(){
           return this.photo ? this.getImageUrl(this.photo, 'z') : '';
       },
-      _addToCart: function(){
-          this.fire('add-to-cart', {
+      _addToCart: function(event){
+          this.fire('buy', {
               photo: this.photo,
-              url: this.getOriginalImageUrl(this.photo)
+              url: this._getImageUrl(),
+              buy: event.target.dataset.buy
           });
       },
       goBack(){

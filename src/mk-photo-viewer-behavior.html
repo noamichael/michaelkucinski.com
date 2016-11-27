@@ -9,13 +9,20 @@
                     notify: true
                 }
             },
-            getAllPhotoParams: function(){
+            getAllPhotoParams: function(page, tags, text){
+                tags = tags || [];
+                page = page || 1;
                 return {
-                    method: 'flickr.people.getPublicPhotos',
+                    method: 'flickr.photos.search',
                     api_key: API_KEY,
                     user_id:'89564538@N00',
+                    tag_mode: 'all',
+                    tags: ['for-sale'].concat(tags).join(','),
                     format: 'json',
-                    nojsoncallback: 1
+                    nojsoncallback: 1,
+                    per_page: 64,
+                    text: text,
+                    page: page
                 };
             },
             findSinlgePhotoParams: function(photoId){
