@@ -1,0 +1,133 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-request.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="./mk-post.html">
+<link rel="import" href="../shared-styles.html">
+
+<dom-module id="mk-blog">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      
+      .post-list-container {
+        display: flex;
+      }
+      
+      .post-list {
+        width: 75%;
+      }
+      
+      .post-list-filter {
+        width: 25%;
+        padding-top: 1em;
+      }
+    </style>
+    <app-route route="{{route}}" pattern="/"></app-route>
+    <app-route route="{{route}}" pattern="/posts/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
+
+    <iron-ajax auto id="posts" last-response="{{postResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_posts"
+      handle-as="json" debounce-duration="300" params="{page: page, count: count}"></iron-ajax>
+
+    <iron-ajax auto id="categories" last-response="{{categoryResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_category_index"
+      handle-as="json" debounce-duration="300"></iron-ajax>
+    <div class="post-list-container" hidden$="{{singleActive}}">
+      <div class="post-list">
+        <template is="dom-repeat" items="{{postResponse.posts}}" as="post">
+          <mk-post post="[[post]]"></mk-post>
+        </template>
+      </div>
+      <div class="post-list-filter">
+        <paper-listbox>
+          <template is="dom-repeat" items="{{categoryResponse.categories}}" as="category">
+            <paper-item data-value="{{category.slug}}">[[category.title]] ([[category.post_count]])</paper-item>
+          </template>
+        </paper-listbox>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'mk-blog',
+       properties: {
+         loading: {
+           type: Boolean,
+           default: false,
+           notify: true
+         },
+         route: {
+              notify: true
+          }
+      },
+      created: function(){
+        this.page = 1;
+        this.count = 10;
+      },
+      ready: function(){
+        var blog = this;
+      },
+      getPosts: function (page, count) {
+            page = page || 1;
+            count = count || 5;
+            return this.$.xhr.send({
+                method: "GET",
+                url: this.path + "get_posts?page=" + page + "&count=" + count,
+                handleAs: 'json'
+            });
+        },
+        getPost: function (postSlug) {
+            return  this.$.xhr.send({
+                method: "GET",
+                url: this.path + "get_post?slug=" + postSlug,
+                handleAs: 'json'
+            });
+        },
+        getPage: function (slug) {
+            return  this.$.xhr.send({
+                method: "GET",
+                url: this.path + "get_page?slug=" + slug,
+                handleAs: 'json'
+            });
+        },
+        getCategories: function () {
+            return  this.$.xhr.send({
+                method: "GET",
+                url: this.path + "get_category_index",
+                handleAs: 'json'
+            });
+
+        },
+        getCategoryPosts: function (categorySlug, page, count) {
+            return  this.$.xhr.send({
+                method: "GET",
+                url: this.path + "get_category_posts/?slug=" + encodeURIComponent(categorySlug)
+                        + "&page=" + page + "&count=" + count,
+                handleAs: 'json'
+            });
+        },
+        searchForPosts: function (searchText, page, count) {
+            return  this.$.xhr.send({
+                method: "GET",
+                url: this.path + "get_search_results/?search=" + encodeURIComponent(searchText)
+                        + "&page=" + page + "&count=" + count + "&post_type=post",
+                handleAs: 'json'
+            });
+        },
+        submitComment: function (comment, postId, name, email) {
+            return  this.$.xhr.send({
+                method: "GET",
+                url: this.path + "submit_comment?post_id=" + postId
+                        + "&content=" + encodeURIComponent(comment)
+                        + "&name=" + encodeURIComponent(name)
+                        + "&email=" + encodeURIComponent(email),
+                handleAs: 'json'
+            });
+        }
+    });
+  </script>
+</dom-module>

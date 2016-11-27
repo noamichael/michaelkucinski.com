@@ -1,13 +1,3 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -91,7 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
-      <app-drawer>
+      <app-drawer align="left">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="home" href="/#/home" drawer-toggle>Home</a>
@@ -112,11 +102,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
           </app-toolbar>
         </app-header>
-        <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="view404" role="main">
-          <mk-home name="home"></mk-home>
-          <mk-blog name="blog"></mk-blog>
-          <mk-shop name="shop" route="{{subroute}}" loading="{{loading}}"></mk-shop>
-          <mk-view404 name="view404"></mk-view404>
+        <iron-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main">
+          <mk-home data-page="home"></mk-home>
+          <mk-blog data-page="blog" data-folder="blog" route="{{subroute}}" loading="{{loading}}"></mk-blog>
+          <mk-shop data-page="shop" data-folder="shop" route="{{subroute}}" loading="{{loading}}"></mk-shop>
+          <mk-view404 data-page="view404"></mk-view404>
         </iron-pages>
         <div class="overlay" hidden$="[[!loading]]">
           <paper-spinner active></paper-spinner>
@@ -152,7 +142,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _pageChanged: function(page) {
         // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('mk-' + page + '.html');
+        var el = this.$$('[data-page="'+page+'"]');
+        var folder = el.dataset.folder ? (el.dataset.folder + '/') : '';
+        var resolvedPageUrl = this.resolveUrl(folder + 'mk-' + page + '.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
       },
 

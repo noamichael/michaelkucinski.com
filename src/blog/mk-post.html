@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../shared-styles.html">
+
+<dom-module id="mk-post">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+            .card-actions[hidden]{
+                display: none;
+            }
+            .read-more{
+                background: #09478D;
+                color: white;
+            }
+        </style>
+        <paper-card>
+            <div class="card-content">
+                <h3>[[post.title_plain]]</h3>
+                <div inner-h-t-m-l="{{_getPostContent(post)}}"></div>
+            </div>
+            <div class="card-actions" hidden$="full">
+                <paper-button class="read-more" raised>Read More</paper-button>
+            </div>
+        </paper-card>
+    </template>
+
+    <script>
+    Polymer({
+      is: 'mk-post',
+      properties: {
+          post: Object,
+          full: Boolean
+      },
+      _getPostContent: function(post){
+          return this.full ? post.content : this.limitHtml(post.content, 350);
+      },
+      limitHtml: function(text, limit ){
+          var changedString = String(text).replace(/<[^>]+>/gm, '');
+          var finalString = changedString.length > limit ? changedString.substr(0, limit - 1) + "..." : changedString;
+          return finalString;        
+      }
+    });
+  </script>
+</dom-module>
