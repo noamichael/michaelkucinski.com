@@ -113,11 +113,11 @@
                     </ul>
                     <div style="display: flex; justify-content: center;">
                         <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
-                            <icon-icon icon="icons:add"></icon-icon>
+                            <icon-icon icon="icons:arrow-back"></icon-icon>
                             Prev
                         </paper-button>
                         <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
-                            <icon-icon icon="icons:add"></icon-icon>
+                            <icon-icon icon="icons:arrow-forward"></icon-icon>
                             Next
                         </paper-button>
                     </div>
@@ -135,11 +135,19 @@
       behaviors: [PhotoViewerBehavior],
       properties: {
           route: {
-              notify: true
-          }
+              notify: true, 
+              type: Object
+          },
+          queryParams:  {
+              notify: true,
+              type: Object
+         }
       },
       ready: function(){
           var shop = this;
+          if(this.queryParams && this.queryParams.page){
+              this.set('meta', {page: this.queryParams.page});
+          }
           shop.set('tags', []);
           shop.set('loading', true);
           shop.categories =  [
@@ -156,7 +164,8 @@
       },
       onSearchTextChange: function(event){
          this.debounce('onSearchTextChange',function(){
-              this._requestImages();
+             this.meta = {page: 1};
+             this._requestImages();
          }, 300);
       },
       onCatagoryChange: function(event){
@@ -167,6 +176,7 @@
           }else{
               this.splice('tags', index, 1);
           }
+          this.meta = {page: 1}
           this._requestImages();
       },
       goBack: function(){
@@ -181,9 +191,6 @@
       onBuy: function(event){
           var windowToOpen = FOTOMOTO.API[event.detail.buy];
           FOTOMOTO.API.showWindow(windowToOpen, event.detail.url);
-      },
-      toJson: function(o){
-          return JSON.stringify(o);
       },
       loadPreviousPhotos: function(){
         if(!this.meta){
@@ -210,7 +217,7 @@
           var page = this.meta ? this.meta.page: 1;
           this.$.flickrRequest.params = this.getAllPhotoParams(page, this.tags, this.text);
           this.$.flickrRequest.generateRequest();
-          document.body.scrollTop = 0;
+          this.set('queryParams', {page: page});
       },
       _hasNext: function(meta){
           return !meta ? false: meta.pages > meta.page;

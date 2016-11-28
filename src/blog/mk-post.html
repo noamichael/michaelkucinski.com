@@ -1,5 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../shared-styles.html">
 
 <dom-module id="mk-post">
@@ -7,22 +11,81 @@
         <style include="shared-styles">
             :host {
                 display: block;
+                padding: 0 0 1em 0;
+                --paper-toast-background-color: green;
+                --paper-toast-color: white;
             }
-            .card-actions[hidden]{
+            
+            .card-actions[hidden] {
                 display: none;
             }
-            .read-more{
+            
+            .post-comment {
+                background: green;
+                color: white;
+            }
+            
+            .comment h6,
+            h3 {
+                margin: 0px;
+            }
+            
+            small {
+                margin-bottom: 1em;
+                font-style: italic;
+                font-size: initial;
+                display: block;
+            }
+            
+            .read-more {
                 background: #09478D;
                 color: white;
             }
+            
+            .comment {
+                padding: 1em;
+            }
+            
+            .create-comment {
+                margin-bottom: 1em;
+            }
+            
+            paper-card {
+                width: 100%;
+            }
         </style>
-        <paper-card>
+
+        <iron-ajax id="saveComment" on-response="onCommentSave" url="http://www.michaelkucinski.com/blog/api/submit_comment" handle-as="json"
+            debounce-duration="300" params='{{getCommentParams(post.id, comment.content, comment.name,comment.email)}}'>
+        </iron-ajax>
+        <paper-toast id="commentSavedToast" horizontal-align="right" text="Your comment has been submitted (pending approval)"></paper-toast>
+        <paper-card id="post">
             <div class="card-content">
                 <h3>[[post.title_plain]]</h3>
+                <small>by [[post.author.nickname]] on [[post.date]]</small>
                 <div inner-h-t-m-l="{{_getPostContent(post)}}"></div>
+                <template is="dom-if" if="{{full}}">
+                    <h3>Comments</h3>
+                    <form class="create-comment" is="iron-form">
+                        <paper-input label="Name" value="{{comment.name}}" required auto-validate></paper-input>
+                        <paper-input label="Email" value="{{comment.email}}" required auto-validate></paper-input>
+                        <paper-textarea label="Comment" value="{{comment.content}}" required auto-validate></paper-textarea>
+                        <paper-button type="submit" rasied class="post-comment" on-tap="onCommentSubmit">Post Comment</paper-button>
+                    </form>
+                    <template is="dom-repeat" as="comment" items="{{post.comments}}">
+                        <paper-card class="comment">
+                            <h6>[[comment.name]] says...</h6>
+                            <small>[[comment.date]]</small>
+                            <div inner-h-t-m-l="{{comment.content}}"></div>
+                        </paper-card>
+                    </template>
+                    <span hidden$="{{!noComments(post.comments)}}">
+                        No comments
+                    </span>
+                </template>
             </div>
-            <div class="card-actions" hidden$="full">
-                <paper-button class="read-more" raised>Read More</paper-button>
+            <div class="card-actions" hidden$="{{full}}">
+                <paper-button class="read-more" raised on-tap="_readyMore">Read More</paper-button>
             </div>
         </paper-card>
     </template>
@@ -34,13 +97,45 @@
           post: Object,
           full: Boolean
       },
+      observers: [
+          '_onPostChange(post)'
+      ],
+      getCommentParams: function(post_id, content, name, email){
+        return {
+            post_id: post_id,
+            content: content,
+            name: name,
+            email: email
+        };
+      },
+      onCommentSave: function(event){
+          this.$.commentSavedToast.show({duration: 3000});
+          this.comment = {};
+      },
+      _onPostChange: function(post){
+          this.comment = {};
+      },
+      onCommentSubmit: function(event){
+          if(!this.comment.content || !this.comment.name || !this.comment.email){
+              return;
+          }
+          this.$.saveComment.generateRequest();
+      },
       _getPostContent: function(post){
           return this.full ? post.content : this.limitHtml(post.content, 350);
+      },
+      _readyMore: function(){
+          this.fire('read-more', {
+              post: this.post
+          });
       },
       limitHtml: function(text, limit ){
           var changedString = String(text).replace(/<[^>]+>/gm, '');
           var finalString = changedString.length > limit ? changedString.substr(0, limit - 1) + "..." : changedString;
           return finalString;        
+      },
+      noComments: function(comments){
+          return !comments || comments.length < 1;
       }
     });
   </script>

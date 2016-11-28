@@ -5,6 +5,7 @@
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
@@ -75,10 +76,9 @@
         font-weight: bold;
       }
     </style>
-
-    <app-location route="{{route}}" use-hash-as-path></app-location>
-    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
-
+    <app-scrollpos-control selected="{{page}}" reset></app-scrollpos-control>
+    <app-location path="{{path}}" route="{{route}}" use-hash-as-path></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" query-params="{{queryParams}}" tail="{{subroute}}"></app-route>
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer align="left">
@@ -104,8 +104,8 @@
         </app-header>
         <iron-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main">
           <mk-home data-page="home"></mk-home>
-          <mk-blog data-page="blog" data-folder="blog" route="{{subroute}}" loading="{{loading}}"></mk-blog>
-          <mk-shop data-page="shop" data-folder="shop" route="{{subroute}}" loading="{{loading}}"></mk-shop>
+          <mk-blog data-page="blog" data-folder="blog" route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
+          <mk-shop data-page="shop" data-folder="shop" route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
           <mk-view404 data-page="view404"></mk-view404>
         </iron-pages>
         <div class="overlay" hidden$="[[!loading]]">
@@ -150,7 +150,10 @@
 
       _showPage404: function() {
         this.page = 'view404';
-      }
+      },
+      stringify: function(o){
+          return JSON.stringify(o);
+      },
     });
   </script>
 </dom-module>
