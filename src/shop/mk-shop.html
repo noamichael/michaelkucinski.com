@@ -9,7 +9,6 @@
 <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="./fotomoto-plugin.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
 <link rel="import" href="./mk-photo.html">
@@ -101,27 +100,25 @@
                         Click on an image below to see full image and purchasing options.
                     </div>
                 </paper-card>
-                <iron-scroll-threshold id="ironScrollTheshold" lower-threshold="500" scroll-target="document">
-                    <ul class="app-grid">
-                        <template is="dom-repeat" items="{{images}}" as="image">
-                            <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
-                                <div class="photo-title">
-                                    [[image.title]]
-                                </div>
-                            </li>
-                        </template>
-                    </ul>
-                    <div style="display: flex; justify-content: center;">
-                        <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
-                            <icon-icon icon="icons:arrow-back"></icon-icon>
-                            Prev
-                        </paper-button>
-                        <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
-                            <icon-icon icon="icons:arrow-forward"></icon-icon>
-                            Next
-                        </paper-button>
-                    </div>
-                </iron-scroll-threshold>
+                <ul class="app-grid">
+                    <template is="dom-repeat" items="{{images}}" as="image">
+                        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
+                            <div class="photo-title">
+                                [[image.title]]
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+                <div style="display: flex; justify-content: center;">
+                    <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
+                        <iron-icon icon="icons:arrow-back"></iron-icon>
+                        Prev
+                    </paper-button>
+                    <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
+                        <iron-icon icon="icons:arrow-forward"></iron-icon>
+                        Next
+                    </paper-button>
+                </div>
             </template>
             <template is="dom-if" if="{{singleActive}}">
                 <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-buy="onBuy"></mk-photo>

@@ -63,7 +63,7 @@
     <iron-ajax id="post" last-response="{{postResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_post"
       handle-as="json" debounce-duration="300" params='{{getSinglePostParams(routeData.id)}}'></iron-ajax>
 
-    <iron-ajax auto id="categories" last-response="{{categoryResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_category_index"
+    <iron-ajax auto id="categoriesRequest" on-response="onCategoryResponse" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_category_index"
       handle-as="json" debounce-duration="300">
     </iron-ajax>
 
@@ -73,11 +73,21 @@
         <template is="dom-repeat" items="{{posts}}" as="post">
           <mk-post post="[[post]]" on-read-more="readFullPost"></mk-post>
         </template>
+        <div style="display: flex; justify-content: center;">
+          <paper-button on-tap="loadPreviousPosts" raised hidden$="{{!_hasPrev(meta)}}">
+            <iron-icon icon="icons:arrow-back"></iron-icon>
+            Prev
+          </paper-button>
+          <paper-button on-tap="loadNextPosts" raised hidden$="{{!_hasNext(meta)}}">
+            <iron-icon icon="icons:arrow-forward"></iron-icon>
+            Next
+          </paper-button>
+        </div>
       </div>
       <div class="post-list-filter">
-        <paper-listbox selected="0" on-iron-select="onCategorySelect">
+        <paper-listbox id="categoryList" selected="0" on-iron-select="onCategorySelect">
           <paper-item data-value="">All</paper-item>
-          <template is="dom-repeat" items="{{categoryResponse.categories}}" as="category">
+          <template is="dom-repeat" items="{{categories}}" as="category">
             <paper-item data-slug$="{{category.slug}}">[[category.title]] ([[category.post_count]])</paper-item>
           </template>
         </paper-listbox>
@@ -115,8 +125,24 @@
       ready: function(){
         this.page = 1;
         this.count = 10;
-        this.category = '';
+        if(this.queryParams && this.queryParams.category){
+          this.lastCategory = this.queryParams.category;
+        } 
+        this.category = ''; 
         this.set('loading', true);
+      },
+      onCategoryResponse: function(event){
+        this.set('categories', event.detail.response.categories);
+        if(this.lastCategory){
+          for(var i = 0; i < this.categories.length; i++){
+            var current = this.categories[i];
+            if(current.slug == this.lastCategory) {
+              this.$.categoryList.selected = i + 1;
+              this.category = current.slug;
+              break;
+            }
+          }
+        }
       },
       getPostsParams(page, count, category){
         return {"page": page || 1, "count": count || 5, "slug": category || undefined};
@@ -149,20 +175,52 @@
         return {slug: id};
       },
       handlePostResponse: function(event){
+        this.set('meta',event.detail.response);
         this.set('posts', event.detail.response.posts);
       },
       onCategorySelect: function(event){
         this.category = event.detail.item.dataset.slug;
-        this.set('queryParams', {category: this.category});
+        var queryParams  = this.cloneQuery();
+        queryParams.category = this.category;
+        this.set('queryParams', queryParams);
       },
-        searchForPosts: function (searchText, page, count) {
+      _hasNext: function(meta){
+          return !meta ? false: meta.pages > this.page;
+      },
+      _hasPrev: function(meta){
+           return !meta ? false: this.page > 1;
+      },
+      loadNextPosts: function(){
+        this.set('page', this.page + 1);
+        this._getPosts();
+      },
+      loadPreviousPosts: function(){
+        this.set('page', this.page - 1);
+        this._getPosts();
+      },
+      _getPosts(){
+        this.$.posts.params = this.getPostsParams(this.page, this.count, this.category);
+        var queryParams  = this.cloneQuery();
+        queryParams.page = this.page;
+        this.set('queryParams', queryParams);
+      },
+      searchForPosts: function (searchText, page, count) {
             return  this.$.xhr.send({
                 method: "GET",
                 url: this.path + "get_search_results/?search=" + encodeURIComponent(searchText)
                         + "&page=" + page + "&count=" + count + "&post_type=post",
                 handleAs: 'json'
             });
+      },
+      cloneQuery: function() {
+        var queryParams  = {};
+        if(this.queryParams){
+          for(var key in this.queryParams){
+            queryParams[key] = this.queryParams[key];
+          }
         }
+        return queryParams;
+      }
     });
   </script>
 </dom-module>
