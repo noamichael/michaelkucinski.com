@@ -11,7 +11,7 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="mk-icons.html">
 <link rel="import" href="shared-styles.html">
 
@@ -84,14 +84,15 @@
       <app-drawer align="left">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="home" href="/#/home" drawer-toggle>Home</a>
-          <a name="blog" href="/#/blog" drawer-toggle>Blog</a>
-          <a name="shop" href="/#/shop" drawer-toggle>Shop</a>
+          <a name="home" href="/#/home/" drawer-toggle>Home</a>
+          <a name="blog" href="/#/blog/" drawer-toggle>Blog</a>
+          <a name="shop" href="/#/shop/" drawer-toggle>Shop</a>
+          <a name="contact" href="/#/contact/" drawer-toggle>Contact</a>
         </iron-selector>
       </app-drawer>
 
       <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+      <app-header-layout>
 
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
@@ -106,10 +107,11 @@
           <mk-home data-page="home"></mk-home>
           <mk-blog data-page="blog" data-folder="blog" route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
           <mk-shop data-page="shop" data-folder="shop" route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
+          <mk-contact data-page="contact"></mk-contact>
           <mk-view404 data-page="view404"></mk-view404>
         </iron-pages>
         <div class="overlay" hidden$="[[!loading]]">
-          <paper-spinner active></paper-spinner>
+          <paper-spinner-lite active></paper-spinner-lite>
         </div>
       </app-header-layout>
     </app-drawer-layout>
@@ -132,14 +134,19 @@
       },
 
       observers: [
-        '_routePageChanged(routeData.page)'
+        '_routePageChanged(routeData.page)',
+        '_routePathChange(route.path)'
       ],
 
 
       _routePageChanged: function(page) {
         this.page = page || 'home';
       },
-
+      _routePathChange: function(path){
+          this.async(function(){
+             document.body.scrollTop = 0;
+          });
+      },
       _pageChanged: function(page) {
         // Load page import on demand. Show 404 page if fails
         var el = this.$$('[data-page="'+page+'"]');

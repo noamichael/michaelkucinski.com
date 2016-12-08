@@ -1,0 +1,82 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../bower_components/social-media-icons/social-media-icons.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="mk-contact">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      
+      paper-card {
+        width: 100%;
+      }
+      
+      [icon="communication:phone"] {
+        color: orangered;
+      }
+      
+      [icon="communication:email"] {
+        color: seagreen;
+      }
+      [icon="image:camera"]{
+        color: #ff0084;
+      }
+      
+      ul {
+        list-style: none;
+      }
+      a {
+        text-decoration: none;
+        color: black;
+        transition: 0.2s linear color;
+      }
+      a:hover{
+        color: orangered;
+      }
+    </style>
+
+    <paper-card>
+      <div class="card-content">
+        <h3>Michael Kucinski</h3>
+        <ul>
+          <li>
+            <iron-icon icon="communication:phone"></iron-icon> (973) 814-4132
+          </li>
+          <li>
+            <a href="mailto:me@michaelkucinski.com">
+              <iron-icon icon="communication:email"></iron-icon> me@michaelkucinski.com
+            </a>
+          </li>
+          <li>
+            <a href="https://instagram.com/noaamichael">
+              <social-media-icons icon="instagram" color="#8a3ab9" size="24"></social-media-icons> Instagram
+            </a>
+          </li>
+          <li>
+            <a href="https://www.flickr.com/photos/89564538@N00/">
+              <iron-icon icon="image:camera"></iron-icon> Flickr
+            </a>
+          </li>
+           <li>
+            <a href="https://www.github.com/noamichael">
+              <social-media-icons icon="github" size="24" color="#000000"></social-media-icons> Github
+            </a>
+          </li>
+        </ul>
+      </div>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'mk-contact'
+    });
+  </script>
+</dom-module>

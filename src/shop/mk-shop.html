@@ -42,6 +42,10 @@
                 list-style: none;
             }
             
+            h3 {
+                margin: 0px;
+            }
+            
             paper-dialog {
                 position: fixed;
                 top: 25%;
@@ -49,6 +53,10 @@
                 bottom: 25%;
                 right: 25%;
                 margin: 0px;
+            }
+            
+            paper-checkbox {
+                font-size: initial;
             }
             
             .item {
@@ -72,29 +80,36 @@
                 display: block !important;
             }
             
-            @media(max-width: 799px) {
+            @media screen and (max-width: 960px) {
                 :host {
                     --app-grid-columns: 2;
                     --app-grid-expandible-item-columns: 2;
                 }
             }
+            @media screen and (max-width: 799px) {
+                :host {
+                    --app-grid-columns: 1;
+                    --app-grid-expandible-item-columns: 1;
+                }
+            }
         </style>
         <fotomoto-plugin id="fotomoto">
-            <app-route route="{{route}}" pattern="/"></app-route>
+            <app-route route="{{route}}" pattern="/" active="{{active}}"></app-route>
             <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
-            <iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" handle-as="json" on-response="handleFlickrResponse"
+            <iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" loading="{{loading}}" handle-as="json" on-response="handleFlickrResponse"
                 debounce-duration="300">
             </iron-ajax>
 
             <template is="dom-if" if="{{!singleActive}}">
                 <paper-card class="filter-container">
-                    <div class="filters">
-                        <template is="dom-repeat" as="catagory" items="{{categories}}">
-                            <paper-checkbox data-catagory$="{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
-                        </template>
-                    </div>
+                    <h3>Search</h3>
                     <div style="display: flex;">
-                        <paper-input type="text" label="Search" value="{{text}}" on-input="onSearchTextChange"></paper-input>
+                        <paper-input type="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
+                    </div>
+                    <div class="filters">
+                        <template is="dom-repeat" as="catagory" items="{{categories}}" on-dom-change="_onFilterReady">
+                            <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
+                        </template>
                     </div>
                     <div class="instructions">
                         Click on an image below to see full image and purchasing options.
@@ -138,14 +153,35 @@
           queryParams:  {
               notify: true,
               type: Object
+         },
+         active:{
+             type: Boolean
          }
+      },
+      observers: [
+          '_onActiveChange(active)'
+      ],
+      attached: function() {
+          this._updateGridStyles = this._updateGridStyles || function() {
+              this.updateStyles();
+          }.bind(this);
+          window.addEventListener('resize', this._updateGridStyles);
+      },
+      detached: function() {
+          window.removeEventListener('resize', this._updateGridStyles);
       },
       ready: function(){
           var shop = this;
-          if(this.queryParams && this.queryParams.page){
-              this.set('meta', {page: this.queryParams.page});
-          }
-          shop.set('tags', []);
+          shop.ready = true;
+          if(this.queryParams){
+              shop.set('meta', {
+                  page: this.queryParams.page || 1,
+                  tags: this.queryParams.tags ?  this.queryParams.tags.split(',').map(function(t){return {value: t};}) : [],
+                  text: this.queryParams.text
+              });
+          } else { 
+              shop.set('meta', {page: 1, tags: []});
+          }          
           shop.set('loading', true);
           shop.categories =  [
               {label: 'Landscapes', value: 'landscape'},
@@ -159,21 +195,42 @@
                shop._requestImages();
           });
       },
+      _onActiveChange: function(active){
+          if(this.ready){
+              this._writeMetaToQuery();
+          }
+      },
+      _onFilterReady: function() {
+          var shop = this;
+          this.async(function(){
+            shop.meta.tags.forEach(function(tag){
+                var checkbox = shop.$$('#filter_' + tag.value );
+                checkbox.checked = true;
+            });
+         });
+      },
       onSearchTextChange: function(event){
          this.debounce('onSearchTextChange',function(){
-             this.meta = {page: 1};
+             this._resetMeta();
              this._requestImages();
-         }, 300);
+         }, 500);
       },
       onCatagoryChange: function(event){
           var catagory = event.path[0].dataset.catagory;
-          var index = this.tags.indexOf(catagory);
-          if(index < 0){
-              this.push('tags', catagory);
-          }else{
-              this.splice('tags', index, 1);
+          var index = -1;
+          for(var i = 0; i < this.meta.tags.length; i++){
+              if(this.meta.tags[i].value === catagory){
+                  index = i;
+                  break;
+              }
           }
-          this.meta = {page: 1}
+        
+          if(index < 0){
+              this.push('meta.tags', {value: catagory});
+          } else {
+              this.splice('meta.tags', index, 1);
+          }
+          this._resetMeta();
           this._requestImages();
       },
       goBack: function(){
@@ -191,7 +248,7 @@
       },
       loadPreviousPhotos: function(){
         if(!this.meta){
-              this.meta = {page: 1};
+            this._resetMeta();
         }else{
             this.meta.page = this.meta.page - 1;
         }
@@ -199,29 +256,57 @@
       },
       loadNextPhotos: function(){
           if(!this.meta){
-              this.meta = {page: 0};
+             this._resetMeta();
           } else {
               this.meta.page = this.meta.page + 1;
           }
           this._requestImages();
       },
       handleFlickrResponse: function(event){
-          this.set('meta', event.detail.response.photos);
+          var tags = this.meta.tags;
+          var text = this.meta.text;
+          var responseMeta = event.detail.response.photos;
+          responseMeta.tags = tags;
+          responseMeta.text = text;
+          this.set('meta', responseMeta);
           var photos = this.meta.photo;
           this.set('images', event.detail.response.photos.photo);
       }  ,
-      _requestImages(){
-          var page = this.meta ? this.meta.page: 1;
-          this.$.flickrRequest.params = this.getAllPhotoParams(page, this.tags, this.text);
+      _requestImages: function(){
+          this._writeMetaToQuery();
+          var queryParams = this.queryParams;
+          this.$.flickrRequest.params = this.getAllPhotoParams(queryParams.page, queryParams.tags, queryParams.text);
           this.$.flickrRequest.generateRequest();
-          this.set('queryParams', {page: page});
       },
       _hasNext: function(meta){
           return !meta ? false: meta.pages > meta.page;
       },
       _hasPrev: function(meta){
            return !meta ? false: meta.page > 1;
-      }    
+      },
+      _resetMeta: function(){
+          var meta = {page: 1, tags: this.meta ? this.meta.tags : []};
+          if(this.meta.text){
+              meta.text = this.meta.text;
+          }          
+          this.set('meta', meta);
+      },
+      toJson: function(o){return JSON.stringify(o);},
+      _writeMetaToQuery: function(){
+          var page = this.meta ? this.meta.page : 1;
+          var tags = this.meta ? this.meta.tags.map(function(t){return t.value;}).join(',') : '';
+          var text = this.meta ? this.meta.text : undefined;
+          var queryParams = {
+              page: page
+          };
+         if(tags && tags.length){
+              queryParams.tags = tags;
+          }
+          if(text){
+              queryParams.text = text
+          }
+         this.set('queryParams', queryParams);
+      }
     });
   </script>
 </dom-module>

@@ -24,8 +24,8 @@
                 background: green;
                 color: white;
             }
-
-             paper-button.digital-download {
+            
+            paper-button.digital-download {
                 background: #09478D;
                 color: white;
             }
@@ -78,8 +78,8 @@
               reflectToAttribute: true
           }
       },
-      _getImageUrl(){
-          return this.photo ? this.getImageUrl(this.photo, 'z') : '';
+      _getImageUrl: function(){
+          return this.photo ? this.getImageUrl(this.photo, 'b') : '';
       },
       _addToCart: function(event){
           this.fire('buy', {
@@ -88,7 +88,7 @@
               buy: event.target.dataset.buy
           });
       },
-      goBack(){
+      goBack: function(){
           this._photoChanged();
           this.fire('back');
       },

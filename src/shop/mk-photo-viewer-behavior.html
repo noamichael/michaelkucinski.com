@@ -12,7 +12,7 @@
             getAllPhotoParams: function(page, tags, text){
                 tags = tags || [];
                 page = page || 1;
-                return {
+                var params = {
                     method: 'flickr.photos.search',
                     api_key: API_KEY,
                     user_id:'89564538@N00',
@@ -21,9 +21,12 @@
                     format: 'json',
                     nojsoncallback: 1,
                     per_page: 36,
-                    text: text,
                     page: page
                 };
+                if(text){
+                    params.text = text;
+                }
+                return params;
             },
             findSinlgePhotoParams: function(photoId){
                  return {

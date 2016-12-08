@@ -42,7 +42,7 @@
         cursor: pointer;
       }
       
-      @media(max-width: 640px) {
+      @media (max-width: 640px) {
         .post-list {
           order: 2;
           width: 100%;
@@ -144,7 +144,7 @@
           }
         }
       },
-      getPostsParams(page, count, category){
+      getPostsParams: function(page, count, category){
         return {"page": page || 1, "count": count || 5, "slug": category || undefined};
       },
       getPostsUrl: function(category){
@@ -198,7 +198,7 @@
         this.set('page', this.page - 1);
         this._getPosts();
       },
-      _getPosts(){
+      _getPosts: function(){
         this.$.posts.params = this.getPostsParams(this.page, this.count, this.category);
         var queryParams  = this.cloneQuery();
         queryParams.page = this.page;

@@ -1,10 +1,11 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/my-app.html",
+  "shell": "src/mk-app.html",
   "fragments": [
-    "src/my-view1.html",
-    "src/my-view2.html",
-    "src/my-view3.html",
+    "src/blog/mk-blog.html",
+    "src/shop/mk-shop.html",
+    "src/mk-home.html",
+    "src/mk-contact.html",
     "src/my-view404.html"
   ],
   "sourceGlobs": [
@@ -14,7 +15,6 @@
   ],
   "includeDependencies": [
     "manifest.json",
-    "bower_components/**/*.js",
-    "bower_components/**/*.html"
+    "bower_components/webcomponentsjs/webcomponents.min.js"
   ]
 }
