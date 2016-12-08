@@ -17,12 +17,14 @@
 
         }
         var script = this.$.fotomoto;
-        script.src = '//widget.fotomoto.com/stores/script/8b7cd976d995f4b705789ca85c609c13619f0031.js?api=true';
-        return new Promise(function(resolve, reject){
-          script.addEventListener('load', function(){
-            resolve('done');
-          });
+        var deffered = new Promise(function(resolve, reject){
+          script.onload = function(){
+             resolve('done');
+          };
         });
+        script.src = '//widget.fotomoto.com/stores/script/8b7cd976d995f4b705789ca85c609c13619f0031.js?api=true';
+        return deffered;
+        
       }
     });
   </script>

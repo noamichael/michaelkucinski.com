@@ -86,6 +86,7 @@
                     --app-grid-expandible-item-columns: 2;
                 }
             }
+            
             @media screen and (max-width: 799px) {
                 :host {
                     --app-grid-columns: 1;
@@ -93,52 +94,50 @@
                 }
             }
         </style>
-        <fotomoto-plugin id="fotomoto">
-            <app-route route="{{route}}" pattern="/" active="{{active}}"></app-route>
-            <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
-            <iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" loading="{{loading}}" handle-as="json" on-response="handleFlickrResponse"
-                debounce-duration="300">
-            </iron-ajax>
+        <app-route route="{{route}}" pattern="/" active="{{active}}"></app-route>
+        <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
+        <iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" loading="{{loading}}" handle-as="json" on-response="handleFlickrResponse"
+            debounce-duration="300">
+        </iron-ajax>
 
-            <template is="dom-if" if="{{!singleActive}}">
-                <paper-card class="filter-container">
-                    <h3>Search</h3>
-                    <div style="display: flex;">
-                        <paper-input type="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
-                    </div>
-                    <div class="filters">
-                        <template is="dom-repeat" as="catagory" items="{{categories}}" on-dom-change="_onFilterReady">
-                            <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
-                        </template>
-                    </div>
-                    <div class="instructions">
-                        Click on an image below to see full image and purchasing options.
-                    </div>
-                </paper-card>
-                <ul class="app-grid">
-                    <template is="dom-repeat" items="{{images}}" as="image">
-                        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
-                            <div class="photo-title">
-                                [[image.title]]
-                            </div>
-                        </li>
-                    </template>
-                </ul>
-                <div style="display: flex; justify-content: center;">
-                    <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
-                        <iron-icon icon="icons:arrow-back"></iron-icon>
-                        Prev
-                    </paper-button>
-                    <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
-                        <iron-icon icon="icons:arrow-forward"></iron-icon>
-                        Next
-                    </paper-button>
+        <template is="dom-if" if="{{!singleActive}}">
+            <paper-card class="filter-container">
+                <h3>Search</h3>
+                <div style="display: flex;">
+                    <paper-input type="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
                 </div>
-            </template>
-            <template is="dom-if" if="{{singleActive}}">
-                <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-buy="onBuy"></mk-photo>
-            </template>
-        </fotomoto-plugin>
+                <div class="filters">
+                    <template is="dom-repeat" as="catagory" items="{{categories}}" on-dom-change="_onFilterReady">
+                        <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
+                    </template>
+                </div>
+                <div class="instructions">
+                    Click on an image below to see full image and purchasing options.
+                </div>
+            </paper-card>
+            <ul class="app-grid">
+                <template is="dom-repeat" items="{{images}}" as="image">
+                    <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
+                        <div class="photo-title">
+                            [[image.title]]
+                        </div>
+                    </li>
+                </template>
+            </ul>
+            <div style="display: flex; justify-content: center;">
+                <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
+                    <iron-icon icon="icons:arrow-back"></iron-icon>
+                    Prev
+                </paper-button>
+                <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
+                    <iron-icon icon="icons:arrow-forward"></iron-icon>
+                    Next
+                </paper-button>
+            </div>
+        </template>
+        <template is="dom-if" if="{{singleActive}}">
+            <mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-buy="onBuy"></mk-photo>
+        </template>
     </template>
 
     <script>
@@ -182,7 +181,6 @@
           } else { 
               shop.set('meta', {page: 1, tags: []});
           }          
-          shop.set('loading', true);
           shop.categories =  [
               {label: 'Landscapes', value: 'landscape'},
               {label: 'Portraits', value: 'portrait'},
@@ -190,10 +188,7 @@
               {label: 'Sunrise', value: 'sunrise'},
               {label: 'Sunset', value: 'sunset'}
           ];
-          shop.$.fotomoto.load().then(function(){
-               shop.set('loading', false);
-               shop._requestImages();
-          });
+         shop._requestImages();
       },
       _onActiveChange: function(active){
           if(this.ready){
