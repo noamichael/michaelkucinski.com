@@ -97,7 +97,7 @@
       <paper-button class="clear-post" raised on-tap="clearPost">
         <iron-icon icon="icons:arrow-back"></iron-icon> Back
       </paper-button>
-      <mk-post post="[[postResponse.post]]" full="true" style="width: 100%;"></mk-post>
+      <mk-post visible="{{singleActive}}" post="[[postResponse.post]]" full="true" style="width: 100%;"></mk-post>
     </div>
   </template>
 

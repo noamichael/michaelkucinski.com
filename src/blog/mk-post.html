@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../mk-scaler-behavior.html">
 <link rel="import" href="../shared-styles.html">
 
 <dom-module id="mk-post">
@@ -93,6 +94,7 @@
     <script>
     Polymer({
       is: 'mk-post',
+      behaviors: [ScalerBehavior],
       properties: {
           post: Object,
           full: Boolean

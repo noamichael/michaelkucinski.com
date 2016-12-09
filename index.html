@@ -14,7 +14,7 @@
   <link rel="manifest" href="/manifest.json">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
   <style>
-    body{
+    body {
       font-family: 'Open Sans Condensed', sans-serif;
     }
   </style>
@@ -46,7 +46,7 @@
   <script>
       // Setup Polymer options
       window.Polymer = {
-        dom: 'shady',
+        dom: document.registerElement ? 'shadow': 'shady',
         lazyRegister: true
       };
 
@@ -82,11 +82,11 @@
       })();
 
       // Load pre-caching Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('service-worker.js');
-        });
-      }
+      // if ('serviceWorker' in navigator) {
+      //   window.addEventListener('load', function() {
+      //     navigator.serviceWorker.register('service-worker.js');
+      //   });
+      // }
     </script>
 
   <link rel="import" href="src/mk-app.html">

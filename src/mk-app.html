@@ -8,10 +8,13 @@
 <link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="mk-icons.html">
 <link rel="import" href="shared-styles.html">
 
@@ -35,11 +38,12 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: white;
+        background: grey;
+        visibility: visible;
       }
       
       .overlay[hidden] {
-        display: none;
+        visibility : hidden;
       }
       
       app-toolbar h3 {
@@ -103,18 +107,30 @@
             </div>
           </app-toolbar>
         </app-header>
-        <iron-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main">
-          <mk-home data-page="home"></mk-home>
-          <mk-blog data-page="blog" data-folder="blog" route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
-          <mk-shop data-page="shop" data-folder="shop" route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
-          <mk-contact data-page="contact"></mk-contact>
-          <mk-view404 data-page="view404"></mk-view404>
-        </iron-pages>
-        <div class="overlay" hidden$="[[!loading]]">
-          <paper-spinner-lite active></paper-spinner-lite>
-        </div>
+        <neon-animated-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main" entry-animation="slide-from-left-animation"
+          exit-animation="slide-right-animation">
+          <neon-animatable data-page="home">
+            <mk-home></mk-home>
+          </neon-animatable>
+          <neon-animatable data-page="blog" data-folder="blog">
+            <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
+          </neon-animatable>
+          <neon-animatable data-page="shop" data-folder="shop">
+            <mk-shop route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
+          </neon-animatable>
+            <neon-animatable data-page="contact">
+              <mk-contact></mk-contact>
+            </neon-animatable>
+            <neon-animatable data-page="view404">
+              <mk-view404></mk-view404>
+            </neon-animatable>
+        </neon-animated-pages>
       </app-header-layout>
     </app-drawer-layout>
+    <iron-media-query query="(min-width: 640px)" query-matches="{{queryMatches}}"></iron-media-query>
+    <div class="overlay" hidden$="[[!loading]]" style$="{{getOverlayStyle(queryMatches)}}">
+      <paper-spinner active></paper-spinner>
+    </div>
   </template>
 
   <script>
@@ -157,6 +173,9 @@
 
       _showPage404: function() {
         this.page = 'view404';
+      },
+      getOverlayStyle: function(isDesktop){
+        return isDesktop ? 'left: 200px;' : 'left: 0px;';
       },
       stringify: function(o){
           return JSON.stringify(o);

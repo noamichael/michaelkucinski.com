@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../mk-scaler-behavior.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
 <link rel="import" href="../shared-styles.html">
 
@@ -53,9 +54,6 @@
                     Taken [[photo.dates.taken]]
                 </div>
                 <div class="card-actions">
-                    <paper-button raised>
-                        <iron-icon icon="social:share"></iron-icon>Share
-                    </paper-button>
                     <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
                         <iron-icon icon="add-shopping-cart"></iron-icon> Buy Print
                     </paper-button>
@@ -70,7 +68,7 @@
     <script>
     Polymer({
       is: 'mk-photo',
-      behaviors: [PhotoViewerBehavior],
+      behaviors: [PhotoViewerBehavior, ScalerBehavior],
       properties: {
           photoId: {
               type: String,
