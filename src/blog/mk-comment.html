@@ -31,12 +31,10 @@
                         <mk-comment post="[[post]]" comment="{{child}}" parent="[[comment]]"></mk-comment>
                     </template>
                 </div>
-                <template is="dom-if" if="{{shouldReply}}">
-                    <mk-create-comment parent="[[comment]]"></mk-create-comment>
-                </template>
+                <mk-create-comment visible="{{shouldReply}}" parent="[[comment]]" on-submit="_onCommentSubmit"></mk-create-comment>   
             </div>
             <div class="card-actions">
-                <paper-button on-tap="toggleReply" raised>{{_replyTitle(shouldReply)}}</paper-button>
+                <paper-button on-tap="_toggleReply" raised>{{_replyTitle(shouldReply)}}</paper-button>
             </div>
         </paper-card>
     </template>
@@ -56,11 +54,14 @@
        this.shouldReply = false;
        this.self = this;
       },
-      toggleReply: function(){
+      _toggleReply: function(){
           this.set('shouldReply', !this.get('shouldReply'));
       },
       _replyTitle: function(shouldReply){
           if (shouldReply) {return 'Cancel';} return 'Reply';
+      },
+      _onCommentSubmit: function(){
+          this._toggleReply();
       }
     
     });

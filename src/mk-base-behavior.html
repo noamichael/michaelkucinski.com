@@ -1,0 +1,22 @@
+<script>
+    var BaseBehavior = BaseBehavior || {
+        properties: {
+            loading: {
+                type: Object,
+                notify: true,
+                default: true
+            },
+            route: {
+                notify: true,
+                type: Object
+            },
+            queryParams:  {
+                notify: true,
+                type: Object
+            }
+         },
+         ready: function(){
+            this.set('loading', false);
+         }
+    };
+</script>

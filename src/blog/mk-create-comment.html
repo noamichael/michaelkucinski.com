@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../shared-styles.html">
+<link rel="import" href="../mk-scaler-behavior.html">
 
 <dom-module id="mk-create-comment">
     <template>
@@ -24,6 +25,7 @@
     <script>
     Polymer({
       is: 'mk-create-comment',
+      behaviors: [ScalerBehavior],
       properties: {
           parent: Object
       },

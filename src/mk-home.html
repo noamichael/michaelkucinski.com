@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="mk-base-behavior.html">
 
 <dom-module id="mk-home">
   <template>
@@ -52,7 +53,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'mk-home'
+      is: 'mk-home',
+      behaviors: [BaseBehavior]
     });
   </script>
 </dom-module>

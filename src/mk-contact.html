@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/social-media-icons/social-media-icons.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="mk-base-behavior.html">
 
 <dom-module id="mk-contact">
   <template>
@@ -78,7 +79,8 @@
 
   <script>
     Polymer({
-      is: 'mk-contact'
+      is: 'mk-contact',
+      behaviors: [BaseBehavior]
     });
   </script>
 </dom-module>

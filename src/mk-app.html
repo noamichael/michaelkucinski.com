@@ -82,17 +82,17 @@
       }
     </style>
     <app-scrollpos-control selected="{{page}}" reset></app-scrollpos-control>
-    <app-location path="{{path}}" route="{{route}}" use-hash-as-path></app-location>
+    <app-location path="{{path}}" route="{{route}}"></app-location>
     <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" query-params="{{queryParams}}" tail="{{subroute}}"></app-route>
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer align="left">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="home" href="/#/home/" drawer-toggle>Home</a>
-          <a name="blog" href="/#/blog/" drawer-toggle>Blog</a>
-          <a name="shop" href="/#/shop/" drawer-toggle>Shop</a>
-          <a name="contact" href="/#/contact/" drawer-toggle>Contact</a>
+          <a name="home" href="/home/" drawer-toggle>Home</a>
+          <a name="blog" href="/blog/" drawer-toggle>Blog</a>
+          <a name="shop" href="/shop/" drawer-toggle>Shop</a>
+          <a name="contact" href="/contact/" drawer-toggle>Contact</a>
         </iron-selector>
       </app-drawer>
 
@@ -111,7 +111,7 @@
         <neon-animated-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main" entry-animation="slide-from-left-animation"
           exit-animation="slide-right-animation">
           <neon-animatable data-page="home" data-title="Home">
-            <mk-home></mk-home>
+            <mk-home route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-home>
           </neon-animatable>
           <neon-animatable data-page="blog" data-folder="blog" data-title="Blog">
             <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
@@ -120,7 +120,7 @@
             <mk-shop route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
           </neon-animatable>
             <neon-animatable data-page="contact" data-title="Contact">
-              <mk-contact></mk-contact>
+              <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-contact>
             </neon-animatable>
             <neon-animatable data-page="view404" data-title="404">
               <mk-view404></mk-view404>
@@ -169,6 +169,11 @@
         var el = this.$$('[data-page="'+page+'"]');
         var folder = el.dataset.folder ? (el.dataset.folder + '/') : '';
         var title = el.dataset.title;
+        var hasBeenResolved = el.dataset.resolved;
+        if(!hasBeenResolved){
+          el.dataset.resolved = 'true';
+          this.set('loading', true);
+        }
         var resolvedPageUrl = this.resolveUrl(folder + 'mk-' + page + '.html');
         this.importHref(resolvedPageUrl, null, this._showPage404, true);
         document.title = title + ' - Michael Kucinski - Photography, Programming, Percussion';
