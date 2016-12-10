@@ -88,7 +88,7 @@
       },
       goBack: function(){
           this._photoChanged();
-          this.async(function(){this.fire('back');});
+          this.fire('back');
       },
       handleFlickrResponse: function(event){
           this.photo = event.detail.response.photo;
