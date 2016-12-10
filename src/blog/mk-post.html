@@ -56,7 +56,7 @@
             }
         </style>
 
-        <iron-ajax id="saveComment" on-response="onCommentSave" url="http://www.michaelkucinski.com/blog/api/submit_comment" handle-as="json"
+        <iron-ajax id="saveComment" on-response="onCommentSave" url="http://www.michaelkucinski.com/wp-blog/api/submit_comment" handle-as="json"
             debounce-duration="300" params='{{getCommentParams(post.id, comment.content, comment.name,comment.email)}}'>
         </iron-ajax>
         <paper-toast id="commentSavedToast" horizontal-align="right" text="Your comment has been submitted (pending approval)"></paper-toast>

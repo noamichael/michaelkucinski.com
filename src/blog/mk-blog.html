@@ -60,10 +60,10 @@
     <iron-ajax auto id="posts" on-response="handlePostResponse" loading="{{loading}}" url="{{getPostsUrl(category)}}" handle-as="json"
       debounce-duration="300" params="{{getPostsParams(page, count, category)}}"></iron-ajax>
 
-    <iron-ajax id="post" last-response="{{postResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_post"
+    <iron-ajax id="post" last-response="{{postResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/wp-blog/api/get_post"
       handle-as="json" debounce-duration="300" params='{{getSinglePostParams(routeData.id)}}'></iron-ajax>
 
-    <iron-ajax auto id="categoriesRequest" on-response="onCategoryResponse" loading="{{loading}}" url="http://www.michaelkucinski.com/blog/api/get_category_index"
+    <iron-ajax auto id="categoriesRequest" on-response="onCategoryResponse" loading="{{loading}}" url="http://www.michaelkucinski.com/wp-blog/api/get_category_index"
       handle-as="json" debounce-duration="300">
     </iron-ajax>
 
@@ -148,7 +148,7 @@
         return {"page": page || 1, "count": count || 5, "slug": category || undefined};
       },
       getPostsUrl: function(category){
-        var base = 'http://www.michaelkucinski.com/blog/api/';
+        var base = 'http://www.michaelkucinski.com/wp-blog/api/';
         if(category){
           return base + 'get_category_posts'
         }
