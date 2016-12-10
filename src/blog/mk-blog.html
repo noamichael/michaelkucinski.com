@@ -60,10 +60,10 @@
     <iron-ajax auto id="posts" on-response="handlePostResponse" loading="{{loading}}" url="{{getPostsUrl(category)}}" handle-as="json"
       debounce-duration="300" params="{{getPostsParams(page, count, category)}}"></iron-ajax>
 
-    <iron-ajax id="post" last-response="{{postResponse}}" loading="{{loading}}" url="http://www.michaelkucinski.com/wp-blog/api/get_post"
-      handle-as="json" debounce-duration="300" params='{{getSinglePostParams(routeData.id)}}'></iron-ajax>
+    <iron-ajax id="post" last-response="{{postResponse}}" loading="{{loading}}" url="{{getPostsUrl()}}" params={{getSinglePostParams(routeData.id)}}
+      handle-as="json" debounce-duration="300"></iron-ajax>
 
-    <iron-ajax auto id="categoriesRequest" on-response="onCategoryResponse" loading="{{loading}}" url="http://www.michaelkucinski.com/wp-blog/api/get_category_index"
+    <iron-ajax auto id="categoriesRequest" on-response="onCategoryResponse" loading="{{loading}}" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/categories"
       handle-as="json" debounce-duration="300">
     </iron-ajax>
 
@@ -88,7 +88,7 @@
         <paper-listbox id="categoryList" selected="0" on-iron-select="onCategorySelect">
           <paper-item data-value="">All</paper-item>
           <template is="dom-repeat" items="{{categories}}" as="category">
-            <paper-item data-slug$="{{category.slug}}">[[category.title]] ([[category.post_count]])</paper-item>
+            <paper-item data-slug$="{{category.slug}}">[[category.name]] ([[category.count]])</paper-item>
           </template>
         </paper-listbox>
       </div>
@@ -97,7 +97,7 @@
       <paper-button class="clear-post" raised on-tap="clearPost">
         <iron-icon icon="icons:arrow-back"></iron-icon> Back
       </paper-button>
-      <mk-post visible="{{singleActive}}" post="[[postResponse.post]]" full="true" style="width: 100%;"></mk-post>
+      <mk-post visible="{{singleActive}}" post="{{_unwrapPost(postResponse)}}" full="true" style="width: 100%;"></mk-post>
     </div>
   </template>
 
@@ -125,6 +125,7 @@
       ready: function(){
         this.page = 1;
         this.count = 10;
+        this.categoryCache= {}
         if(this.queryParams && this.queryParams.category){
           this.lastCategory = this.queryParams.category;
         } 
@@ -132,7 +133,12 @@
         this.set('loading', true);
       },
       onCategoryResponse: function(event){
-        this.set('categories', event.detail.response.categories);
+        var shop = this;
+        this.set('categories', event.detail.response);
+        this.categoryCache = {};
+        event.detail.response.forEach(function(cat){
+          shop.categoryCache[cat.slug] = cat.id;
+        });
         if(this.lastCategory){
           for(var i = 0; i < this.categories.length; i++){
             var current = this.categories[i];
@@ -145,14 +151,14 @@
         }
       },
       getPostsParams: function(page, count, category){
-        return {"page": page || 1, "count": count || 5, "slug": category || undefined};
+        var params = {"page": page || 1, "count": count || 5, _embed: true};
+        if(category){
+          params.categories = this.categoryCache[category];
+        }
+        return params;
       },
       getPostsUrl: function(category){
-        var base = 'http://www.michaelkucinski.com/wp-blog/api/';
-        if(category){
-          return base + 'get_category_posts'
-        }
-        return base + 'get_posts';
+        return 'http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/posts';
       },
       readFullPost: function(event){
          this.async(function() {
@@ -172,17 +178,29 @@
         });
       },
       getSinglePostParams: function(id){
-        return {slug: id};
+        return {slug: id, _embed: true};
       },
-      handlePostResponse: function(event){
-        this.set('meta',event.detail.response);
-        this.set('posts', event.detail.response.posts);
+      handlePostResponse: function(event, request){
+        var headerString = request.xhr.getAllResponseHeaders();
+        var headerArray = headerString.split('\n');
+        var headers = {};
+        headerArray.forEach(function(h){
+          var s = h.split(':');
+          headers[s[0]] = s[1];
+        });
+        this.set('meta', {
+          pages: Number(headers['X-WP-TotalPages'])
+        });
+        this.set('posts', event.detail.response);
       },
       onCategorySelect: function(event){
         this.category = event.detail.item.dataset.slug;
         var queryParams  = this.cloneQuery();
         queryParams.category = this.category;
         this.set('queryParams', queryParams);
+      },
+      _unwrapPost: function(postResponse){
+        return postResponse ? postResponse[0] : undefined;
       },
       _hasNext: function(meta){
           return !meta ? false: meta.pages > this.page;

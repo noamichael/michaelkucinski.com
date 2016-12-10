@@ -6,6 +6,8 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../mk-scaler-behavior.html">
 <link rel="import" href="../shared-styles.html">
+<link rel="import" href="./mk-comment.html">
+<link rel="import" href="./mk-create-comment.html">
 
 <dom-module id="mk-post">
     <template>
@@ -19,11 +21,6 @@
             
             .card-actions[hidden] {
                 display: none;
-            }
-            
-            .post-comment {
-                background: green;
-                color: white;
             }
             
             .comment h6,
@@ -60,32 +57,25 @@
                 width: 100%;
             }
         </style>
-
-        <iron-ajax id="saveComment" on-response="onCommentSave" url="http://www.michaelkucinski.com/wp-blog/api/submit_comment" handle-as="json"
-            debounce-duration="300" params='{{getCommentParams(post.id, comment.content, comment.name,comment.email)}}'>
+        <iron-ajax id="getComments" on-response="onCommentResponse" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/comments"
+            handle-as="json" debounce-duration="300" params='{{getCommentParams(post.id)}}'>
+        </iron-ajax>
+        <iron-ajax id="saveComment" method="POST" on-response="onCommentSave" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/comments"
+            handle-as="json" debounce-duration="500">
         </iron-ajax>
         <paper-toast id="commentSavedToast" horizontal-align="right" text="Your comment has been submitted (pending approval)"></paper-toast>
         <paper-card id="post">
             <div class="card-content">
-                <h3>[[post.title_plain]]</h3>
-                <small>by [[post.author.nickname]] on [[post.date]]</small>
+                <h3>[[post.title.rendered]]</h3>
+                <small>by [[getAuthor(post)]] on [[post.date]]</small>
                 <div inner-h-t-m-l="{{_getPostContent(post)}}"></div>
                 <template is="dom-if" if="{{full}}">
                     <h3>Comments</h3>
-                    <form class="create-comment" is="iron-form">
-                        <paper-input label="Name" value="{{comment.name}}" required auto-validate></paper-input>
-                        <paper-input label="Email" value="{{comment.email}}" required auto-validate></paper-input>
-                        <paper-textarea label="Comment" value="{{comment.content}}" required auto-validate></paper-textarea>
-                        <paper-button type="submit" rasied class="post-comment" on-tap="onCommentSubmit">Post Comment</paper-button>
-                    </form>
-                    <template is="dom-repeat" as="comment" items="{{post.comments}}">
-                        <paper-card class="comment">
-                            <h6>[[comment.name]] says...</h6>
-                            <small>[[comment.date]]</small>
-                            <div inner-h-t-m-l="{{comment.content}}"></div>
-                        </paper-card>
+                    <mk-create-comment on-submit="onCommentSubmit"></mk-create-comment>
+                    <template is="dom-repeat" as="comment" items="{{comments}}">
+                        <mk-comment comment="{{comment}}" post="{{post}}" on-submit="onCommentSubmit"></mk-comment>
                     </template>
-                    <span hidden$="{{!noComments(post.comments)}}">
+                    <span hidden$="{{!noComments(comments)}}">
                         No comments
                     </span>
                 </template>
@@ -107,29 +97,64 @@
       observers: [
           '_onPostChange(post)'
       ],
-      getCommentParams: function(post_id, content, name, email){
+      getCommentParams: function(post){
         return {
-            post_id: post_id,
-            content: content,
-            name: name,
-            email: email
+            post: post
         };
+      },
+       getSaveCommentParams: function(post, event){
+        var params = {
+            post: post,
+            content: event.content,
+            author_name: event.author_name,
+            author_email: event.author_email
+        };
+        if(event.parent){
+            params.parent = event.parent.id;
+        }
+        return params;
       },
       onCommentSave: function(event){
           this.$.commentSavedToast.show({duration: 3000});
           this.comment = {};
       },
+      onCommentResponse: function(event){
+          var commentCache = {};
+          var comments = event.detail.response;
+          var rootComments = [];
+          var childComments = [];
+          
+          comments.forEach(function(comment){
+              comment.children = [];
+              commentCache[comment.id] = comment;
+              if(comment.parent){
+                  childComments.push(comment);
+              } else {
+                  rootComments.push(comment);
+              }
+          });
+          childComments.forEach(function(comment){
+              commentCache[comment.parent].children.push(comment);
+          });
+
+          this.set('comments', rootComments);
+      },
       _onPostChange: function(post){
           this.comment = {};
+          if(this.full && post){
+              this.$.getComments.generateRequest();
+          }
       },
       onCommentSubmit: function(event){
-          if(!this.comment.content || !this.comment.name || !this.comment.email){
-              return;
-          }
+          this.$.saveComment.params = this.getSaveCommentParams(this.post.id ,event.detail);
           this.$.saveComment.generateRequest();
       },
+      getAuthor: function(post){
+          return post ? post._embedded.author[0].name : undefined;
+      },
       _getPostContent: function(post){
-          return this.full ? post.content : this.limitHtml(post.content, 350);
+          var html = post.content.rendered;
+          return this.full ? html : this.limitHtml(html, 350);
       },
       _readyMore: function(){
           this.fire('read-more', {

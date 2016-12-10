@@ -1,0 +1,68 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../shared-styles.html">
+<link rel="import" href="./mk-create-comment.html">
+
+<dom-module id="mk-comment">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+                width: 100%;
+                padding: 0px 0px 1em 0px;
+            }
+            
+            paper-card {
+                width: 100%;
+            }
+
+            h6{
+                margin: 0;
+            }
+        </style>
+        <paper-card class="comment">
+            <div class="card-content">
+                <h6>[[comment.author_name]] says...</h6>
+                <small>[[comment.date]]</small>
+                <div inner-h-t-m-l="{{comment.content.rendered}}"></div>
+                <div class="replies" hidden$="{{!comment.children.length}}">
+                    <template is="dom-repeat" as="child" items="{{comment.children}}">
+                        <mk-comment post="[[post]]" comment="{{child}}" parent="[[comment]]"></mk-comment>
+                    </template>
+                </div>
+                <template is="dom-if" if="{{shouldReply}}">
+                    <mk-create-comment parent="[[comment]]"></mk-create-comment>
+                </template>
+            </div>
+            <div class="card-actions">
+                <paper-button on-tap="toggleReply" raised>{{_replyTitle(shouldReply)}}</paper-button>
+            </div>
+        </paper-card>
+    </template>
+
+    <script>
+    Polymer({
+      is: 'mk-comment',
+       properties: {
+         comment: Object,
+         post: Object,
+         parent: Object
+      },
+      observers: [
+
+      ],
+      ready: function(){
+       this.shouldReply = false;
+       this.self = this;
+      },
+      toggleReply: function(){
+          this.set('shouldReply', !this.get('shouldReply'));
+      },
+      _replyTitle: function(shouldReply){
+          if (shouldReply) {return 'Cancel';} return 'Reply';
+      }
+    
+    });
+  </script>
+</dom-module>
