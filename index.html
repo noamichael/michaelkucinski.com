@@ -44,9 +44,14 @@
   <meta name="msapplication-tap-highlight" content="no">
   <script src='//widget.fotomoto.com/stores/script/8b7cd976d995f4b705789ca85c609c13619f0031.js?api=true'></script>
   <script>
+        var webComponentsSupported = (
+          'registerElement' in document
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')
+        );
       // Setup Polymer options
       window.Polymer = {
-        dom: document.registerElement ? 'shadow': 'shady',
+        dom: webComponentsSupported ? 'shadow': 'shady',
         lazyRegister: true
       };
 
@@ -63,12 +68,6 @@
             );
           }
         };
-
-        var webComponentsSupported = (
-          'registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')
-        );
 
         if (!webComponentsSupported) {
           var script = document.createElement('script');

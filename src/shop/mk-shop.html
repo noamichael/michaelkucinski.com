@@ -20,10 +20,10 @@
         <style include="app-grid-style shared-styles">
             :host {
                 display: block;
-                --app-grid-columns: 4;
+                --app-grid-columns: 3;
                 --app-grid-gutter: 5px;
                 --app-grid-item-height: 250px;
-                --app-grid-expandible-item-columns: 4;
+                --app-grid-expandible-item-columns: 3;
             }
             
             .instructions {
@@ -191,7 +191,7 @@
          shop._requestImages();
       },
       _onActiveChange: function(active){
-          if(this.ready){
+          if(this.ready && active){
               this._writeMetaToQuery();
           }
       },
@@ -232,10 +232,13 @@
           this.set('route.path', '/');
       },
       selectImage: function(event){
-          this.currentImage = this.get('images')[event.target.dataset.index];
-          this.async(function() {
-               this.set('route.path', '/photos/' + this.currentImage.id);
-          });
+          var shop = this;
+          shop.set('currentImage', this.get('images')[event.target.dataset.index]);
+          if(shop.currentImage){
+              shop.set('route.path', '/photos/' + shop.currentImage.id);
+          } else {
+                  console.error('Cannot select image.');
+          }
       },
       onBuy: function(event){
           var windowToOpen = FOTOMOTO.API[event.detail.buy];
