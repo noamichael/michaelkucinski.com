@@ -19,4 +19,19 @@
             this.set('loading', false);
          }
     };
+
+    var DateBehavior = DateBehavior || {
+        _formatDate: function(date){
+          if(!date){
+              return 'Unknown';
+          }
+          var d = new Date(date);
+          var minutes = d.getMinutes();
+          return  [
+              d.getDate(),
+              d.getMonth() + 1,
+            d.getFullYear()
+          ].join('/') + ' @ ' + d.getHours() + ':' + (minutes < 10 ? '0' + minutes : minutes);
+      }
+    };
 </script>

@@ -80,7 +80,13 @@
             li .photo-title:hover {
                 display: block !important;
             }
-            
+            .no-images{
+                display: flex;
+                justify-content: center;
+            }
+            .no-images[hidden]{
+                display: none;
+            }
             @media screen and (max-width: 960px) {
                 :host {
                     --app-grid-columns: 2;
@@ -113,7 +119,7 @@
                     <paper-input style="flex-grow: 1" type="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
                 </div>
                 <div class="instructions">
-                    Click on an image below to see full image and purchasing options.
+                    Click on an image below to see it in full size with purchasing options.
                 </div>
             </paper-card>
             <ul class="app-grid">
@@ -125,6 +131,9 @@
                     </li>
                 </template>
             </ul>
+            <div class="no-images" hidden$="{{_hasImages(images.length)}}">
+                No images found
+            </div>
             <div style="display: flex; justify-content: center;">
                 <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
                     <iron-icon icon="icons:arrow-back"></iron-icon>
@@ -283,7 +292,9 @@
           }          
           this.set('meta', meta);
       },
-      toJson: function(o){return JSON.stringify(o);},
+      _hasImages: function(length){
+          return length !== undefined && length !== 0;
+      },
       _writeMetaToQuery: function(){
           var page = this.meta ? this.meta.page : 1;
           var tags = this.meta ? this.meta.tags.map(function(t){return t.value;}).join(',') : '';

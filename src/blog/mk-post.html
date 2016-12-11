@@ -4,10 +4,15 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/notification-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../mk-scaler-behavior.html">
 <link rel="import" href="../shared-styles.html">
+<link rel="import" href="../mk-base-behavior.html">
 <link rel="import" href="./mk-comment.html">
 <link rel="import" href="./mk-create-comment.html">
+
 
 <dom-module id="mk-post">
     <template>
@@ -18,14 +23,22 @@
                 --paper-toast-background-color: green;
                 --paper-toast-color: white;
             }
+
+            h3{
+                margin: 0;
+            }
             
             .card-actions[hidden] {
                 display: none;
             }
             
-            .comment h6,
-            h3 {
-                margin: 0px;
+            .no-comments:not([hidden]){
+                display: flex;
+                justify-content: center;
+            }
+
+            mk-create-comment{
+                margin-bottom: 1em;
             }
             
             small {
@@ -40,9 +53,6 @@
                 color: white;
             }
             
-            .comment {
-                padding: 1em;
-            }
             
             #post img {
                 height: 100%;
@@ -67,21 +77,23 @@
         <paper-card id="post">
             <div class="card-content">
                 <h3>[[post.title.rendered]]</h3>
-                <small>by [[getAuthor(post)]] on [[post.date]]</small>
+                <small>by [[getAuthor(post)]] on [[_formatDate(post.date)]]</small>
                 <div inner-h-t-m-l="{{_getPostContent(post)}}"></div>
                 <template is="dom-if" if="{{full}}">
                     <h3>Comments</h3>
                     <mk-create-comment on-submit="onCommentSubmit"></mk-create-comment>
-                    <template is="dom-repeat" as="comment" items="{{comments}}">
-                        <mk-comment comment="{{comment}}" post="{{post}}" on-submit="onCommentSubmit"></mk-comment>
+                    <template is="dom-repeat" as="comment" items="{{comments}}" index-as="index">
+                        <mk-comment comment="{{comment}}" post="{{post}}" on-submit="onCommentSubmit" style-class="{{_getCommentStyle(index)}}"></mk-comment>
                     </template>
-                    <span hidden$="{{!noComments(comments)}}">
+                    <span class="no-comments" hidden$="{{!noComments(comments)}}">
                         No comments
                     </span>
                 </template>
             </div>
             <div class="card-actions" hidden$="{{full}}">
-                <paper-button class="read-more" raised on-tap="_readyMore">Read More</paper-button>
+                <paper-button class="read-more" raised on-tap="_readMore">
+                    <iron-icon icon="notification:more"></iron-icon>&nbsp;Read More
+                </paper-button>
             </div>
         </paper-card>
     </template>
@@ -89,7 +101,7 @@
     <script>
     Polymer({
       is: 'mk-post',
-      behaviors: [ScalerBehavior],
+      behaviors: [ScalerBehavior, DateBehavior],
       properties: {
           post: Object,
           full: Boolean
@@ -156,7 +168,7 @@
           var html = post.content.rendered;
           return this.full ? html : this.limitHtml(html, 350);
       },
-      _readyMore: function(){
+      _readMore: function(){
           this.fire('read-more', {
               post: this.post
           });
@@ -165,6 +177,9 @@
           var changedString = String(text).replace(/<[^>]+>/gm, '');
           var finalString = changedString.length > limit ? changedString.substr(0, limit - 1) + "..." : changedString;
           return finalString;        
+      },
+      _getCommentStyle: function(i){
+          return i % 2 === 0 ? 'even' : 'odd';
       },
       noComments: function(comments){
           return !comments || comments.length < 1;

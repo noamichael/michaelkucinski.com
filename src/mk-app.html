@@ -38,13 +38,13 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: grey;
+        background: rgba(0, 0, 0, 0.9);
         visibility: visible;
         transform: all 0.2s linear;
       }
       
       .overlay[hidden] {
-        visibility : hidden;
+        visibility: hidden;
       }
       
       app-toolbar h3 {
@@ -119,12 +119,12 @@
           <neon-animatable data-page="shop" data-folder="shop" data-title="Shop">
             <mk-shop route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
           </neon-animatable>
-            <neon-animatable data-page="contact" data-title="Contact">
-              <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-contact>
-            </neon-animatable>
-            <neon-animatable data-page="view404" data-title="404">
-              <mk-view404></mk-view404>
-            </neon-animatable>
+          <neon-animatable data-page="contact" data-title="Contact">
+            <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-contact>
+          </neon-animatable>
+          <neon-animatable data-page="view404" data-title="404">
+            <mk-view404></mk-view404>
+          </neon-animatable>
         </neon-animated-pages>
       </app-header-layout>
     </app-drawer-layout>

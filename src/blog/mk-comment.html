@@ -1,7 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../shared-styles.html">
+<link rel="import" href="../mk-base-behavior.html">
 <link rel="import" href="./mk-create-comment.html">
 
 <dom-module id="mk-comment">
@@ -12,29 +15,50 @@
                 width: 100%;
                 padding: 0px 0px 1em 0px;
             }
+
+            paper-card.odd{
+                   background: #f4f4f4;
+            }
+            
+            small {
+                margin-bottom: 1em;
+                font-style: italic;
+                font-size: initial;
+                display: block;
+            }
             
             paper-card {
                 width: 100%;
             }
 
-            h6{
+            paper-button{
+                background: #09478D;
+                color: white;
+            }
+            paper-button[data-reply]{
+                background: orange;
+            }
+            
+            h6 {
                 margin: 0;
             }
         </style>
-        <paper-card class="comment">
+        <paper-card class$="comment {{styleClass}}">
             <div class="card-content">
-                <h6>[[comment.author_name]] says...</h6>
-                <small>[[comment.date]]</small>
+                <h6>[[comment.author_name]]</h6>
+                <small>[[_formatDate(comment.date)]]</small>
                 <div inner-h-t-m-l="{{comment.content.rendered}}"></div>
                 <div class="replies" hidden$="{{!comment.children.length}}">
-                    <template is="dom-repeat" as="child" items="{{comment.children}}">
-                        <mk-comment post="[[post]]" comment="{{child}}" parent="[[comment]]"></mk-comment>
+                    <template is="dom-repeat" as="child" items="{{comment.children}}" index-as="index">
+                        <mk-comment post="[[post]]" comment="[[child]]" parent="[[comment]]" style-class="[[_getStyleClass(index, styleClass)]]"></mk-comment>
                     </template>
                 </div>
-                <mk-create-comment visible="{{shouldReply}}" parent="[[comment]]" on-submit="_onCommentSubmit"></mk-create-comment>   
+                <mk-create-comment visible="{{shouldReply}}" parent="[[comment]]" on-submit="_onCommentSubmit"></mk-create-comment>
             </div>
             <div class="card-actions">
-                <paper-button on-tap="_toggleReply" raised>{{_replyTitle(shouldReply)}}</paper-button>
+                <paper-button data-reply$="{{shouldReply}}" on-tap="_toggleReply" raised>
+                    <iron-icon icon="{{_replyIcon(shouldReply)}}"></iron-icon> [[_replyTitle(shouldReply)]]
+                </paper-button>
             </div>
         </paper-card>
     </template>
@@ -45,8 +69,10 @@
        properties: {
          comment: Object,
          post: Object,
-         parent: Object
+         parent: Object,
+         styleClass: String
       },
+      behaviors: [DateBehavior],
       observers: [
 
       ],
@@ -60,10 +86,18 @@
       _replyTitle: function(shouldReply){
           if (shouldReply) {return 'Cancel';} return 'Reply';
       },
+      _replyIcon: function(shouldReply){
+          return shouldReply ? 'icons:cancel' : 'icons:reply';
+      },
       _onCommentSubmit: function(){
           this._toggleReply();
+      },
+      _getStyleClass: function(n, parentStyle){
+          if(parentStyle && parentStyle === 'even'){
+            return n % 2 !== 0 ? 'even' : 'odd';
+          }
+          return n % 2 === 0 ? 'even' : 'odd';
       }
-    
     });
   </script>
 </dom-module>

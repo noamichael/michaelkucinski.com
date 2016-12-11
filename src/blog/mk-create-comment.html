@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../shared-styles.html">
 <link rel="import" href="../mk-scaler-behavior.html">
 
@@ -9,6 +11,7 @@
         <style include="shared-styles">
             :host {
                 display: block;
+                padding: 0px;
             }
             
             .post-comment:not([disabled]) {
@@ -19,7 +22,9 @@
         <paper-input label="Name" value="{{author_name}}" required auto-validate></paper-input>
         <paper-input label="Email" value="{{author_email}}" required auto-validate></paper-input>
         <paper-textarea label="Comment" value="{{content}}" required auto-validate></paper-textarea>
-        <paper-button type="submit" rasied class="post-comment" on-tap="submit" disabled$="{{_isDisabled(content, author_name, author_email)}}">Post Comment</paper-button>
+        <paper-button type="submit" rasied class="post-comment" on-tap="submit" disabled$="{{_isDisabled(content, author_name, author_email)}}">
+           <iron-icon icon="icons:check"></iron-icon> Post Comment
+        </paper-button>
     </template>
 
     <script>
@@ -28,6 +33,11 @@
       behaviors: [ScalerBehavior],
       properties: {
           parent: Object
+      },
+      _afterAnimation: function(visible){
+          if(visible){
+              this.scrollIntoView();
+          }
       },
       ready: function(){
           this._reset();

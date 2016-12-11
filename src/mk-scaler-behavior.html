@@ -43,6 +43,10 @@
           } else {
               this.style.display = 'none';
           }
+          this._afterAnimation(this.visible);
+      },
+      _afterAnimation: function(visible){
+
       }
     };
     var ScalerBehavior = ScalerBehavior || [Polymer.NeonAnimationRunnerBehavior, _ScalerBehavior];
