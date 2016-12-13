@@ -80,13 +80,16 @@
             li .photo-title:hover {
                 display: block !important;
             }
-            .no-images{
+            
+            .no-images {
                 display: flex;
                 justify-content: center;
             }
-            .no-images[hidden]{
+            
+            .no-images[hidden] {
                 display: none;
             }
+            
             @media screen and (max-width: 960px) {
                 :host {
                     --app-grid-columns: 2;
@@ -231,8 +234,11 @@
           this._requestImages();
       },
       goBack: function(){
-          this.set('route.path', '/');
-          this.set('routeData', {});
+          this.async(function(){
+                this.set('routeData', {});
+                this.set('queryParams', {});
+                this.set('route.path', '/');
+          });
       },
       selectImage: function(event){
           var shop = this;

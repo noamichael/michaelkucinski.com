@@ -6,21 +6,31 @@
     <style>
       :host {
         padding: 1em;
-        font-family: 'Open Sans Condensed', sans-serif;
+        font-family: 'Raleway', sans-serif;
         font-size: 24px;
       }
       
       paper-card {
-        font-family: 'Open Sans Condensed', sans-serif;
+        font-family: 'Raleway', sans-serif;
       }
       
       paper-button {
         font-size: initial;
       }
       
+      .flickr iron-icon {
+        color: #ff0084;
+      }
+      
       ::selection {
         color: white;
         background: orangered;
+      }
+      
+      .clearfix::after {
+        content: "";
+        display: block;
+        clear: both;
       }
     </style>
   </template>

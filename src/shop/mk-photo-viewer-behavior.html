@@ -9,7 +9,7 @@
                     notify: true
                 }
             },
-            getAllPhotoParams: function(page, tags, text){
+            getAllPhotoParams: function(page, tags, text, per_page){
                 tags = tags || [];
                 page = page || 1;
                 var params = {
@@ -20,7 +20,7 @@
                     tags: ['for-sale'].concat(tags).join(','),
                     format: 'json',
                     nojsoncallback: 1,
-                    per_page: 36,
+                    per_page: per_page || 36,
                     page: page
                 };
                 if(text){
@@ -37,11 +37,14 @@
                     nojsoncallback: 1
                 };
             },
-            getImageListStyle: function(image){
+            getImageListStyle: function(image, size){
                 if(!image){
                     return '';
                 }
-                return 'background-image: url(' + this.getImageUrl(image) + '); cursor: pointer';
+                return this.getImageStyle(image, size) + 'cursor: pointer;';
+            },
+            getImageStyle: function(image, size){
+                return 'background-image: url(' + this.getImageUrl(image, size) + ');';
             },
             getImageUrl: function(image, size){
                 if(!image){

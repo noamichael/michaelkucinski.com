@@ -26,53 +26,78 @@
       .email iron-icon {
         color: seagreen;
       }
-      .flickr iron-icon{
-        color: #ff0084;
-      }
       
       ul {
         list-style: none;
       }
+      
       a {
         text-decoration: none;
         color: black;
         transition: 0.2s linear color;
       }
-      a:hover{
+      
+      a:hover {
         color: orangered;
+      }
+      
+      img {
+        float: left;
+        margin: 0 1em;
+        border: 1em solid gainsboro;
+        box-shadow: 0px 0px 3px black;
+        height: 400px;
+      }
+      
+      @media screen and (max-width: 830px) {
+        img {
+          float: none;
+          margin: 0px;
+          width: 90%;
+          height: auto;
+        }
       }
     </style>
 
     <paper-card>
       <div class="card-content">
         <h3>Michael Kucinski</h3>
-        <ul>
-          <li class="phone">
-            <a href="tel:9738144132">
-              <iron-icon icon="communication:phone"></iron-icon> (973) 814-4132
-            </a>
-          </li>
-          <li class="email">
-            <a href="mailto:me@michaelkucinski.com">
-              <iron-icon icon="communication:email"></iron-icon> me@michaelkucinski.com
-            </a>
-          </li>
-          <li class="instagram">
-            <a href="https://instagram.com/noaamichael">
-              <social-media-icons icon="instagram" color="#8a3ab9" size="24"></social-media-icons> Instagram
-            </a>
-          </li>
-          <li class="flickr">
-            <a href="https://www.flickr.com/photos/89564538@N00/">
-              <iron-icon icon="image:camera"></iron-icon> Flickr
-            </a>
-          </li>
-           <li class="github">
-            <a href="https://www.github.com/noamichael">
-              <social-media-icons icon="github" size="24" color="#000000"></social-media-icons> Github
-            </a>
-          </li>
-        </ul>
+        <div class="clearfix">
+          <img src="/images/me.jpg">
+          <section>
+            Hey. I’m Michael – a college student and junior programmer from Northern New Jersey. I love to program, with my current languages
+            being Java(EE), JavaScript (jQuery, Angular 1/2, Polymer), HTML(5), CSS(3), and SQL (SQLServer). I’m also super
+            into hiking and photography.You can see some of my pictures (which include some of my hiking!) under the photos
+            section, and all of my personal programming projects are on GitHub. Free free to contact me if you have any questions!
+          </section>
+          <ul>
+            <li class="phone">
+              <a href="tel:9738144132">
+                <iron-icon icon="communication:phone"></iron-icon> (973) 814-4132
+              </a>
+            </li>
+            <li class="email">
+              <a href="mailto:me@michaelkucinski.com">
+                <iron-icon icon="communication:email"></iron-icon> me@michaelkucinski.com
+              </a>
+            </li>
+            <li class="instagram">
+              <a href="https://instagram.com/noaamichael">
+                <social-media-icons icon="instagram" color="#8a3ab9" size="24"></social-media-icons> Instagram
+              </a>
+            </li>
+            <li class="flickr">
+              <a href="https://www.flickr.com/photos/89564538@N00/">
+                <iron-icon icon="image:camera"></iron-icon> Flickr
+              </a>
+            </li>
+            <li class="github">
+              <a href="https://www.github.com/noamichael">
+                <social-media-icons icon="github" size="24" color="#000000"></social-media-icons> Github
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </paper-card>
   </template>

@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
@@ -13,9 +12,12 @@
 <link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="mk-icons.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="mk-app">
@@ -26,8 +28,19 @@
         --app-secondary-color: orangered;
         --app-drawer-width: 200px;
         display: block;
+        height: 100%;
+        padding: 0px;
+        --paper-toolbar-title: {
+          margin: 0px;
+        }
+        --paper-tooltip: {
+          font-size: 1em;
+        }
       }
-      
+      .content, neon-animated-pages{
+        height: 100%;
+        width: 100%;
+      }
       .overlay {
         position: absolute;
         top: 0;
@@ -47,67 +60,79 @@
         visibility: hidden;
       }
       
-      app-toolbar h3 {
+      .title small {
+        font-size: 0.6em;
+      }
+      
+      .title h4,
+      small {
+        font-family: 'Raleway', sans-serif;
+      }
+      
+      .title h4 {
         color: var(--app-secondary-color);
         margin: 0px;
       }
       
       app-header {
         color: #fff;
-        background-color: rgba(0, 0, 0, 0.75);
+        background-color: rgba(0, 0, 0, 0.80);
       }
       
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
+      paper-scroll-header-panel {
+        height: 100%;
       }
       
-      .drawer-list {
-        margin: 0 20px;
-      }
-      
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        text-decoration: none;
-        color: black;
-        line-height: 40px;
+      paper-toolbar paper-icon-button {
         transition: box-shadow .2s linear;
       }
       
-      .drawer-list a:hover,
-      .drawer-list a.iron-selected {
-        color: black;
-        box-shadow: inset 0.4em 0em 0em 0em var(--app-secondary-color);
+      paper-toolbar paper-icon-button:hover,
+      paper-toolbar paper-icon-button.iron-selected {
+        color: var(--app-secondary-color);
         font-weight: bold;
+      }
+      
+      paper-toolbar {
+        background-color: rgba(0, 0, 0, 0.75);
       }
     </style>
     <app-scrollpos-control selected="{{page}}" reset></app-scrollpos-control>
-    <app-location path="{{path}}" route="{{route}}"></app-location>
+    <app-location path="{{path}}" route="{{route}}" query-params="{{queryParams}}"></app-location>
     <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" query-params="{{queryParams}}" tail="{{subroute}}"></app-route>
-    <app-drawer-layout fullbleed>
-      <!-- Drawer content -->
-      <app-drawer align="left">
-        <app-toolbar>Menu</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="home" href="/home/" drawer-toggle>Home</a>
-          <a name="blog" href="/blog/" drawer-toggle>Blog</a>
-          <a name="shop" href="/shop/" drawer-toggle>Shop</a>
-          <a name="contact" href="/contact/" drawer-toggle>Contact</a>
+    <iron-media-query query="(min-width: 640px)" query-matches="{{queryMatches}}"></iron-media-query>
+    <!-- Main content -->
+    <!--<app-header-layout>
+
+      <app-header condenses reveals effects="waterfall">
+        <app-toolbar>
+          <div main-title>
+            <h3>Michael Kucinski</h3>
+            <small>Programmer, Photographer, Percussionist</small>
+          </div>
+        </app-toolbar>
+      </app-header>-->
+    <paper-scroll-header-panel id="layoutPanel" fixed condenses>
+
+      <paper-toolbar middle-justify="end" class$="{{_toolbarStyle(queryMatches)}}">
+        <div class="title">
+          <h4>Michael Kucinski</h4>
+          <small>Photographer, Programmer, Percussionist</small>
+        </div>
+
+        <iron-selector selected="[[page]]" attr-for-selected="data-current-page" class$="{{_menuStyle(queryMatches)}}" role="navigation">
+          <paper-icon-button id="home" icon="icons:home" alt="Home" data-current-page="home" on-tap="_navigate"></paper-icon-button>
+          <paper-icon-button id="shop" icon="icons:shopping-cart" alt="Shop" data-current-page="shop" on-tap="_navigate"></paper-icon-button>
+          <paper-icon-button id="blog" icon="communication:chat" alt="Blog" data-current-page="blog" on-tap="_navigate"></paper-icon-button>
+          <paper-icon-button id="contact" icon="communication:call" alt="Contact" data-current-page="contact" on-tap="_navigate"></paper-icon-button>
+          <paper-tooltip for="home" offset="0" position="bottom">Home</paper-tooltip>
+          <paper-tooltip for="shop" offset="0" position="bottom">Shop</paper-tooltip>
+          <paper-tooltip for="blog" offset="0" position="bottom">Blog</paper-tooltip>
+          <paper-tooltip for="contact" offset="0" position="bottom">Contact</paper-tooltip>
         </iron-selector>
-      </app-drawer>
+      </paper-toolbar>
 
-      <!-- Main content -->
-      <app-header-layout>
-
-        <app-header condenses reveals effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div main-title>
-              <h3>Michael Kucinski</h3>
-              <small>Programmer, Photographer, Percussionist</small>
-            </div>
-          </app-toolbar>
-        </app-header>
+      <div class="content">
         <neon-animated-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main" entry-animation="slide-from-left-animation"
           exit-animation="slide-right-animation">
           <neon-animatable data-page="home" data-title="Home">
@@ -126,10 +151,11 @@
             <mk-view404></mk-view404>
           </neon-animatable>
         </neon-animated-pages>
-      </app-header-layout>
-    </app-drawer-layout>
-    <iron-media-query query="(min-width: 640px)" query-matches="{{queryMatches}}"></iron-media-query>
-    <div class="overlay" hidden$="[[!loading]]" style$="{{getOverlayStyle(queryMatches)}}">
+      </div>
+
+    </paper-scroll-header-panel>
+    <!--</app-header-layout>-->
+    <div class="overlay" hidden$="[[!loading]]">
       <paper-spinner active></paper-spinner>
     </div>
   </template>
@@ -143,7 +169,8 @@
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged'
-        }
+        },
+        queryParams: Object
       },
 
       ready: function() {
@@ -152,7 +179,8 @@
 
       observers: [
         '_routePageChanged(routeData.page)',
-        '_routePathChange(route.path)'
+        '_routePathChange(route.path)',
+        '_queryParamsChange(queryParams)'
       ],
 
 
@@ -160,9 +188,12 @@
         this.page = page || 'home';
       },
       _routePathChange: function(path){
-          this.async(function(){
-             document.body.scrollTop = 0;
-          });
+          this._resetScroll();
+      },
+      _resetScroll: function(){
+        this.async(function(){ 
+          this.$.layoutPanel.scroller.scrollTop = 0;
+        });
       },
       _pageChanged: function(page) {
         // Load page import on demand. Show 404 page if fails
@@ -182,11 +213,21 @@
       _showPage404: function() {
         this.page = 'view404';
       },
-      getOverlayStyle: function(isDesktop){
-        return isDesktop ? 'left: 200px;' : 'left: 0px;';
+     _navigate: function(event){
+        this.set('queryParams', {});
+        var page = event.target.dataset.currentPage;
+        this.async(function(){
+          this.set('route.path', page);
+        });
+     },
+     _toolbarStyle: function(mobile){
+       return mobile ? '' : 'medium-tall';
       },
-      stringify: function(o){
-          return JSON.stringify(o);
+      _menuStyle: function(mobile){
+        return mobile ? '' : 'middle';
+      },
+      _queryParamsChange: function(o){
+          this._resetScroll();
       },
     });
   </script>

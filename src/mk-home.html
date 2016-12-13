@@ -9,52 +9,114 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="mk-base-behavior.html">
+<link rel="import" href="shop/mk-photo-viewer-behavior.html">
 
 <dom-module id="mk-home">
   <template>
     <style include="shared-styles">
       :host {
         display: block;
-      }
-      
-      img {
-        float: left;
-        margin: 0 1em;
-        border: 1em solid gainsboro;
-        box-shadow: 0px 0px 3px black;
-        height: 400px;
+        padding: 0px;
+        height: 100%;
+        width: 100%;
       }
       
       section {
         max-width: 90%;
       }
-      @media screen and (max-width: 830px){
-        img{
-          float: none;
-          margin: 0px;
-          width: 90%;
-          height: auto;
-        }
+      
+      .container {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        transition: background-image 1s ease-in-out;
+      }
+      
+      .welcome-message-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        background: rgba(0, 0, 0, .75);
+        color: white;
+        padding: 2em 4em;
+        right: 50%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+        display: flex;
+        justify-content: center;
+      }
+      
+      paper-button {
+        background: green;
+      }
+      
+      h4 {
+        margin: 0;
+        color: var(--app-secondary-color);
+      }
+      
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      
+      .welcome-message {
+        text-align: center;
       }
     </style>
-
-    <div class="card">
-      <img src="/images/me.jpg">
-      <section>
-        Hey. I’m Michael – a college student and junior programmer from Northern New Jersey. I love to program, with my current languages
-        being Java(EE), JavaScript (jQuery, Angular 1/2, Polymer), HTML(5), CSS(3), and SQL (SQLServer). I’m also super into
-        hiking and photography.You can see some of my pictures (which include some of my hiking!) under the photos section,
-        and all of my personal programming projects are on GitHub. Free free to contact me if you have any questions!
-      </section>
+    <iron-ajax auto id="flickrRequest" loading="{{loading}}" on-response="_setupImages" url="https://api.flickr.com/services/rest"
+      params="{{_getAllPhotoParams()}}" handle-as="json" debounce-duration="300">
+    </iron-ajax>
+    <div class="container" style$="{{_getImageStyle(currentImage)}}">
+      <div class="welcome-message-container">
+        <div class="welcome-message">
+          <h4>Michael Kucinski</h4>
+          <div>
+            <small>Photographer, Programmer, Percussionist</small>
+          </div>
+          <div>
+            <paper-button raised on-tap- "_shop">
+              <a href="/shop">
+                <iron-icon icon="icons:shopping-cart"></iron-icon> Shop</a>
+            </paper-button>
+          </div>
+        </div>
+      </div>
     </div>
   </template>
 
   <script>
     Polymer({
       is: 'mk-home',
-      behaviors: [BaseBehavior]
+      behaviors: [BaseBehavior,PhotoViewerBehavior],
+      _setupImages: function(event){
+        var home = this;
+        var photoMeta = event.detail.response.photos;
+        var photos = photoMeta.photo;
+        var count = photoMeta.perpage;
+        var currentIndex = 0;
+        function changeBackground(){
+          home.set('currentImage', photos[currentIndex]);
+          currentIndex++;
+          if(currentIndex >= (count - 1)){
+            currentIndex = 0;
+          }
+        }
+        changeBackground();
+        setInterval(changeBackground, 5000);
+      },
+      _getAllPhotoParams: function(){
+        return this.getAllPhotoParams(1, [], null, 10);
+      },
+      _getImageStyle: function(image){
+        return this.getImageStyle(image, 'h') + 'background-size: cover;background-position: center center;background-attachment: fixed;';
+      }
     });
   </script>
 </dom-module>
