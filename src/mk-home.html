@@ -25,21 +25,17 @@
         position: relative;
         height: 100%;
         width: 100%;
-        transition: background-image 1s ease-in-out;
+        transition: background-image 1s linear;
       }
       
       .welcome-message-container {
         position: absolute;
-        top: 50%;
-        left: 50%;
+        bottom: 50%;
+        left: 0;
         background: rgba(0, 0, 0, .75);
         color: white;
-        padding: 2em 4em;
-        right: 50%;
-        transform: translate(-50%, -50%);
-        width: 50%;
-        display: flex;
-        justify-content: center;
+        padding: .5em;
+        right: 0;
       }
       
       paper-button {
@@ -100,7 +96,7 @@
           }
         }
         changeBackground();
-        setInterval(changeBackground, 5000);
+        setInterval(changeBackground, 6 * 1000);
       },
       _getAllPhotoParams: function(){
         return this.getAllPhotoParams(1, [], null, 10);
