@@ -89,7 +89,7 @@
         <paper-listbox id="categoryList" selected="0" on-iron-select="onCategorySelect">
           <paper-item data-value="">All</paper-item>
           <template is="dom-repeat" items="{{categories}}" as="category">
-            <paper-item data-slug$="{{category.slug}}">[[category.name]] ([[category.count]])</paper-item>
+            <paper-item data-slug$="[[category.slug]]">[[category.name]] ([[category.count]])</paper-item>
           </template>
         </paper-listbox>
       </div>

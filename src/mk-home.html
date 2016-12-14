@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="./shared-styles.html">
 <link rel="import" href="./mk-base-behavior.html">
@@ -25,17 +26,21 @@
         position: relative;
         height: 100%;
         width: 100%;
-        transition: background-image 1s linear;
+        transition: background-image 1s ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       
       .welcome-message-container {
-        position: absolute;
-        bottom: 50%;
-        left: 0;
-        background: rgba(0, 0, 0, .75);
         color: white;
-        padding: .5em;
-        right: 0;
+        flex-grow: 1;
+        text-align: center;
+      }
+      
+      .welcome-message {
+        background: rgba(0, 0, 0, .75);
+        padding: 0.5em 0.0em;
       }
       
       paper-button {
@@ -51,14 +56,11 @@
         color: inherit;
         text-decoration: none;
       }
-      
-      .welcome-message {
-        text-align: center;
-      }
     </style>
     <iron-ajax auto id="flickrRequest" loading="{{loading}}" on-response="_setupImages" url="https://api.flickr.com/services/rest"
       params="{{_getAllPhotoParams()}}" handle-as="json" debounce-duration="300">
     </iron-ajax>
+    <img id="loader" style="display: none" src$="{{_getImageUrl(nextImageToLoad)}}">
     <div class="container" style$="{{_getImageStyle(currentImage)}}">
       <div class="welcome-message-container">
         <div class="welcome-message">
@@ -67,11 +69,11 @@
             <small>Photographer, Programmer, Percussionist</small>
           </div>
           <div>
-            <paper-button raised>
-              <a href="/shop">
-                <iron-icon icon="icons:shopping-cart"></iron-icon> Shop
-              </a>
-            </paper-button>
+            <a href="/shop">
+              <paper-button raised>
+                <iron-icon icon="image:photo-camera"></iron-icon> Gallery
+              </paper-button>
+            </a>
           </div>
         </div>
       </div>
@@ -88,15 +90,29 @@
         var photos = photoMeta.photo;
         var count = photoMeta.perpage;
         var currentIndex = 0;
+        var needToLoadNext = true
+        var intervalId;
+        this.$.loader.addEventListener('load', function(){
+          setTimeout(changeBackground, 5 * 1000);
+        });
         function changeBackground(){
           home.set('currentImage', photos[currentIndex]);
           currentIndex++;
-          if(currentIndex >= (count - 1)){
+          if(currentIndex >= count){
             currentIndex = 0;
+            needToLoadNext = false;
+            if(!intervalId){
+                intervalId = setInterval(changeBackground, 5 * 1000);
+            }
+          }
+          if(needToLoadNext){
+            home.set('nextImageToLoad', photos[currentIndex]);
           }
         }
         changeBackground();
-        setInterval(changeBackground, 6 * 1000);
+      },
+      _getImageUrl: function(image){
+        return this.getImageUrl(image, 'h');
       },
       _getAllPhotoParams: function(){
         return this.getAllPhotoParams(1, [], null, 10);

@@ -33,9 +33,6 @@
         --paper-toolbar-title: {
           margin: 0px;
         }
-        --paper-tooltip: {
-          font-size: 1em;
-        }
       }
       .content, neon-animated-pages{
         height: 100%;
@@ -215,7 +212,7 @@
       },
      _navigate: function(event){
         this.set('queryParams', {});
-        var page = event.target.dataset.currentPage;
+        var page = event.currentTarget.dataset.currentPage;
         this.async(function(){
           this.set('route.path', page);
         });

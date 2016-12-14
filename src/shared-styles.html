@@ -7,7 +7,7 @@
       :host {
         padding: 1em;
         font-family: 'Raleway', sans-serif;
-        font-size: 24px;
+        font-size: 20px;
       }
       
       paper-card {
@@ -31,6 +31,18 @@
         content: "";
         display: block;
         clear: both;
+      }
+      
+      @media screen and (max-width: 830px) {
+        :host {
+          padding: 0;
+        }
+        img {
+          float: none;
+          margin: 0px;
+          height: 100%;
+          width: 100%;
+        }
       }
     </style>
   </template>
