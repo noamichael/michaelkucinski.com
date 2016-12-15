@@ -138,6 +138,7 @@
             visibleWhen: Boolean
         },
         ready: function () {
+            this.style.display = 'none';
             var photo = this;
             this.$.viewer.addEventListener('load', function () {
                 photo.set('visible', true);
