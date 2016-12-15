@@ -67,123 +67,123 @@
                 width: 100%;
             }
         </style>
-        <iron-ajax id="getComments" on-response="onCommentResponse" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/comments"
-            handle-as="json" debounce-duration="300" params='{{getCommentParams(post.id)}}'>
-        </iron-ajax>
-        <iron-ajax id="saveComment" method="POST" on-response="onCommentSave" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/comments"
-            handle-as="json" debounce-duration="500">
-        </iron-ajax>
-        <paper-toast id="commentSavedToast" horizontal-align="right" text="Your comment has been submitted (pending approval)"></paper-toast>
-        <paper-card id="post">
-            <div class="card-content">
-                <h3>[[post.title.rendered]]</h3>
-                <small>by [[getAuthor(post)]] on [[_formatDate(post.date)]]</small>
-                <div inner-h-t-m-l="{{_getPostContent(post)}}"></div>
-                <template is="dom-if" if="{{full}}">
-                    <h3>Comments</h3>
-                    <mk-create-comment on-submit="onCommentSubmit"></mk-create-comment>
-                    <template is="dom-repeat" as="comment" items="{{comments}}" index-as="index">
-                        <mk-comment comment="[[comment]]" post="[[post]]" on-submit="onCommentSubmit" style-class="{{_getCommentStyle(index)}}"></mk-comment>
-                    </template>
-                    <span class="no-comments" hidden$="{{!noComments(comments)}}">
+<iron-ajax id="getComments" on-response="onCommentResponse" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/comments"
+    handle-as="json" debounce-duration="300" params='{{getCommentParams(post.id)}}'>
+</iron-ajax>
+<iron-ajax id="saveComment" method="POST" on-response="onCommentSave" url="http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/comments"
+    handle-as="json" debounce-duration="500">
+</iron-ajax>
+<paper-toast id="commentSavedToast" horizontal-align="right" text="Your comment has been submitted (pending approval)"></paper-toast>
+<paper-card id="post">
+    <div class="card-content">
+        <h3>[[post.title.rendered]]</h3>
+        <small>by [[getAuthor(post)]] on [[_formatDate(post.date)]]</small>
+        <div inner-h-t-m-l="{{_getPostContent(post)}}"></div>
+        <template is="dom-if" if="{{full}}">
+            <h3>Comments</h3>
+            <mk-create-comment on-submit="onCommentSubmit"></mk-create-comment>
+            <template is="dom-repeat" as="comment" items="{{comments}}" index-as="index">
+                <mk-comment comment="[[comment]]" post="[[post]]" on-submit="onCommentSubmit" style-class="{{_getCommentStyle(index)}}"></mk-comment>
+            </template>
+            <span class="no-comments" hidden$="{{!noComments(comments)}}">
                         No comments
                     </span>
-                </template>
-            </div>
-            <div class="card-actions" hidden$="{{full}}">
-                <paper-button class="read-more" raised on-tap="_readMore">
-                    <iron-icon icon="notification:more"></iron-icon>&nbsp;Read More
-                </paper-button>
-            </div>
-        </paper-card>
-    </template>
+        </template>
+    </div>
+    <div class="card-actions" hidden$="{{full}}">
+        <paper-button class="read-more" raised on-tap="_readMore">
+            <iron-icon icon="notification:more"></iron-icon>&nbsp;Read More
+        </paper-button>
+    </div>
+</paper-card>
+</template>
 
-    <script>
-    Polymer({
-      is: 'mk-post',
-      behaviors: [ScalerBehavior, DateBehavior],
-      properties: {
-          post: Object,
-          full: Boolean
-      },
-      observers: [
-          '_onPostChange(post)'
-      ],
-      getCommentParams: function(post){
-        return {
-            post: post
-        };
-      },
-       getSaveCommentParams: function(post, event){
-        var params = {
-            post: post,
-            content: event.content,
-            author_name: event.author_name,
-            author_email: event.author_email
-        };
-        if(event.parent){
-            params.parent = event.parent.id;
-        }
-        return params;
-      },
-      onCommentSave: function(event){
-          this.$.commentSavedToast.show({duration: 3000});
-          this.comment = {};
-      },
-      onCommentResponse: function(event){
-          var commentCache = {};
-          var comments = event.detail.response;
-          var rootComments = [];
-          var childComments = [];
-          
-          comments.forEach(function(comment){
-              comment.children = [];
-              commentCache[comment.id] = comment;
-              if(comment.parent){
-                  childComments.push(comment);
-              } else {
-                  rootComments.push(comment);
-              }
-          });
-          childComments.forEach(function(comment){
-              commentCache[comment.parent].children.push(comment);
-          });
+<script>
+        Polymer({
+            is: 'mk-post',
+            behaviors: [ScalerBehavior, DateBehavior],
+            properties: {
+                post: Object,
+                full: Boolean
+            },
+            observers: [
+                '_onPostChange(post)'
+            ],
+            getCommentParams: function (post) {
+                return {
+                    post: post
+                };
+            },
+            getSaveCommentParams: function (post, event) {
+                var params = {
+                    post: post,
+                    content: event.content,
+                    author_name: event.author_name,
+                    author_email: event.author_email
+                };
+                if (event.parent) {
+                    params.parent = event.parent.id;
+                }
+                return params;
+            },
+            onCommentSave: function (event) {
+                this.$.commentSavedToast.show({ duration: 3000 });
+                this.comment = {};
+            },
+            onCommentResponse: function (event) {
+                var commentCache = {};
+                var comments = event.detail.response;
+                var rootComments = [];
+                var childComments = [];
 
-          this.set('comments', rootComments);
-      },
-      _onPostChange: function(post){
-          this.comment = {};
-          if(this.full && post){
-              this.$.getComments.generateRequest();
-          }
-      },
-      onCommentSubmit: function(event){
-          this.$.saveComment.params = this.getSaveCommentParams(this.post.id ,event.detail);
-          this.$.saveComment.generateRequest();
-      },
-      getAuthor: function(post){
-          return post ? post._embedded.author[0].name : undefined;
-      },
-      _getPostContent: function(post){
-          var html = post.content.rendered;
-          return this.full ? html : this.limitHtml(html, 350);
-      },
-      _readMore: function(){
-          this.fire('read-more', {
-              post: this.post
-          });
-      },
-      limitHtml: function(text, limit ){
-          var changedString = String(text).replace(/<[^>]+>/gm, '');
-          var finalString = changedString.length > limit ? changedString.substr(0, limit - 1) + "..." : changedString;
-          return finalString;        
-      },
-      _getCommentStyle: function(i){
-          return i % 2 === 0 ? 'even' : 'odd';
-      },
-      noComments: function(comments){
-          return !comments || comments.length < 1;
-      }
-    });
-  </script>
+                comments.forEach(function (comment) {
+                    comment.children = [];
+                    commentCache[comment.id] = comment;
+                    if (comment.parent) {
+                        childComments.push(comment);
+                    } else {
+                        rootComments.push(comment);
+                    }
+                });
+                childComments.forEach(function (comment) {
+                    commentCache[comment.parent].children.push(comment);
+                });
+
+                this.set('comments', rootComments);
+            },
+            _onPostChange: function (post) {
+                this.comment = {};
+                if (this.full && post) {
+                    this.$.getComments.generateRequest();
+                }
+            },
+            onCommentSubmit: function (event) {
+                this.$.saveComment.params = this.getSaveCommentParams(this.post.id, event.detail);
+                this.$.saveComment.generateRequest();
+            },
+            getAuthor: function (post) {
+                return post ? post._embedded.author[0].name : undefined;
+            },
+            _getPostContent: function (post) {
+                var html = post.content.rendered;
+                return this.full ? html : this.limitHtml(html, 350);
+            },
+            _readMore: function () {
+                this.fire('read-more', {
+                    post: this.post
+                });
+            },
+            limitHtml: function (text, limit) {
+                var changedString = String(text).replace(/<[^>]+>/gm, '');
+                var finalString = changedString.length > limit ? changedString.substr(0, limit - 1) + "..." : changedString;
+                return finalString;
+            },
+            _getCommentStyle: function (i) {
+                return i % 2 === 0 ? 'even' : 'odd';
+            },
+            noComments: function (comments) {
+                return !comments || comments.length < 1;
+            }
+        });
+    </script>
 </dom-module>

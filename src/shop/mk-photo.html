@@ -15,14 +15,30 @@
     <template>
         <style include="shared-styles">
             :host {
-                display: block;
-                --paper-card-header-text: {
-                    background: rgba(0, 0, 0, 0.75);
-                    color: white;
-                    font-size: initial;
-                }
+                display: block;  
             }
-            
+
+            .viewer {
+                height: auto;
+                width: 100%;
+                display: block;
+            }
+            .title {
+                background: rgba(0, 0, 0, 0.75);
+                color: white;
+                position: absolute;
+                bottom: 0;
+                padding: 1em;
+            }
+            .actions{
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: row;
+                padding: 0.2em;
+            }
+            paper-button{
+                flex-grow: 1;
+            }
             paper-button.print {
                 background: green;
                 color: white;
@@ -32,26 +48,65 @@
                 background: #09478D;
                 color: white;
             }
-            
-            .card-content {
-                font-size: initial;
+
+            .image-and-title{
+                position: relative;
+            }
+
+            .description{
+                padding: 1em;
             }
             
+            .image-and-title > img{
+                display: block;
+                border-top-left-radius:2px;
+                border-top-right-radius:2px;
+            }
             .image-container {
                 margin-top: 0.5em;
                 display: flex;
                 align-content: center;
                 justify-content: center;
+                position: relative;
+            }
+            .image-container-inner{
+                background: white;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+                border-bottom-left-radius: 2px;
+                border-bottom-right-radius: 2px;
             }
         </style>
-        <iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
-            params="{{findSinlgePhotoParams(photoId)}}" handle-as="json" debounce-duration="300">
-        </iron-ajax>
-        <paper-button raised on-tap="goBack">
-            <iron-icon icon="arrow-back"></iron-icon>Back
-        </paper-button>
-        <div class="image-container">
-            <paper-card heading="[[photo.title._content]]" id="viewer" alt="Sailboat Harbor" class="white">
+<iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
+    params="{{findSinlgePhotoParams(photoId)}}" handle-as="json" debounce-duration="300">
+</iron-ajax>
+<paper-button raised on-tap="goBack">
+    <iron-icon icon="arrow-back"></iron-icon>Back
+</paper-button>
+<div class="image-container">
+    <div class="image-container-inner">
+        <div class="image-and-title">
+            <img id="viewer">
+            <span class="title">
+                            [[photo.title._content]]
+                     </span>
+        </div>
+        <div class="description">
+            Taken [[photo.dates.taken]]
+        </div>
+        <div class="actions">
+            <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
+                <iron-icon icon="icons:add-shopping-cart"></iron-icon> Buy Print
+            </paper-button>
+            <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
+                <iron-icon icon="icons:file-download"></iron-icon> Digital Download
+            </paper-button>
+            <paper-button class="flickr" raised on-tap="_viewOnFlickr">
+                <iron-icon icon="image:camera"></iron-icon> View on Flickr
+            </paper-button>
+        </div>
+    </div>
+</div>
+<!--<paper-card heading="[[photo.title._content]]" id="viewer" alt="Sailboat Harbor" class="white">
                 <div class="card-content">
                     Taken [[photo.dates.taken]]
                 </div>
@@ -66,60 +121,73 @@
                         <iron-icon icon="image:camera"></iron-icon> View on Flickr
                     </paper-button>
                 </div>
-            </paper-card>
-        </div>
-    </template>
+            </paper-card>-->
 
-    <script>
+</template>
+
+<script>
     Polymer({
-      is: 'mk-photo',
-      behaviors: [PhotoViewerBehavior, ScalerBehavior],
-      properties: {
-          photoId: {
-              type: String,
-              observer: '_photoChanged',
-              reflectToAttribute: true
-          }
-      },
-      _getImageUrl: function(){
-          return this.photo ? this.getImageUrl(this.photo, 'b') : '';
-      },
-      _addToCart: function(event){
-          this.fire('buy', {
-              photo: this.photo,
-              url: this._getImageUrl(),
-              buy: event.target.dataset.buy
-          });
-      },
-      goBack: function(){
-          this._photoChanged();
-          this.fire('back');
-      },
-      handleFlickrResponse: function(event){
-          this.photo = event.detail.response.photo;
-          this.$.viewer.image = this._getImageUrl();
-      },
-      _photoChanged: function(){
-          this.photo = undefined;
-          this.$.viewer.image = '';
-          if(this.photoId){
-              this.$.flickrRequest.generateRequest();
-          }
-      },
-      _viewOnFlickr: function(){
-          var urls = this.photo.urls.url;
-          var photopage;
-          for(var i = 0; i < urls.length; i++){
-              var url = urls[i];
-              if(url.type === 'photopage'){
-                  photopage = url._content;
-                  break;
-              }
-          }
-          if(photopage){
-              window.open(photopage);
-          }
-      }
+        is: 'mk-photo',
+        behaviors: [PhotoViewerBehavior, ScalerBehavior],
+        properties: {
+            photoId: {
+                type: String,
+                observer: '_photoChanged',
+                reflectToAttribute: true
+            },
+            visibleWhen: Boolean
+        },
+        ready: function () {
+            var photo = this;
+            this.$.viewer.addEventListener('load', function () {
+                photo.set('visible', true);
+                photo.set('loading', false);
+            });
+        },
+        _getImageUrl: function () {
+            return this.photo ? this.getImageUrl(this.photo, 'b') : '';
+        },
+        _addToCart: function (event) {
+            this.fire('buy', {
+                photo: this.photo,
+                url: this._getImageUrl(),
+                buy: event.target.dataset.buy
+            });
+        },
+        goBack: function () {
+            this._resetPhoto();
+            this.set('visible', false);
+            this.fire('back');
+        },
+        handleFlickrResponse: function (event) {
+            this.photo = event.detail.response.photo;
+            this.set('loading', true);
+            this.$.viewer.src = this._getImageUrl();
+        },
+        _photoChanged: function () {
+            this._resetPhoto();
+            if (this.photoId) {
+                this.$.flickrRequest.generateRequest();
+            }
+        },
+        _resetPhoto: function () {
+            this.photo = undefined;
+            this.$.viewer.src = '';
+        },
+        _viewOnFlickr: function () {
+            var urls = this.photo.urls.url;
+            var photopage;
+            for (var i = 0; i < urls.length; i++) {
+                var url = urls[i];
+                if (url.type === 'photopage') {
+                    photopage = url._content;
+                    break;
+                }
+            }
+            if (photopage) {
+                window.open(photopage);
+            }
+        }
     });
-  </script>
+</script>
 </dom-module>
