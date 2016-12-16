@@ -106,23 +106,6 @@
         </div>
     </div>
 </div>
-<!--<paper-card heading="[[photo.title._content]]" id="viewer" alt="Sailboat Harbor" class="white">
-                <div class="card-content">
-                    Taken [[photo.dates.taken]]
-                </div>
-                <div class="card-actions">
-                    <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
-                        <iron-icon icon="icons:add-shopping-cart"></iron-icon> Buy Print
-                    </paper-button>
-                    <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
-                        <iron-icon icon="icons:file-download"></iron-icon> Digital Download
-                    </paper-button>
-                    <paper-button class="flickr" raised on-tap="_viewOnFlickr">
-                        <iron-icon icon="image:camera"></iron-icon> View on Flickr
-                    </paper-button>
-                </div>
-            </paper-card>-->
-
 </template>
 
 <script>
@@ -137,13 +120,57 @@
             },
             visibleWhen: Boolean
         },
+        listeners: {
+            'track': 'handleTrack'
+        },
         ready: function () {
             this.style.display = 'none';
             var photo = this;
+
             this.$.viewer.addEventListener('load', function () {
                 photo.set('visible', true);
                 photo.set('loading', false);
+                photo.focus();
             });
+            document.addEventListener('keydown', function (event) {
+                if (photo.visible) {
+                    switch (event.key) {
+                        case "ArrowLeft":
+                            photo._previousImage();
+                            break;
+                        case "ArrowRight":
+                            photo._nextImage();
+                            break;
+                    }
+                }
+            });
+        },
+        handleTrack: function (e) {
+            var message;
+            switch (e.detail.state) {
+                case 'start':
+                    message = 'Tracking started!';
+                    break;
+                case 'track':
+                    message = 'Tracking in progress... ' +
+                        e.detail.x + ', ' + e.detail.y;
+                    break;
+                case 'end':
+                    message = 'Tracking ended!';
+                    break;
+            }
+            console.log(message);
+        },
+        _previousImage: function () {
+            this.fire('previous-image');
+        },
+        _nextImage: function () {
+            this.fire('next-image');
+        },
+        _handleSwipe: function (event) {
+            console.log(event);
+            event.preventDefault();
+            return false;
         },
         _getImageUrl: function () {
             return this.photo ? this.getImageUrl(this.photo, 'b') : '';

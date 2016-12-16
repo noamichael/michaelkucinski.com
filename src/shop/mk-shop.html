@@ -244,7 +244,7 @@
         },
         selectImage: function (event) {
             var shop = this;
-            shop.set('currentImage', this.get('images')[event.target.dataset.index]);
+            shop.set('currentImage', this.get('images')[event.currentTarget.dataset.index]);
             if (shop.currentImage) {
                 shop.set('route.path', '/photos/' + shop.currentImage.id);
             } else {
@@ -252,8 +252,8 @@
             }
         },
         onBuy: function (event) {
-            var windowToOpen = FOTOMOTO.API[event.detail.buy];
-            FOTOMOTO.API.showWindow(windowToOpen, event.detail.url);
+            var windowToOpen = window.FOTOMOTO.API[event.detail.buy];
+            window.FOTOMOTO.API.showWindow(windowToOpen, event.detail.url);
         },
         loadPreviousPhotos: function () {
             if (!this.meta) {
