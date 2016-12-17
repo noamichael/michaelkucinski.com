@@ -36,7 +36,7 @@
                 flex-direction: row;
                 padding: 0.2em;
             }
-            paper-button{
+            .card-actions > paper-button{
                 flex-grow: 1;
             }
             paper-button.print {
@@ -49,27 +49,32 @@
                 color: white;
             }
 
-            .image-and-title{
+            .photo-and-title{
                 position: relative;
             }
 
             .description{
                 padding: 1em;
             }
+            .pagination{
+                display: flex;
+                justify-content: center;
+            }
             
-            .image-and-title > img{
+            .photo-and-title > img{
                 display: block;
                 border-top-left-radius:2px;
                 border-top-right-radius:2px;
+                user-select: none;
             }
-            .image-container {
+            .photo-container {
                 margin-top: 0.5em;
                 display: flex;
                 align-content: center;
                 justify-content: center;
                 position: relative;
             }
-            .image-container-inner{
+            .photo-container-inner{
                 background: white;
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
                 border-bottom-left-radius: 2px;
@@ -82,13 +87,21 @@
 <paper-button raised on-tap="goBack">
     <iron-icon icon="arrow-back"></iron-icon>Back
 </paper-button>
-<div class="image-container">
-    <div class="image-container-inner">
-        <div class="image-and-title">
+<div class="pagination">
+    <paper-button raised on-tap="_previousPhoto">
+        <iron-icon icon="arrow-back"></iron-icon>Previous
+    </paper-button>
+    <paper-button raised on-tap="_nextPhoto">
+        <iron-icon icon="arrow-forward"></iron-icon>Next
+    </paper-button>
+</div>
+<div class="photo-container" on-track="handleTrack">
+    <div class="photo-container-inner">
+        <div class="photo-and-title">
             <img id="viewer">
             <span class="title">
                             [[photo.title._content]]
-                     </span>
+             </span>
         </div>
         <div class="description">
             Taken [[photo.dates.taken]]
@@ -118,10 +131,11 @@
                 observer: '_photoChanged',
                 reflectToAttribute: true
             },
-            visibleWhen: Boolean
-        },
-        listeners: {
-            'track': 'handleTrack'
+            hasNext: Boolean,
+            hasPrevious: {
+                type: Boolean,
+                notify: true
+            }
         },
         ready: function () {
             this.style.display = 'none';
@@ -132,53 +146,71 @@
                 photo.set('loading', false);
                 photo.focus();
             });
+            this.$.viewer.addEventListener('mousemove', function (e) {
+                e.preventDefault();
+            });
             document.addEventListener('keydown', function (event) {
                 if (photo.visible) {
                     switch (event.key) {
                         case "ArrowLeft":
-                            photo._previousImage();
+                            photo._previousPhoto();
                             break;
                         case "ArrowRight":
-                            photo._nextImage();
+                            photo._nextPhoto();
                             break;
                     }
                 }
             });
         },
         handleTrack: function (e) {
-            var message;
+            var el = e.currentTarget;
+            var x = e.detail.x;
+            var dx = el._originalX ? (x - el._originalX) : 0;
+            // if (dx < 0 && !this.hasPrevious) {
+            //     return;
+            // }
+            // if (dx > 0 && !this.hasNext) {
+            //     return;
+            // }
             switch (e.detail.state) {
                 case 'start':
-                    message = 'Tracking started!';
+                    el._originalX = x;
                     break;
                 case 'track':
-                    message = 'Tracking in progress... ' +
-                        e.detail.x + ', ' + e.detail.y;
+                    el.style.transform = 'translateX(' + dx + 'px)';
                     break;
                 case 'end':
-                    message = 'Tracking ended!';
+                    el.style.transform = '';
+                    if (Math.abs(dx) < (el.offsetWidth / 2)) {
+                        return;
+                    }
+
+                    if (dx < 0) {
+                        this._previousPhoto();
+                    } else {
+                        this._nextPhoto();
+                    }
                     break;
             }
-            console.log(message);
         },
-        _previousImage: function () {
-            this.fire('previous-image');
+        _previousPhoto: function () {
+            this.fire('previous-photo', { photo: this.photo });
         },
-        _nextImage: function () {
-            this.fire('next-image');
+        _nextPhoto: function () {
+            this.fire('next-photo', { photo: this.photo });
         },
         _handleSwipe: function (event) {
             console.log(event);
             event.preventDefault();
             return false;
         },
-        _getImageUrl: function () {
+        _getPhotoUrl: function () {
             return this.photo ? this.getImageUrl(this.photo, 'b') : '';
         },
         _addToCart: function (event) {
             this.fire('buy', {
                 photo: this.photo,
-                url: this._getImageUrl(),
+                url: this._getPhotoUrl(),
                 buy: event.target.dataset.buy
             });
         },
@@ -190,7 +222,7 @@
         handleFlickrResponse: function (event) {
             this.photo = event.detail.response.photo;
             this.set('loading', true);
-            this.$.viewer.src = this._getImageUrl();
+            this.$.viewer.src = this._getPhotoUrl();
         },
         _photoChanged: function () {
             this._resetPhoto();

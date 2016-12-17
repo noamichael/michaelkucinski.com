@@ -83,15 +83,23 @@
                 display: block !important;
             }
             
-            .no-images {
+            .no-photos {
                 display: flex;
                 justify-content: center;
             }
             
-            .no-images[hidden] {
+            .no-photos[hidden] {
                 display: none;
             }
-            
+            .pagination,
+            .search-box {
+                display: flex;justify-content:center
+            }
+
+            .search-box paper-input{
+                flex-grow: 1
+            }
+
             @media screen and (max-width: 960px) {
                 :host {
                     --app-grid-columns: 2;
@@ -120,39 +128,38 @@
                 <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
             </template>
         </div>
-        <div style="display: flex;justify-content:center">
-<paper-input style="flex-grow: 1" type="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
-</div>
-<div class="instructions">
-    Click on an image below to see it in full size with purchasing options.
-</div>
-</paper-card>
-<ul class="app-grid">
-    <template is="dom-repeat" items="{{images}}" as="image">
-        <li class="item" data-index$="[[index]]" on-tap="selectImage" style$="[[getImageListStyle(image)]]">
-            <div class="photo-title">
-                [[image.title]]
-            </div>
-        </li>
-    </template>
-</ul>
-<div class="no-images" hidden$="{{_hasImages(images.length)}}">
-    No images found
-</div>
-<div style="display: flex; justify-content: center;">
-<paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
-    <iron-icon icon="icons:arrow-back"></iron-icon>
-    Prev
-</paper-button>
-<paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
-    <iron-icon icon="icons:arrow-forward"></iron-icon>
-    Next
-</paper-button>
-</div>
+        <div class="search-box">
+            <paper-input ype="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
+        </div>
+        <div class="instructions">
+            Click on an photo below to see it in full size with purchasing options.
+        </div>
+    </paper-card>
+    <ul class="app-grid">
+        <template is="dom-repeat" items="{{photos}}" as="photo">
+            <li class="item" data-index$="[[index]]" on-tap="selectPhoto" style$="[[getImageListStyle(photo)]]">
+                <div class="photo-title">
+                    [[photo.title]]
+                </div>
+            </li>
+        </template>
+    </ul>
+    <div class="no-photos" hidden$="{{_hasPhotos(photos.length)}}">
+        No photos found
+    </div>
+    <div class="pagination">
+        <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
+            <iron-icon icon="icons:arrow-back"></iron-icon>
+            Prev
+        </paper-button>
+        <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
+            <iron-icon icon="icons:arrow-forward"></iron-icon>
+            Next
+        </paper-button>
+    </div>
 </template>
-<!--<template is="dom-if" if="{{singleActive}}">-->
-<mk-photo on-back="goBack" loading="{{loading}}" photo-id="{{routeData.id}}" on-buy="onBuy"></mk-photo>
-<!--</template>-->
+<mk-photo on-back="goBack" on-previous-photo="_showPreviousPhoto" on-next-photo="_showNextPhoto" loading="{{loading}}" photo-id="{{routeData.id}}"
+    on-buy="onBuy" has-previous="[[_canShowPrevious(currentImage, meta)]]" has-next="{{_hasNext(meta)}}"></mk-photo>
 </template>
 
 <script>
@@ -195,12 +202,38 @@
                 { label: 'Sunrise', value: 'sunrise' },
                 { label: 'Sunset', value: 'sunset' }
             ];
-            shop._requestImages();
+            shop._requestPhotos();
+        },
+        _showPreviousPhoto: function (event) {
+            var previousIndex = this._findPhotoIndex(event.detail.photo.id) - 1;
+            if (previousIndex < 0) {
+                //load previous page
+            } else {
+                this._selectPhoto(previousIndex);
+            }
+
+        },
+        _showNextPhoto: function (event) {
+            var nextIndex = this._findPhotoIndex(event.detail.photo.id) + 1;
+            if (nextIndex > this.photos.length) {
+                //load next page
+            } else {
+                this._selectPhoto(nextIndex);
+            }
+
         },
         _onActiveChange: function (active) {
             if (this.ready && active) {
                 this._writeMetaToQuery();
             }
+        },
+        _findPhotoIndex: function (id) {
+            for (var i = 0; i < this.photos.length; i++) {
+                if (this.photos[i].id === id) {
+                    return i;
+                }
+            }
+            return -1;
         },
         _onFilterReady: function () {
             var shop = this;
@@ -214,7 +247,7 @@
         onSearchTextChange: function (event) {
             this.debounce('onSearchTextChange', function () {
                 this._resetMeta();
-                this._requestImages();
+                this._requestPhotos();
             }, 500);
         },
         onCatagoryChange: function (event) {
@@ -233,7 +266,7 @@
                 this.splice('meta.tags', index, 1);
             }
             this._resetMeta();
-            this._requestImages();
+            this._requestPhotos();
         },
         goBack: function () {
             this.async(function () {
@@ -242,13 +275,16 @@
                 this.set('route.path', '/');
             });
         },
-        selectImage: function (event) {
+        selectPhoto: function (event) {
+            this._selectPhoto(event.currentTarget.dataset.index);
+        },
+        _selectPhoto: function (index) {
             var shop = this;
-            shop.set('currentImage', this.get('images')[event.currentTarget.dataset.index]);
-            if (shop.currentImage) {
-                shop.set('route.path', '/photos/' + shop.currentImage.id);
+            shop.set('currentPhoto', this.get('photos')[index]);
+            if (shop.currentPhoto) {
+                shop.set('route.path', '/photos/' + shop.currentPhoto.id);
             } else {
-                console.error('Cannot select image.');
+                console.error('Cannot select photo.');
             }
         },
         onBuy: function (event) {
@@ -261,7 +297,7 @@
             } else {
                 this.meta.page = this.meta.page - 1;
             }
-            this._requestImages();
+            this._requestPhotos();
         },
         loadNextPhotos: function () {
             if (!this.meta) {
@@ -269,7 +305,7 @@
             } else {
                 this.meta.page = this.meta.page + 1;
             }
-            this._requestImages();
+            this._requestPhotos();
         },
         handleFlickrResponse: function (event) {
             var tags = this.meta.tags;
@@ -279,9 +315,9 @@
             responseMeta.text = text;
             this.set('meta', responseMeta);
             var photos = this.meta.photo;
-            this.set('images', event.detail.response.photos.photo);
+            this.set('photos', event.detail.response.photos.photo);
         },
-        _requestImages: function () {
+        _requestPhotos: function () {
             this._writeMetaToQuery();
             var queryParams = this.queryParams;
             this.$.flickrRequest.params = this.getAllPhotoParams(queryParams.page, queryParams.tags, queryParams.text);
@@ -293,6 +329,16 @@
         _hasPrev: function (meta) {
             return !meta ? false : meta.page > 1;
         },
+        _canShowPrevious: function (currentImage, meta) {
+            if (!currentImage || !meta) {
+                return false;
+            }
+            var indexOfCurrent = this._findPhotoIndex(currentImage.id);
+            if(meta.page === 1 && indexOfCurrent === 0){
+                return false;
+            }
+            return true;
+        },
         _resetMeta: function () {
             var meta = { page: 1, tags: this.meta ? this.meta.tags : [] };
             if (this.meta.text) {
@@ -300,7 +346,7 @@
             }
             this.set('meta', meta);
         },
-        _hasImages: function (length) {
+        _hasPhotos: function (length) {
             return length !== undefined && length !== 0;
         },
         _writeMetaToQuery: function () {
