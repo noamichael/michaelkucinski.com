@@ -159,7 +159,7 @@
     </div>
 </template>
 <mk-photo on-back="goBack" on-previous-photo="_showPreviousPhoto" on-next-photo="_showNextPhoto" loading="{{loading}}" photo-id="{{routeData.id}}"
-    on-buy="onBuy" has-previous="[[_canShowPrevious(currentImage, meta)]]" has-next="{{_hasNext(meta)}}"></mk-photo>
+    on-buy="onBuy" has-previous="{{_canShowPrevious(currentPhoto, meta)}}" has-next="{{_hasNext(meta)}}"></mk-photo>
 </template>
 
 <script>
@@ -206,8 +206,13 @@
         },
         _showPreviousPhoto: function (event) {
             var previousIndex = this._findPhotoIndex(event.detail.photo.id) - 1;
-            if (previousIndex < 0) {
+            if (previousIndex < 0 && this.meta.page > 1) {
                 //load previous page
+                this._postResponse = function () {
+                    this._selectPhoto(this.photos.length - 1);
+                };
+                this.loadPreviousPhotos();
+
             } else {
                 this._selectPhoto(previousIndex);
             }
@@ -215,8 +220,12 @@
         },
         _showNextPhoto: function (event) {
             var nextIndex = this._findPhotoIndex(event.detail.photo.id) + 1;
-            if (nextIndex > this.photos.length) {
+            if (nextIndex >= this.photos.length && this._hasNext(this.meta)) {
                 //load next page
+                this._postResponse = function () {
+                    this._selectPhoto(0);
+                };
+                this.loadNextPhotos();
             } else {
                 this._selectPhoto(nextIndex);
             }
@@ -316,6 +325,10 @@
             this.set('meta', responseMeta);
             var photos = this.meta.photo;
             this.set('photos', event.detail.response.photos.photo);
+            if (this._postResponse) {
+                this._postResponse();
+                delete this._postResponse;
+            }
         },
         _requestPhotos: function () {
             this._writeMetaToQuery();
@@ -334,7 +347,7 @@
                 return false;
             }
             var indexOfCurrent = this._findPhotoIndex(currentImage.id);
-            if(meta.page === 1 && indexOfCurrent === 0){
+            if (meta.page === 1 && indexOfCurrent === 0) {
                 return false;
             }
             return true;
