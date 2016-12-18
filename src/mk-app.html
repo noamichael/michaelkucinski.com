@@ -13,6 +13,7 @@
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
@@ -119,11 +120,11 @@
 
     <iron-selector selected="[[page]]" attr-for-selected="data-current-page" class$="{{_menuStyle(queryMatches)}}" role="navigation">
       <paper-icon-button id="home" icon="icons:home" alt="Home" data-current-page="home" on-tap="_navigate"></paper-icon-button>
-      <paper-icon-button id="shop" icon="icons:shopping-cart" alt="Shop" data-current-page="shop" on-tap="_navigate"></paper-icon-button>
+      <paper-icon-button id="gallery" icon="image:photo-camera" alt="Gallery" data-current-page="gallery" on-tap="_navigate"></paper-icon-button>
       <paper-icon-button id="blog" icon="communication:chat" alt="Blog" data-current-page="blog" on-tap="_navigate"></paper-icon-button>
       <paper-icon-button id="contact" icon="communication:call" alt="Contact" data-current-page="contact" on-tap="_navigate"></paper-icon-button>
       <paper-tooltip for="home" offset="0" position="bottom">Home</paper-tooltip>
-      <paper-tooltip for="shop" offset="0" position="bottom">Shop</paper-tooltip>
+      <paper-tooltip for="gallery" offset="0" position="bottom">Gallery</paper-tooltip>
       <paper-tooltip for="blog" offset="0" position="bottom">Blog</paper-tooltip>
       <paper-tooltip for="contact" offset="0" position="bottom">Contact</paper-tooltip>
     </iron-selector>
@@ -138,8 +139,8 @@
       <neon-animatable data-page="blog" data-folder="blog" data-title="Blog">
         <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
       </neon-animatable>
-      <neon-animatable data-page="shop" data-folder="shop" data-title="Shop">
-        <mk-shop route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-shop>
+      <neon-animatable data-page="gallery" data-folder="gallery" data-title="Gallery">
+        <mk-gallery route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-gallery>
       </neon-animatable>
       <neon-animatable data-page="contact" data-title="Contact">
         <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-contact>

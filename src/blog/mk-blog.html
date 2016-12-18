@@ -123,11 +123,11 @@
         this.set('loading', true);
       },
       onCategoryResponse: function (event) {
-        var shop = this;
+        var blog = this;
         this.set('categories', event.detail.response);
         this.categoryCache = {};
         event.detail.response.forEach(function (cat) {
-          shop.categoryCache[cat.slug] = cat.id;
+          blog.categoryCache[cat.slug] = cat.id;
         });
         if (this.lastCategory) {
           for (var i = 0; i < this.categories.length; i++) {

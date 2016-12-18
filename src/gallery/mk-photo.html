@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-swipeable-container/iron-swipeable-container.html">
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../mk-scaler-behavior.html">
@@ -29,6 +30,7 @@
                 position: absolute;
                 bottom: 0;
                 padding: 1em;
+                font-size: .7em;
             }
             .actions{
                 display: flex;
@@ -36,7 +38,7 @@
                 flex-direction: row;
                 padding: 0.2em;
             }
-            .card-actions > paper-button{
+            .actions  paper-button {
                 flex-grow: 1;
             }
             paper-button.print {
@@ -56,9 +58,18 @@
             .description{
                 padding: 1em;
             }
+            .back{
+                align-self: flex-start;
+            }
             .pagination{
                 display: flex;
                 justify-content: center;
+                padding: 0.2em;
+            }
+
+            .pagination paper-button:not(.back):not([disabled]){
+                background: #09478D;
+                color: white;
             }
             
             .photo-and-title > img{
@@ -84,41 +95,45 @@
 <iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
     params="{{findSinlgePhotoParams(photoId)}}" handle-as="json" debounce-duration="300">
 </iron-ajax>
-<paper-button raised on-tap="goBack">
-    <iron-icon icon="arrow-back"></iron-icon>Back
-</paper-button>
 <div class="pagination">
-    <paper-button raised on-tap="_previousPhoto" hidden$="{{!hasPrevious}}">
+    <paper-button raised on-tap="goBack" class="back">
+        <iron-icon icon="arrow-back"></iron-icon>Back
+    </paper-button>
+    <paper-button raised on-tap="_previousPhoto" disabled$="{{!hasPrevious}}">
         <iron-icon icon="arrow-back"></iron-icon>Previous
     </paper-button>
     <paper-button raised on-tap="_nextPhoto">
         <iron-icon icon="arrow-forward"></iron-icon>Next
     </paper-button>
 </div>
-<div class="photo-container" on-track="handleTrack">
-    <div class="photo-container-inner">
-        <div class="photo-and-title">
-            <img id="viewer">
-            <span class="title">
+<template is="dom-repeat" as="photo" items="{{photos}}">
+    <!--<iron-swipeable-container on-iron-swipe="_handleSwipe" swipe-style="curve">-->
+    <div class="photo-container">
+        <div class="photo-container-inner">
+            <div class="photo-and-title">
+                <img src$="{{_getPhotoUrl(photo)}}" on-mousemove="onImageMousemove" on-load="onImageLoad">
+                <span class="title">
                 [[photo.title._content]]
              </span>
-        </div>
-        <div class="description">
-            Taken [[photo.dates.taken]]
-        </div>
-        <div class="actions">
-            <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
-                <iron-icon icon="icons:add-shopping-cart"></iron-icon> Buy Print
-            </paper-button>
-            <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
-                <iron-icon icon="icons:file-download"></iron-icon> Digital Download
-            </paper-button>
-            <paper-button class="flickr" raised on-tap="_viewOnFlickr">
-                <iron-icon icon="image:camera"></iron-icon> View on Flickr
-            </paper-button>
+            </div>
+            <div class="description">
+                Taken [[photo.dates.taken]]
+            </div>
+            <div class="actions">
+                <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
+                    <iron-icon icon="icons:add-shopping-cart"></iron-icon> Buy Print
+                </paper-button>
+                <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
+                    <iron-icon icon="icons:file-download"></iron-icon> Digital Download
+                </paper-button>
+                <paper-button class="flickr" raised on-tap="_viewOnFlickr">
+                    <iron-icon icon="image:camera"></iron-icon> View on Flickr
+                </paper-button>
+            </div>
         </div>
     </div>
-</div>
+    <!--</iron-swipeable-container>-->
+</template>
 </template>
 
 <script>
@@ -141,14 +156,6 @@
             this.style.display = 'none';
             var photo = this;
 
-            this.$.viewer.addEventListener('load', function () {
-                photo.set('visible', true);
-                photo.set('loading', false);
-                photo.focus();
-            });
-            this.$.viewer.addEventListener('mousemove', function (e) {
-                e.preventDefault();
-            });
             document.addEventListener('keydown', function (event) {
                 if (photo.visible) {
                     switch (event.key) {
@@ -162,55 +169,39 @@
                 }
             });
         },
-        handleTrack: function (e) {
-            var el = e.currentTarget;
-            var x = e.detail.x;
-            var dx = el._originalX ? (x - el._originalX) : 0;
-            if (dx < 0 && !this.hasNext) {
-                return;
-            }
-            if (dx > 0 && !this.hasPrevious) {
-                return;
-            }
-            switch (e.detail.state) {
-                case 'start':
-                    el._originalX = x;
-                    break;
-                case 'track':
-                    el.style.transform = 'translateX(' + dx + 'px)';
-                    break;
-                case 'end':
-                    el.style.transform = '';
-                    if (Math.abs(dx) < (el.offsetWidth / 2)) {
-                        return;
-                    }
-                    delete el.originalX;
-                    if (dx < 0) {
-                        this._nextPhoto();
-                    } else {
-                        this._previousPhoto();
-                    }
-                    break;
-            }
+        onImageMousemove: function (e) {
+            e.preventDefault();
+        },
+        onImageLoad: function () {
+            this.set('visible', true);
+            this.set('loading', false);
         },
         _previousPhoto: function () {
-            this.fire('previous-photo', { photo: this.photo });
+            this._fireNextOrPreviousEvent('previous');
         },
         _nextPhoto: function () {
-            this.fire('next-photo', { photo: this.photo });
+            this._fireNextOrPreviousEvent('next');
+        },
+        _fireNextOrPreviousEvent: function (name) {
+            this.style.display = 'none';
+            this.set('visible', false);
+            this.set('loading', true);
+            this.fire(name + '-photo', { photo: this.photos[0] });
         },
         _handleSwipe: function (event) {
-            console.log(event);
-            event.preventDefault();
-            return false;
+            if (event.detail.direction === 'left') {
+                this._nextPhoto();
+            } else {
+                this._previousPhoto();
+            }
         },
-        _getPhotoUrl: function () {
-            return this.photo ? this.getImageUrl(this.photo, 'b') : '';
+        _getPhotoUrl: function (photo) {
+            return photo ? this.getImageUrl(photo, 'b') : '';
         },
         _addToCart: function (event) {
             this.fire('buy', {
-                photo: this.photo,
-                url: this._getPhotoUrl(),
+                photo: this.photos[0],
+                url: this._getPhotoUrl(this.photos[0]),
                 buy: event.target.dataset.buy
             });
         },
@@ -220,9 +211,8 @@
             this.fire('back');
         },
         handleFlickrResponse: function (event) {
-            this.photo = event.detail.response.photo;
+            this.set('photos', [event.detail.response.photo]);
             this.set('loading', true);
-            this.$.viewer.src = this._getPhotoUrl();
         },
         _photoChanged: function () {
             this._resetPhoto();
@@ -231,11 +221,10 @@
             }
         },
         _resetPhoto: function () {
-            this.photo = undefined;
-            this.$.viewer.src = '';
+            this.photos = undefined;
         },
         _viewOnFlickr: function () {
-            var urls = this.photo.urls.url;
+            var urls = this.photos[0].urls.url;
             var photopage;
             for (var i = 0; i < urls.length; i++) {
                 var url = urls[i];

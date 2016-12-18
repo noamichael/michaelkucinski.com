@@ -16,7 +16,7 @@
 <link rel="import" href="../mk-base-behavior.html">
 
 
-<dom-module id="mk-shop">
+<dom-module id="mk-gallery">
     <template>
         <style include="app-grid-style shared-styles">
             :host {
@@ -158,13 +158,13 @@
         </paper-button>
     </div>
 </template>
-<mk-photo on-back="goBack" on-previous-photo="_showPreviousPhoto" on-next-photo="_showNextPhoto" loading="{{loading}}" photo-id="{{routeData.id}}"
+<mk-photo hidden$="{{!singleActive}}" on-back="goBack" on-previous-photo="_showPreviousPhoto" on-next-photo="_showNextPhoto" loading="{{loading}}" photo-id="{{routeData.id}}"
     on-buy="onBuy" has-previous="{{_canShowPrevious(currentPhoto, meta)}}" has-next="{{_hasNext(meta)}}"></mk-photo>
 </template>
 
 <script>
     Polymer({
-        is: 'mk-shop',
+        is: 'mk-gallery',
         behaviors: [PhotoViewerBehavior, BaseBehavior],
         properties: {
             active: {
@@ -184,25 +184,25 @@
             window.removeEventListener('resize', this._updateGridStyles);
         },
         ready: function () {
-            var shop = this;
-            shop.ready = true;
+            var gallery = this;
+            gallery.ready = true;
             if (this.queryParams) {
-                shop.set('meta', {
+                gallery.set('meta', {
                     page: this.queryParams.page || 1,
                     tags: this.queryParams.tags ? this.queryParams.tags.split(',').map(function (t) { return { value: t }; }) : [],
                     text: this.queryParams.text
                 });
             } else {
-                shop.set('meta', { page: 1, tags: [] });
+                gallery.set('meta', { page: 1, tags: [] });
             }
-            shop.categories = [
+            gallery.categories = [
                 { label: 'Landscapes', value: 'landscape' },
                 { label: 'Portraits', value: 'portrait' },
                 { label: 'Abstract', value: 'abstract' },
                 { label: 'Sunrise', value: 'sunrise' },
                 { label: 'Sunset', value: 'sunset' }
             ];
-            shop._requestPhotos();
+            gallery._requestPhotos();
         },
         _showPreviousPhoto: function (event) {
             var previousIndex = this._findPhotoIndex(event.detail.photo.id) - 1;
@@ -245,10 +245,10 @@
             return -1;
         },
         _onFilterReady: function () {
-            var shop = this;
+            var gallery = this;
             this.async(function () {
-                shop.meta.tags.forEach(function (tag) {
-                    var checkbox = shop.$$('#filter_' + tag.value);
+                gallery.meta.tags.forEach(function (tag) {
+                    var checkbox = gallery.$$('#filter_' + tag.value);
                     checkbox.checked = true;
                 });
             });
@@ -288,10 +288,10 @@
             this._selectPhoto(event.currentTarget.dataset.index);
         },
         _selectPhoto: function (index) {
-            var shop = this;
-            shop.set('currentPhoto', this.get('photos')[index]);
-            if (shop.currentPhoto) {
-                shop.set('route.path', '/photos/' + shop.currentPhoto.id);
+            var gallery = this;
+            gallery.set('currentPhoto', this.get('photos')[index]);
+            if (gallery.currentPhoto) {
+                gallery.set('route.path', '/photos/' + gallery.currentPhoto.id);
             } else {
                 console.error('Cannot select photo.');
             }
