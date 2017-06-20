@@ -4,10 +4,9 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../../bower_components/iron-swipeable-container/iron-swipeable-container.html">
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
-<link rel="import" href="../mk-scaler-behavior.html">
+<link rel="import" href="../mk-base-behavior.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
 <link rel="import" href="../shared-styles.html">
 
@@ -15,8 +14,8 @@
 <dom-module id="mk-photo">
     <template>
         <style include="shared-styles">
-            :host {
-                display: block;  
+             :host {
+                display: block;
             }
 
             .viewer {
@@ -24,6 +23,7 @@
                 width: 100%;
                 display: block;
             }
+
             .title {
                 background: rgba(0, 0, 0, 0.75);
                 color: white;
@@ -32,52 +32,58 @@
                 padding: 1em;
                 font-size: .7em;
             }
-            .actions{
+
+            .actions {
                 display: flex;
                 flex-wrap: wrap;
                 flex-direction: row;
                 padding: 0.2em;
             }
-            .actions  paper-button {
+
+            .actions paper-button {
                 flex-grow: 1;
             }
+
             paper-button.print {
                 background: green;
                 color: white;
             }
-            
+
             paper-button.digital-download {
                 background: #09478D;
                 color: white;
             }
 
-            .photo-and-title{
+            .photo-and-title {
                 position: relative;
             }
 
-            .description{
+            .description {
                 padding: 1em;
             }
-            .back{
+
+            .back {
                 align-self: flex-start;
             }
-            .pagination{
+
+            .pagination {
                 display: flex;
                 justify-content: center;
                 padding: 0.2em;
             }
 
-            .pagination paper-button:not(.back):not([disabled]){
+            .pagination paper-button:not(.back):not([disabled]) {
                 background: #09478D;
                 color: white;
             }
-            
-            .photo-and-title > img{
+
+            .photo-and-title>img {
                 display: block;
-                border-top-left-radius:2px;
-                border-top-right-radius:2px;
+                border-top-left-radius: 2px;
+                border-top-right-radius: 2px;
                 user-select: none;
             }
+
             .photo-container {
                 margin-top: 0.5em;
                 display: flex;
@@ -85,158 +91,165 @@
                 justify-content: center;
                 position: relative;
             }
-            .photo-container-inner{
+
+            .photo-container-inner {
                 background: white;
                 box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
                 border-bottom-left-radius: 2px;
                 border-bottom-right-radius: 2px;
             }
         </style>
-<iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
-    params="{{findSinlgePhotoParams(photoId)}}" handle-as="json" debounce-duration="300">
-</iron-ajax>
-<div class="pagination">
-    <paper-button raised on-tap="goBack" class="back">
-        <iron-icon icon="arrow-back"></iron-icon>Back
-    </paper-button>
-    <paper-button raised on-tap="_previousPhoto" disabled$="{{!hasPrevious}}">
-        <iron-icon icon="arrow-back"></iron-icon>Previous
-    </paper-button>
-    <paper-button raised on-tap="_nextPhoto">
-        <iron-icon icon="arrow-forward"></iron-icon>Next
-    </paper-button>
-</div>
-<template is="dom-repeat" as="photo" items="{{photos}}">
-    <!--<iron-swipeable-container on-iron-swipe="_handleSwipe" swipe-style="curve">-->
-    <div class="photo-container">
-        <div class="photo-container-inner">
-            <div class="photo-and-title">
-                <img src$="{{_getPhotoUrl(photo)}}" on-mousemove="onImageMousemove" on-load="onImageLoad">
-                <span class="title">
-                [[photo.title._content]]
-             </span>
-            </div>
-            <div class="description">
-                Taken [[photo.dates.taken]]
-            </div>
-            <div class="actions">
-                <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
-                    <iron-icon icon="icons:add-shopping-cart"></iron-icon> Buy Print
-                </paper-button>
-                <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
-                    <iron-icon icon="icons:file-download"></iron-icon> Digital Download
-                </paper-button>
-                <paper-button class="flickr" raised on-tap="_viewOnFlickr">
-                    <iron-icon icon="image:camera"></iron-icon> View on Flickr
-                </paper-button>
-            </div>
+
+        <iron-ajax id="flickrRequest" loading="{{loading}}" on-response="handleFlickrResponse" url="https://api.flickr.com/services/rest"
+            params="{{findSinlgePhotoParams(photoId)}}" handle-as="json" debounce-duration="300">
+        </iron-ajax>
+        <div class="pagination">
+            <paper-button raised on-tap="goBack" class="back">
+                <iron-icon icon="arrow-back"></iron-icon>Back
+            </paper-button>
+            <paper-button raised on-tap="_previousPhoto" disabled$="[[!hasPrevious]]">
+                <iron-icon icon="arrow-back"></iron-icon>Previous
+            </paper-button>
+            <paper-button raised on-tap="_nextPhoto">
+                <iron-icon icon="arrow-forward"></iron-icon>Next
+            </paper-button>
         </div>
-    </div>
-    <!--</iron-swipeable-container>-->
-</template>
-</template>
+        <template is="dom-repeat" as="photo" items="{{photos}}">
+            <div class="photo-container">
+                <div class="photo-container-inner">
+                    <div class="photo-and-title">
+                        <img src$="{{_getPhotoUrl(photo)}}" on-mousemove="onImageMousemove" on-load="onImageLoad">
+                        <span class="title">[[photo.title._content]]</span>
+                    </div>
+                    <div class="description">
+                        Taken [[photo.dates.taken]]
+                    </div>
+                    <div class="actions">
+                        <paper-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
+                            <iron-icon icon="icons:add-shopping-cart"></iron-icon> Buy Print
+                        </paper-button>
+                        <paper-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
+                            <iron-icon icon="icons:file-download"></iron-icon> Digital Download
+                        </paper-button>
+                        <paper-button class="flickr" raised on-tap="_viewOnFlickr">
+                            <iron-icon icon="image:camera"></iron-icon> View on Flickr
+                        </paper-button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </template>
 
-<script>
-    Polymer({
-        is: 'mk-photo',
-        behaviors: [PhotoViewerBehavior, ScalerBehavior],
-        properties: {
-            photoId: {
-                type: String,
-                observer: '_photoChanged',
-                reflectToAttribute: true
-            },
-            hasNext: Boolean,
-            hasPrevious: {
-                type: Boolean,
-                notify: true
+    <script>
+        class MkPhoto extends Polymer.mixinBehaviors([BaseBehavior, PhotoViewerBehavior], Polymer.Element) {
+            static get is() {
+                return 'mk-photo';
             }
-        },
-        ready: function () {
-            this.style.display = 'none';
-            var photo = this;
-
-            document.addEventListener('keydown', function (event) {
-                if (photo.visible) {
-                    switch (event.key) {
-                        case "ArrowLeft":
-                            photo._previousPhoto();
-                            break;
-                        case "ArrowRight":
-                            photo._nextPhoto();
-                            break;
+            static get properties() {
+                return {
+                    photoId: {
+                        type: String,
+                        observer: '_photoChanged',
+                        reflectToAttribute: true
+                    },
+                    visible: {
+                        type: Boolean,
+                        notify: true
+                    },
+                    loading: {
+                        type: Boolean,
+                        notify: true
+                    },
+                    hasNext: Boolean,
+                    hasPrevious: Boolean
+                };
+            }
+            ready() {
+                super.ready();
+                this.style.display = 'none';
+                document.addEventListener('keydown', function (event) {
+                    if (this.visible) {
+                        switch (event.key) {
+                            case "ArrowLeft":
+                                this._previousPhoto();
+                                break;
+                            case "ArrowRight":
+                                this._nextPhoto();
+                                break;
+                        }
+                    }
+                });
+            }
+            onImageMousemove(e) {
+                e.preventDefault();
+            }
+            onImageLoad() {
+                this.set('visible', true);
+                this.set('loading', false);
+                this.style.display = 'block';
+            }
+            _previousPhoto() {
+                this._fireNextOrPreviousEvent('previous');
+            }
+            _nextPhoto() {
+                this._fireNextOrPreviousEvent('next');
+            }
+            _fireNextOrPreviousEvent(name) {
+                this.style.display = 'none';
+                this.set('visible', false);
+                this.set('loading', true);
+                this.fireEvent(name + '-photo', { photo: this.photos[0] });
+            }
+            _handleSwipe(event) {
+                if (event.detail.direction === 'left') {
+                    this._nextPhoto();
+                } else {
+                    this._previousPhoto();
+                }
+            }
+            _getPhotoUrl(photo) {
+                return photo ? this.getImageUrl(photo, 'b') : '';
+            }
+            _addToCart(event) {
+                this.fireEvent('buy', {
+                    photo: this.photos[0],
+                    url: this._getPhotoUrl(this.photos[0]),
+                    buy: event.target.dataset.buy
+                });
+            }
+            goBack() {
+                this._resetPhoto();
+                this.set('visible', false);
+                this.fireEvent('back');
+            }
+            handleFlickrResponse(event) {
+                this.set('photos', [event.detail.response.photo]);
+                this.set('loading', true);
+            }
+            _photoChanged(photoId) {
+                this._resetPhoto();
+                if (this.photoId) {
+                    this.$.flickrRequest.generateRequest();
+                }
+            }
+            _resetPhoto() {
+                this.photos = undefined;
+            }
+            _viewOnFlickr() {
+                var urls = this.photos[0].urls.url;
+                var photopage;
+                for (var i = 0; i < urls.length; i++) {
+                    var url = urls[i];
+                    if (url.type === 'photopage') {
+                        photopage = url._content;
+                        break;
                     }
                 }
-            });
-        },
-        onImageMousemove: function (e) {
-            e.preventDefault();
-        },
-        onImageLoad: function () {
-            this.set('visible', true);
-            this.set('loading', false);
-        },
-        _previousPhoto: function () {
-            this._fireNextOrPreviousEvent('previous');
-        },
-        _nextPhoto: function () {
-            this._fireNextOrPreviousEvent('next');
-        },
-        _fireNextOrPreviousEvent: function (name) {
-            this.style.display = 'none';
-            this.set('visible', false);
-            this.set('loading', true);
-            this.fire(name + '-photo', { photo: this.photos[0] });
-        },
-        _handleSwipe: function (event) {
-            if (event.detail.direction === 'left') {
-                this._nextPhoto();
-            } else {
-                this._previousPhoto();
-            }
-        },
-        _getPhotoUrl: function (photo) {
-            return photo ? this.getImageUrl(photo, 'b') : '';
-        },
-        _addToCart: function (event) {
-            this.fire('buy', {
-                photo: this.photos[0],
-                url: this._getPhotoUrl(this.photos[0]),
-                buy: event.target.dataset.buy
-            });
-        },
-        goBack: function () {
-            this._resetPhoto();
-            this.set('visible', false);
-            this.fire('back');
-        },
-        handleFlickrResponse: function (event) {
-            this.set('photos', [event.detail.response.photo]);
-            this.set('loading', true);
-        },
-        _photoChanged: function () {
-            this._resetPhoto();
-            if (this.photoId) {
-                this.$.flickrRequest.generateRequest();
-            }
-        },
-        _resetPhoto: function () {
-            this.photos = undefined;
-        },
-        _viewOnFlickr: function () {
-            var urls = this.photos[0].urls.url;
-            var photopage;
-            for (var i = 0; i < urls.length; i++) {
-                var url = urls[i];
-                if (url.type === 'photopage') {
-                    photopage = url._content;
-                    break;
+                if (photopage) {
+                    window.open(photopage);
                 }
             }
-            if (photopage) {
-                window.open(photopage);
-            }
         }
-    });
-</script>
+        customElements.define(MkPhoto.is, MkPhoto);
+    </script>
 </dom-module>

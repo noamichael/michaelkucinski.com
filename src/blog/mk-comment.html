@@ -10,35 +10,36 @@
 <dom-module id="mk-comment">
     <template>
         <style include="shared-styles">
-            :host {
+             :host {
                 display: block;
                 width: 100%;
                 padding: 0px 0px 1em 0px;
             }
 
-            paper-card.odd{
-                   background: #f4f4f4;
+            paper-card.odd {
+                background: #f4f4f4;
             }
-            
+
             small {
                 margin-bottom: 1em;
                 font-style: italic;
                 font-size: initial;
                 display: block;
             }
-            
+
             paper-card {
                 width: 100%;
             }
 
-            paper-button{
+            paper-button {
                 background: #09478D;
                 color: white;
             }
-            paper-button[data-reply]{
+
+            paper-button[data-reply] {
                 background: orange;
             }
-            
+
             h6 {
                 margin: 0;
             }
@@ -64,40 +65,42 @@
     </template>
 
     <script>
-    Polymer({
-      is: 'mk-comment',
-       properties: {
-         comment: Object,
-         post: Object,
-         parent: Object,
-         styleClass: String
-      },
-      behaviors: [DateBehavior],
-      observers: [
-
-      ],
-      ready: function(){
-       this.shouldReply = false;
-       this.self = this;
-      },
-      _toggleReply: function(){
-          this.set('shouldReply', !this.get('shouldReply'));
-      },
-      _replyTitle: function(shouldReply){
-          if (shouldReply) {return 'Cancel';} return 'Reply';
-      },
-      _replyIcon: function(shouldReply){
-          return shouldReply ? 'icons:cancel' : 'icons:reply';
-      },
-      _onCommentSubmit: function(){
-          this._toggleReply();
-      },
-      _getStyleClass: function(n, parentStyle){
-          if(parentStyle && parentStyle === 'even'){
-            return n % 2 !== 0 ? 'even' : 'odd';
-          }
-          return n % 2 === 0 ? 'even' : 'odd';
-      }
-    });
-  </script>
+        class MkComment extends Polymer.mixinBehaviors([BaseBehavior], Polymer.Element) {
+            static get is() {
+                return 'mk-comment';
+            }
+            static get properties() {
+                return {
+                    comment: Object,
+                    post: Object,
+                    parent: Object,
+                    styleClass: String,
+                    shouldReply: Boolean
+                };
+            }
+            ready() {
+                super.ready();
+                this.shouldReply = false;
+            }
+            _toggleReply() {
+                this.set('shouldReply', !this.get('shouldReply'));
+            }
+            _replyTitle(shouldReply) {
+                if (shouldReply) { return 'Cancel'; } return 'Reply';
+            }
+            _replyIcon(shouldReply) {
+                return shouldReply ? 'icons:cancel' : 'icons:reply';
+            }
+            _onCommentSubmit() {
+                this._toggleReply();
+            }
+            _getStyleClass(n, parentStyle) {
+                if (parentStyle && parentStyle === 'even') {
+                    return n % 2 !== 0 ? 'even' : 'odd';
+                }
+                return n % 2 === 0 ? 'even' : 'odd';
+            }
+        }
+        customElements.define(MkComment.is, MkComment);
+    </script>
 </dom-module>

@@ -19,35 +19,35 @@
 <dom-module id="mk-gallery">
     <template>
         <style include="app-grid-style shared-styles">
-            :host {
+             :host {
                 display: block;
                 --app-grid-columns: 3;
                 --app-grid-gutter: 5px;
                 --app-grid-item-height: 250px;
                 --app-grid-expandible-item-columns: 3;
             }
-            
+
             .instructions {
                 display: flex;
                 justify-content: center;
             }
-            
+
             .filters {
                 display: flex;
                 justify-content: space-between;
                 flex-flow: row wrap;
             }
-            
-            
+
+
             ul {
                 padding: 0;
                 list-style: none;
             }
-            
+
             h3 {
                 margin: 0px;
             }
-            
+
             paper-dialog {
                 position: fixed;
                 top: 25%;
@@ -56,327 +56,341 @@
                 right: 25%;
                 margin: 0px;
             }
-            
+
             paper-checkbox {
                 font-size: initial;
                 flex-grow: 1;
             }
-            
+
             .item {
                 background-color: white;
                 background-size: cover;
                 background-position: center center;
             }
-            
+
             .filter-container {
                 width: 100%;
                 padding: 1em;
             }
-            
+
             .photo-title {
                 background: rgba(0, 0, 0, 0.75);
                 color: white;
                 font-size: .6em;
             }
-            
+
             li .photo-title:hover {
                 display: block !important;
             }
-            
+
             .no-photos {
                 display: flex;
                 justify-content: center;
             }
-            
+
             .no-photos[hidden] {
                 display: none;
             }
+
             .pagination,
             .search-box {
-                display: flex;justify-content:center
+                display: flex;
+                justify-content: center
             }
 
-            .search-box paper-input{
+            .search-box paper-input {
                 flex-grow: 1
             }
 
             @media screen and (max-width: 960px) {
-                :host {
+                 :host {
                     --app-grid-columns: 2;
                     --app-grid-expandible-item-columns: 2;
                 }
             }
-            
+
             @media screen and (max-width: 799px) {
-                :host {
+                 :host {
                     --app-grid-columns: 1;
                     --app-grid-expandible-item-columns: 1;
                 }
             }
         </style>
-<app-route route="{{route}}" pattern="/" active="{{active}}"></app-route>
-<app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
-<iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" loading="{{loading}}" handle-as="json" on-response="handleFlickrResponse"
-    debounce-duration="300">
-</iron-ajax>
-
-<template is="dom-if" if="{{!singleActive}}">
-    <paper-card class="filter-container">
-        <h3>Search</h3>
-        <div class="filters">
-            <template is="dom-repeat" as="catagory" items="{{categories}}" on-dom-change="_onFilterReady">
-                <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
-            </template>
-        </div>
-        <div class="search-box">
-            <paper-input ype="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
-        </div>
-        <div class="instructions">
-            Click on an photo below to see it in full size with purchasing options.
-        </div>
-    </paper-card>
-    <ul class="app-grid">
-        <template is="dom-repeat" items="{{photos}}" as="photo">
-            <li class="item" data-index$="[[index]]" on-tap="selectPhoto" style$="[[getImageListStyle(photo)]]">
-                <div class="photo-title">
-                    [[photo.title]]
-                </div>
-            </li>
+        <app-route route="{{route}}" pattern="/" active="{{active}}"></app-route>
+        <app-route route="{{route}}" pattern="/photos/:id" data="{{routeData}}" active="{{singleActive}}"></app-route>
+        <iron-ajax id="flickrRequest" url="https://api.flickr.com/services/rest" loading="{{loading}}" handle-as="json" on-response="handleFlickrResponse"
+            debounce-duration="300">
+        </iron-ajax>
+        <template is="dom-if" if="{{singleActive}}">
+            <mk-photo on-back="goBack" on-previous-photo="_showPreviousPhoto" on-next-photo="_showNextPhoto" loading="{{loading}}" photo-id="{{routeData.id}}"
+                on-buy="onBuy" has-previous="{{_canShowPrevious(currentPhoto, meta)}}" has-next="{{_hasNext(meta)}}">
+            </mk-photo>
         </template>
-    </ul>
-    <div class="no-photos" hidden$="{{_hasPhotos(photos.length)}}">
-        No photos found
-    </div>
-    <div class="pagination">
-        <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
-            <iron-icon icon="icons:arrow-back"></iron-icon>
-            Prev
-        </paper-button>
-        <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
-            <iron-icon icon="icons:arrow-forward"></iron-icon>
-            Next
-        </paper-button>
-    </div>
-</template>
-<mk-photo hidden$="{{!singleActive}}" on-back="goBack" on-previous-photo="_showPreviousPhoto" on-next-photo="_showNextPhoto" loading="{{loading}}" photo-id="{{routeData.id}}"
-    on-buy="onBuy" has-previous="{{_canShowPrevious(currentPhoto, meta)}}" has-next="{{_hasNext(meta)}}"></mk-photo>
-</template>
+        <template is="dom-if" if="{{!singleActive}}">
+            <paper-card class="filter-container">
+                <h3>Search</h3>
+                <div class="filters">
+                    <template is="dom-repeat" as="catagory" items="{{categories}}" on-dom-change="_onFilterReady">
+                        <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
+                    </template>
+                </div>
+                <div class="search-box">
+                    <paper-input ype="text" label="Search Text" value="{{meta.text}}" on-input="onSearchTextChange"></paper-input>
+                </div>
+                <div class="instructions">
+                    Click on an photo below to see it in full size with purchasing options.
+                </div>
+            </paper-card>
+            <ul class="app-grid">
+                <template is="dom-repeat" items="{{photos}}" as="photo">
+                    <li class="item" data-index$="[[index]]" on-tap="selectPhoto" style$="[[getImageListStyle(photo)]]">
+                        <div class="photo-title">
+                            [[photo.title]]
+                        </div>
+                    </li>
+                </template>
+            </ul>
+            <div class="no-photos" hidden$="{{_hasPhotos(photos.length)}}">
+                No photos found
+            </div>
+            <div class="pagination">
+                <paper-button on-tap="loadPreviousPhotos" raised hidden$="{{!_hasPrev(meta)}}">
+                    <iron-icon icon="icons:arrow-back"></iron-icon>
+                    Prev
+                </paper-button>
+                <paper-button on-tap="loadNextPhotos" raised hidden$="{{!_hasNext(meta)}}">
+                    <iron-icon icon="icons:arrow-forward"></iron-icon>
+                    Next
+                </paper-button>
+            </div>
+        </template>
+    </template>
 
-<script>
-    Polymer({
-        is: 'mk-gallery',
-        behaviors: [PhotoViewerBehavior, BaseBehavior],
-        properties: {
-            active: {
-                type: Boolean
+
+    <script>
+        class MkGallery extends Polymer.mixinBehaviors([BaseBehavior, PhotoViewerBehavior], Polymer.Element) {
+            static get is() {
+                return 'mk-gallery';
             }
-        },
-        observers: [
-            '_onActiveChange(active)'
-        ],
-        attached: function () {
-            this._updateGridStyles = this._updateGridStyles || function () {
-                this.updateStyles();
-            }.bind(this);
-            window.addEventListener('resize', this._updateGridStyles);
-        },
-        detached: function () {
-            window.removeEventListener('resize', this._updateGridStyles);
-        },
-        ready: function () {
-            var gallery = this;
-            gallery.ready = true;
-            if (this.queryParams) {
-                gallery.set('meta', {
-                    page: this.queryParams.page || 1,
-                    tags: this.queryParams.tags ? this.queryParams.tags.split(',').map(function (t) { return { value: t }; }) : [],
-                    text: this.queryParams.text
-                });
-            } else {
-                gallery.set('meta', { page: 1, tags: [] });
-            }
-            gallery.categories = [
-                { label: 'Landscapes', value: 'landscape' },
-                { label: 'Portraits', value: 'portrait' },
-                { label: 'Abstract', value: 'abstract' },
-                { label: 'Sunrise', value: 'sunrise' },
-                { label: 'Sunset', value: 'sunset' }
-            ];
-            gallery._requestPhotos();
-        },
-        _showPreviousPhoto: function (event) {
-            var previousIndex = this._findPhotoIndex(event.detail.photo.id) - 1;
-            if (previousIndex < 0 && this.meta.page > 1) {
-                //load previous page
-                this._postResponse = function () {
-                    this._selectPhoto(this.photos.length - 1);
+            static get properties() {
+                return {
+                    queryParams: Object,
+                    active: Boolean,
+                    currentPhoto: Object,
+                    meta: Object,
+                    singleActive: {
+                        type: Boolean,
+                        notify: true
+                    },
+                    loading: {
+                        notify: true
+                    }
                 };
-                this.loadPreviousPhotos();
-
-            } else {
-                this._selectPhoto(previousIndex);
             }
-
-        },
-        _showNextPhoto: function (event) {
-            var nextIndex = this._findPhotoIndex(event.detail.photo.id) + 1;
-            if (nextIndex >= this.photos.length && this._hasNext(this.meta)) {
-                //load next page
-                this._postResponse = function () {
-                    this._selectPhoto(0);
-                };
-                this.loadNextPhotos();
-            } else {
-                this._selectPhoto(nextIndex);
+            static get observers() {
+                return [
+                    '_onActiveChange(active)'
+                ];
             }
-
-        },
-        _onActiveChange: function (active) {
-            if (this.ready && active) {
-                this._writeMetaToQuery();
+            ready() {
+                super.ready();
+                this._updateGridStyles = this._updateGridStyles || function () {
+                    this.updateStyles();
+                }.bind(this);
+                window.addEventListener('resize', this._updateGridStyles);
+                this.ready = true;
+                if (this.queryParams) {
+                    this.set('meta', {
+                        page: this.queryParams.page || 1,
+                        tags: this.queryParams.tags ? this.queryParams.tags.split(',').map(function (t) { return { value: t }; }) : [],
+                        text: this.queryParams.text
+                    });
+                } else {
+                    this.set('meta', { page: 1, tags: [] });
+                }
+                this.categories = [
+                    { label: 'Landscapes', value: 'landscape' },
+                    { label: 'Portraits', value: 'portrait' },
+                    { label: 'Abstract', value: 'abstract' },
+                    { label: 'Sunrise', value: 'sunrise' },
+                    { label: 'Sunset', value: 'sunset' }
+                ];
+                this._requestPhotos();
             }
-        },
-        _findPhotoIndex: function (id) {
-            for (var i = 0; i < this.photos.length; i++) {
-                if (this.photos[i].id === id) {
-                    return i;
+            _showPreviousPhoto(event) {
+                let previousIndex = this._findPhotoIndex(event.detail.photo.id) - 1;
+                if (previousIndex < 0 && this.meta.page > 1) {
+                    //load previous page
+                    this._postResponse = function () {
+                        this._selectPhoto(this.photos.length - 1);
+                    };
+                    this.loadPreviousPhotos();
+
+                } else {
+                    this._selectPhoto(previousIndex);
+                }
+
+            }
+            _showNextPhoto(event) {
+                let nextIndex = this._findPhotoIndex(event.detail.photo.id) + 1;
+                if (nextIndex >= this.photos.length && this._hasNext(this.meta)) {
+                    //load next page
+                    this._postResponse = function () {
+                        this._selectPhoto(0);
+                    };
+                    this.loadNextPhotos();
+                } else {
+                    this._selectPhoto(nextIndex);
+                }
+
+            }
+            _onActiveChange(active) {
+                if (this.ready && active) {
+                    this._writeMetaToQuery();
                 }
             }
-            return -1;
-        },
-        _onFilterReady: function () {
-            var gallery = this;
-            this.async(function () {
-                gallery.meta.tags.forEach(function (tag) {
-                    var checkbox = gallery.$$('#filter_' + tag.value);
-                    checkbox.checked = true;
+            _findPhotoIndex(id) {
+                for (let i = 0; i < this.photos.length; i++) {
+                    if (this.photos[i].id === id) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            _onFilterReady() {
+                ;
+                setTimeout(() => {
+                    this.meta.tags.forEach(function (tag) {
+                        let checkbox = this.shadowRoot.querySelector('#filter_' + tag.value);
+                        checkbox.checked = true;
+                    });
                 });
-            });
-        },
-        onSearchTextChange: function (event) {
-            this.debounce('onSearchTextChange', function () {
+            }
+            onSearchTextChange(event) {
+                setTimeout(() => {
+                    this._resetMeta();
+                    this._requestPhotos();
+                }, 500);
+            }
+            onCatagoryChange(event) {
+                let catagory = event.path[0].dataset.catagory;
+                let index = -1;
+                for (let i = 0; i < this.meta.tags.length; i++) {
+                    if (this.meta.tags[i].value === catagory) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index < 0) {
+                    this.push('meta.tags', { value: catagory });
+                } else {
+                    this.splice('meta.tags', index, 1);
+                }
                 this._resetMeta();
                 this._requestPhotos();
-            }, 500);
-        },
-        onCatagoryChange: function (event) {
-            var catagory = event.path[0].dataset.catagory;
-            var index = -1;
-            for (var i = 0; i < this.meta.tags.length; i++) {
-                if (this.meta.tags[i].value === catagory) {
-                    index = i;
-                    break;
+            }
+            goBack() {
+                setTimeout(() => {
+                    this.set('routeData', {});
+                    //this.set('queryParams', {});
+                    this.set('route.path', '');
+                });
+            }
+            selectPhoto(event) {
+                this._selectPhoto(event.currentTarget.dataset.index);
+            }
+            _selectPhoto(index) {
+                let gallery = this;
+                gallery.set('currentPhoto', this.get('photos')[index]);
+                if (gallery.currentPhoto) {
+                    gallery.set('route.path', '/photos/' + gallery.currentPhoto.id);
+                } else {
+                    console.error('Cannot select photo.');
                 }
             }
-
-            if (index < 0) {
-                this.push('meta.tags', { value: catagory });
-            } else {
-                this.splice('meta.tags', index, 1);
+            onBuy(event) {
+                let windowToOpen = window.FOTOMOTO.API[event.detail.buy];
+                window.FOTOMOTO.API.showWindow(windowToOpen, event.detail.url);
             }
-            this._resetMeta();
-            this._requestPhotos();
-        },
-        goBack: function () {
-            this.async(function () {
-                this.set('routeData', {});
-                this.set('queryParams', {});
-                this.set('route.path', '/');
-            });
-        },
-        selectPhoto: function (event) {
-            this._selectPhoto(event.currentTarget.dataset.index);
-        },
-        _selectPhoto: function (index) {
-            var gallery = this;
-            gallery.set('currentPhoto', this.get('photos')[index]);
-            if (gallery.currentPhoto) {
-                gallery.set('route.path', '/photos/' + gallery.currentPhoto.id);
-            } else {
-                console.error('Cannot select photo.');
+            loadPreviousPhotos() {
+                if (!this.meta) {
+                    this._resetMeta();
+                } else {
+                    this.meta.page = this.meta.page - 1;
+                }
+                this._requestPhotos();
             }
-        },
-        onBuy: function (event) {
-            var windowToOpen = window.FOTOMOTO.API[event.detail.buy];
-            window.FOTOMOTO.API.showWindow(windowToOpen, event.detail.url);
-        },
-        loadPreviousPhotos: function () {
-            if (!this.meta) {
-                this._resetMeta();
-            } else {
-                this.meta.page = this.meta.page - 1;
+            loadNextPhotos() {
+                if (!this.meta) {
+                    this._resetMeta();
+                } else {
+                    this.meta.page = this.meta.page + 1;
+                }
+                this._requestPhotos();
             }
-            this._requestPhotos();
-        },
-        loadNextPhotos: function () {
-            if (!this.meta) {
-                this._resetMeta();
-            } else {
-                this.meta.page = this.meta.page + 1;
+            handleFlickrResponse(event) {
+                let tags = this.meta.tags;
+                let text = this.meta.text;
+                let responseMeta = event.detail.response.photos;
+                responseMeta.tags = tags;
+                responseMeta.text = text;
+                this.set('meta', responseMeta);
+                let photos = this.meta.photo;
+                this.set('photos', event.detail.response.photos.photo);
+                if (this._postResponse) {
+                    this._postResponse();
+                    delete this._postResponse;
+                }
             }
-            this._requestPhotos();
-        },
-        handleFlickrResponse: function (event) {
-            var tags = this.meta.tags;
-            var text = this.meta.text;
-            var responseMeta = event.detail.response.photos;
-            responseMeta.tags = tags;
-            responseMeta.text = text;
-            this.set('meta', responseMeta);
-            var photos = this.meta.photo;
-            this.set('photos', event.detail.response.photos.photo);
-            if (this._postResponse) {
-                this._postResponse();
-                delete this._postResponse;
+            _requestPhotos() {
+                this._writeMetaToQuery();
+                let queryParams = this.queryParams;
+                this.$.flickrRequest.params = this.getAllPhotoParams(queryParams.page, queryParams.tags, queryParams.text);
+                this.$.flickrRequest.generateRequest();
             }
-        },
-        _requestPhotos: function () {
-            this._writeMetaToQuery();
-            var queryParams = this.queryParams;
-            this.$.flickrRequest.params = this.getAllPhotoParams(queryParams.page, queryParams.tags, queryParams.text);
-            this.$.flickrRequest.generateRequest();
-        },
-        _hasNext: function (meta) {
-            return !meta ? false : meta.pages > meta.page;
-        },
-        _hasPrev: function (meta) {
-            return !meta ? false : meta.page > 1;
-        },
-        _canShowPrevious: function (currentImage, meta) {
-            if (!currentImage || !meta) {
-                return false;
+            _hasNext(meta) {
+                return !meta ? false : meta.pages > meta.page;
             }
-            var indexOfCurrent = this._findPhotoIndex(currentImage.id);
-            if (meta.page === 1 && indexOfCurrent === 0) {
-                return false;
+            _hasPrev(meta) {
+                return !meta ? false : meta.page > 1;
             }
-            return true;
-        },
-        _resetMeta: function () {
-            var meta = { page: 1, tags: this.meta ? this.meta.tags : [] };
-            if (this.meta.text) {
-                meta.text = this.meta.text;
+            _canShowPrevious(currentImage, meta) {
+                if (!currentImage || !meta) {
+                    return false;
+                }
+                let indexOfCurrent = this._findPhotoIndex(currentImage.id);
+                if (meta.page === 1 && indexOfCurrent === 0) {
+                    return false;
+                }
+                return true;
             }
-            this.set('meta', meta);
-        },
-        _hasPhotos: function (length) {
-            return length !== undefined && length !== 0;
-        },
-        _writeMetaToQuery: function () {
-            var page = this.meta ? this.meta.page : 1;
-            var tags = this.meta ? this.meta.tags.map(function (t) { return t.value; }).join(',') : '';
-            var text = this.meta ? this.meta.text : undefined;
-            var queryParams = {
-                page: page
-            };
-            if (tags && tags.length) {
-                queryParams.tags = tags;
+            _resetMeta() {
+                let meta = { page: 1, tags: this.meta ? this.meta.tags : [] };
+                if (this.meta.text) {
+                    meta.text = this.meta.text;
+                }
+                this.set('meta', meta);
             }
-            if (text) {
-                queryParams.text = text
+            _hasPhotos(length) {
+                return length !== undefined && length !== 0;
             }
-            this.set('queryParams', queryParams);
+            _writeMetaToQuery() {
+                let page = this.meta ? this.meta.page : 1;
+                let tags = this.meta ? this.meta.tags.map(function (t) { return t.value; }).join(',') : '';
+                let text = this.meta ? this.meta.text : undefined;
+                let queryParams = {
+                    page: page
+                };
+                if (tags && tags.length) {
+                    queryParams.tags = tags;
+                }
+                if (text) {
+                    queryParams.text = text
+                }
+                this.set('queryParams', queryParams);
+            }
         }
-    });
-</script>
+        customElements.define(MkGallery.is, MkGallery);
+    </script>
 </dom-module>

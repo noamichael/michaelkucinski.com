@@ -11,17 +11,17 @@
 <dom-module id="mk-home">
   <template>
     <style include="shared-styles">
-      :host {
+       :host {
         display: block;
         padding: 0px;
         height: 100%;
         width: 100%;
       }
-      
+
       section {
         max-width: 90%;
       }
-      
+
       .container {
         position: relative;
         height: 100%;
@@ -31,27 +31,27 @@
         justify-content: center;
         align-items: center;
       }
-      
+
       .welcome-message-container {
         color: white;
         flex-grow: 1;
         text-align: center;
       }
-      
+
       .welcome-message {
         background: rgba(0, 0, 0, .75);
         padding: 0.5em 0.0em;
       }
-      
+
       paper-button {
         background: green;
       }
-      
+
       h4 {
         margin: 0;
         color: var(--app-secondary-color);
       }
-      
+
       a {
         color: inherit;
         text-decoration: none;
@@ -81,45 +81,53 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'mk-home',
-      behaviors: [BaseBehavior,PhotoViewerBehavior],
-      _setupImages: function(event){
-        var home = this;
-        var photoMeta = event.detail.response.photos;
-        var photos = photoMeta.photo;
-        var count = photoMeta.perpage;
-        var currentIndex = 0;
-        var needToLoadNext = true
-        var intervalId;
-        this.$.loader.addEventListener('load', function(){
-          setTimeout(changeBackground, 5 * 1000);
-        });
-        function changeBackground(){
-          home.set('currentImage', photos[currentIndex]);
+    class MkHome extends Polymer.mixinBehaviors([BaseBehavior, PhotoViewerBehavior], Polymer.Element) {
+      static get is() {
+        return 'mk-home';
+      }
+      static get properties() {
+        return {
+          currentImage: Object,
+          nextImageToLoad: Object
+        };
+      }
+      _setupImages(event) {
+        let photoMeta = event.detail.response.photos;
+        let photos = photoMeta.photo;
+        let count = photoMeta.perpage;
+        let currentIndex = 0;
+        let needToLoadNext = true
+        let intervalId;
+        const changeBackground = () => {
+          this.set('currentImage', photos[currentIndex]);
           currentIndex++;
-          if(currentIndex >= count){
+          if (currentIndex >= count) {
             currentIndex = 0;
             needToLoadNext = false;
-            if(!intervalId){
-                intervalId = setInterval(changeBackground, 5 * 1000);
+            if (!intervalId) {
+              intervalId = setInterval(changeBackground, 5 * 1000);
             }
           }
-          if(needToLoadNext){
-            home.set('nextImageToLoad', photos[currentIndex]);
+          if (needToLoadNext) {
+            this.set('nextImageToLoad', photos[currentIndex]);
           }
-        }
+        };
+
+        this.$.loader.addEventListener('load', () => {
+          setTimeout(changeBackground, 5 * 1000);
+        });
         changeBackground();
-      },
-      _getImageUrl: function(image){
+      }
+      _getImageUrl(image) {
         return this.getImageUrl(image, 'h');
-      },
-      _getAllPhotoParams: function(){
+      }
+      _getAllPhotoParams() {
         return this.getAllPhotoParams(1, [], null, 10);
-      },
-      _getImageStyle: function(image){
+      }
+      _getImageStyle(image) {
         return this.getImageStyle(image, 'h') + 'background-size: cover;background-position: center center;background-attachment: fixed;';
       }
-    });
+    }
+    customElements.define(MkHome.is, MkHome);
   </script>
 </dom-module>

@@ -16,8 +16,13 @@
                 type: Object
             }
         },
-        ready: function () {
-            this.set('loading', false);
+        // ready: function () {
+        //     this.set('loading', false);
+        // },
+        fireEvent: function(name, data) {
+            this.dispatchEvent(
+                new CustomEvent(name, { detail: data })
+            );
         }
     };
     /** @polymerBehavior DateBehavior*/
@@ -35,4 +40,5 @@
             ].join('/') + ' @ ' + d.getHours() + ':' + (minutes < 10 ? '0' + minutes : minutes);
         }
     };
+
 </script>

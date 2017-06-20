@@ -1,44 +1,42 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
-<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
 <link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../bower_components/paper-scroll-header-panel/paper-scroll-header-panel.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="mk-app">
   <template>
     <style include="shared-styles">
-      :host {
+       :host {
         --app-primary-color: #000;
         --app-secondary-color: orangered;
         --app-drawer-width: 200px;
         display: block;
         height: 100%;
         padding: 0px;
-        --paper-toolbar-title: {
+        --app-toolbar-title: {
           margin: 0px;
         }
       }
-      .content, neon-animated-pages{
+
+      .content,
+      iron-pages {
         height: 100%;
         width: 100%;
       }
+
       .overlay {
         position: absolute;
         top: 0;
@@ -53,180 +51,169 @@
         visibility: visible;
         transform: all 0.2s linear;
       }
-      
+
       .overlay[hidden] {
         visibility: hidden;
       }
-      
-      .title small {
+
+      [main-title] small {
         font-size: 0.6em;
       }
-      
-      .title h4,
+
+      [main-title] h4,
       small {
         font-family: 'Raleway', sans-serif;
       }
-      
-      .title h4 {
+
+      [main-title] h4 {
         color: var(--app-secondary-color);
         margin: 0px;
       }
-      
+
       app-header {
         color: #fff;
         background-color: rgba(0, 0, 0, 0.80);
       }
-      
-      paper-scroll-header-panel {
-        height: 100%;
-      }
-      
-      paper-toolbar paper-icon-button {
+
+
+      app-toolbar paper-icon-button {
         transition: box-shadow .2s linear;
       }
-      
-      paper-toolbar paper-icon-button:hover,
-      paper-toolbar paper-icon-button.iron-selected {
+
+      app-toolbar paper-icon-button:hover,
+      app-toolbar paper-icon-button.iron-selected {
         color: var(--app-secondary-color);
         font-weight: bold;
       }
-      
-      paper-toolbar {
+
+      app-toolbar {
         background-color: rgba(0, 0, 0, 0.75);
       }
     </style>
-<app-scrollpos-control selected="{{page}}" reset></app-scrollpos-control>
-<app-location path="{{path}}" route="{{route}}" query-params="{{queryParams}}"></app-location>
-<app-route route="{{route}}" pattern="/:page" data="{{routeData}}" query-params="{{queryParams}}" tail="{{subroute}}"></app-route>
-<iron-media-query query="(min-width: 640px)" query-matches="{{queryMatches}}"></iron-media-query>
-<!-- Main content -->
-<!--<app-header-layout>
-
-      <app-header condenses reveals effects="waterfall">
+    <app-location path="{{path}}" route="{{route}}" query-params="{{queryParams}}"></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" query-params="{{queryParams}}" tail="{{subroute}}"></app-route>
+    <iron-media-query query="(min-width: 640px)" query-matches="{{queryMatches}}"></iron-media-query>
+    <!-- Main content -->
+    <app-header-layout fullbleed>
+      <app-header slot="header" fixed condenses effects="waterfall">
         <app-toolbar>
           <div main-title>
-            <h3>Michael Kucinski</h3>
-            <small>Programmer, Photographer, Percussionist</small>
+            <h4>Michael Kucinski</h4>
+            <small>Photographer, Programmer, Percussionist</small>
           </div>
+          <iron-selector selected="[[page]]" attr-for-selected="id" class$="{{_menuStyle(queryMatches)}}" role="navigation">
+            <paper-icon-button id="home" icon="icons:home" alt="Home" data-current-page="home" on-tap="_navigate"></paper-icon-button>
+            <paper-icon-button id="gallery" icon="image:photo-camera" alt="Gallery" data-current-page="gallery" on-tap="_navigate"></paper-icon-button>
+            <paper-icon-button id="blog" icon="communication:chat" alt="Blog" data-current-page="blog" on-tap="_navigate"></paper-icon-button>
+            <paper-icon-button id="contact" icon="communication:call" alt="Contact" data-current-page="contact" on-tap="_navigate"></paper-icon-button>
+            <paper-tooltip for="home" offset="0" position="bottom">Home</paper-tooltip>
+            <paper-tooltip for="gallery" offset="0" position="bottom">Gallery</paper-tooltip>
+            <paper-tooltip for="blog" offset="0" position="bottom">Blog</paper-tooltip>
+            <paper-tooltip for="contact" offset="0" position="bottom">Contact</paper-tooltip>
+          </iron-selector>
         </app-toolbar>
-      </app-header>-->
-<paper-scroll-header-panel id="layoutPanel" fixed condenses>
-
-  <paper-toolbar middle-justify="end" class$="{{_toolbarStyle(queryMatches)}}">
-    <div class="title">
-      <h4>Michael Kucinski</h4>
-      <small>Photographer, Programmer, Percussionist</small>
+      </app-header>
+      <div class="content">
+        <iron-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main">
+          <mk-home route="{{subroute}}" data-page="home" data-title="Home" loading="{{loading}}" query-params="{{queryParams}}"></mk-home>
+          <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="blog" data-folder="blog" data-title="Blog"></mk-blog>
+          <mk-gallery route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="gallery" data-folder="gallery"
+            data-title="Gallery"></mk-gallery>
+          <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="contact" data-title="Contact"></mk-contact>
+          <mk-view404 data-page="view404" data-title="404"></mk-view404>
+        </iron-pages>
+      </div>
+    </app-header-layout>
+    <!--</app-header-layout>-->
+    <div class="overlay" hidden$="[[!loading]]">
+      <paper-spinner active></paper-spinner>
     </div>
+  </template>
 
-    <iron-selector selected="[[page]]" attr-for-selected="data-current-page" class$="{{_menuStyle(queryMatches)}}" role="navigation">
-      <paper-icon-button id="home" icon="icons:home" alt="Home" data-current-page="home" on-tap="_navigate"></paper-icon-button>
-      <paper-icon-button id="gallery" icon="image:photo-camera" alt="Gallery" data-current-page="gallery" on-tap="_navigate"></paper-icon-button>
-      <paper-icon-button id="blog" icon="communication:chat" alt="Blog" data-current-page="blog" on-tap="_navigate"></paper-icon-button>
-      <paper-icon-button id="contact" icon="communication:call" alt="Contact" data-current-page="contact" on-tap="_navigate"></paper-icon-button>
-      <paper-tooltip for="home" offset="0" position="bottom">Home</paper-tooltip>
-      <paper-tooltip for="gallery" offset="0" position="bottom">Gallery</paper-tooltip>
-      <paper-tooltip for="blog" offset="0" position="bottom">Blog</paper-tooltip>
-      <paper-tooltip for="contact" offset="0" position="bottom">Contact</paper-tooltip>
-    </iron-selector>
-  </paper-toolbar>
+  <script>
+    class MkApp extends Polymer.Element {
+      static get is() { return "mk-app"; }
 
-  <div class="content">
-    <neon-animated-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main" entry-animation="slide-from-left-animation"
-      exit-animation="slide-right-animation">
-      <neon-animatable data-page="home" data-title="Home">
-        <mk-home route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-home>
-      </neon-animatable>
-      <neon-animatable data-page="blog" data-folder="blog" data-title="Blog">
-        <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-blog>
-      </neon-animatable>
-      <neon-animatable data-page="gallery" data-folder="gallery" data-title="Gallery">
-        <mk-gallery route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-gallery>
-      </neon-animatable>
-      <neon-animatable data-page="contact" data-title="Contact">
-        <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}"></mk-contact>
-      </neon-animatable>
-      <neon-animatable data-page="view404" data-title="404">
-        <mk-view404></mk-view404>
-      </neon-animatable>
-    </neon-animated-pages>
-  </div>
-
-</paper-scroll-header-panel>
-<!--</app-header-layout>-->
-<div class="overlay" hidden$="[[!loading]]">
-  <paper-spinner active></paper-spinner>
-</div>
-</template>
-
-<script>
-  Polymer({
-    is: 'mk-app',
-
-    properties: {
-      page: {
-        type: String,
-        reflectToAttribute: true,
-        observer: '_pageChanged'
-      },
-      queryParams: Object
-    },
-
-    ready: function () {
-      this.loading = false;
-    },
-
-    observers: [
-      '_routePageChanged(routeData.page)',
-      '_routePathChange(route.path)',
-      '_queryParamsChange(queryParams)'
-    ],
-
-
-    _routePageChanged: function (page) {
-      this.page = page || 'home';
-    },
-    _routePathChange: function (path) {
-      this._resetScroll();
-    },
-    _resetScroll: function () {
-      this.async(function () {
-        this.$.layoutPanel.scroller.scrollTop = 0;
-      });
-    },
-    _pageChanged: function (page) {
-      // Load page import on demand. Show 404 page if fails
-      var el = this.$$('[data-page="' + page + '"]');
-      var folder = el.dataset.folder ? (el.dataset.folder + '/') : '';
-      var title = el.dataset.title;
-      var hasBeenResolved = el.dataset.resolved;
-      if (!hasBeenResolved) {
-        el.dataset.resolved = 'true';
-        this.set('loading', true);
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged'
+          },
+          queryParams: Object,
+          route: Object,
+          routeData: Object,
+          loading: Boolean
+        };
       }
-      var resolvedPageUrl = this.resolveUrl(folder + 'mk-' + page + '.html');
-      this.importHref(resolvedPageUrl, null, this._showPage404, true);
-      document.title = title + ' - Michael Kucinski - Photography, Programming, Percussion';
-    },
 
-    _showPage404: function () {
-      this.page = 'view404';
-    },
-    _navigate: function (event) {
-      this.set('queryParams', {});
-      var page = event.currentTarget.dataset.currentPage;
-      this.async(function () {
-        this.set('route.path', page);
-      });
-    },
-    _toolbarStyle: function (mobile) {
-      return mobile ? '' : 'medium-tall';
-    },
-    _menuStyle: function (mobile) {
-      return mobile ? '' : 'middle';
-    },
-    _queryParamsChange: function (o) {
-      this._resetScroll();
-    },
-  });
-</script>
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+          '_routePathChange(route.path)',
+          '_queryParamsChange(queryParams)'
+        ];
+      }
+      constructor() {
+        super();
+      }
+
+      ready() {
+        super.ready();
+        this.loading = false;
+      }
+      _routePageChanged(page) {
+        this.page = page || 'home';
+      }
+      _routePathChange(path) {
+        this._resetScroll();
+      }
+      _resetScroll() {
+        setTimeout(() => {
+          document.body.scrollTop = 0;
+        });
+      }
+      _pageChanged(page) {
+        // Load page import on demand. Show 404 page if fails
+        const el = this.shadowRoot.querySelector('[data-page="' + page + '"]');
+        const folder = el.dataset.folder ? (el.dataset.folder + '/') : '';
+        const title = el.dataset.title;
+        const hasBeenResolved = el.dataset.resolved;
+        if (!hasBeenResolved) {
+          el.dataset.resolved = 'true';
+          this.set('loading', true);
+        }
+        const resolvedPageUrl = this.resolveUrl(folder + 'mk-' + page + '.html');
+        Polymer.importHref(
+          resolvedPageUrl,
+          null,//success
+          () => this._showPage404,//error
+          true//async
+        );
+        document.title = title + ' - Michael Kucinski - Photography, Programming, Percussion';
+      }
+
+      _showPage404() {
+        this.page = 'view404';
+      }
+      _navigate(event) {
+        this.set('queryParams', {});
+        const page = event.currentTarget.dataset.currentPage;
+        setTimeout(() => {
+          this.set('route.path', page);
+        });
+      }
+      _toolbarStyle(mobile) {
+        return mobile ? '' : 'medium-tall';
+      }
+      _menuStyle(mobile) {
+        return mobile ? '' : 'middle';
+      }
+      _queryParamsChange(o) {
+        this._resetScroll();
+      }
+    }
+    customElements.define(MkApp.is, MkApp);
+  </script>
 </dom-module>
