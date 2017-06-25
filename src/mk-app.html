@@ -95,7 +95,7 @@
     <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" query-params="{{queryParams}}" tail="{{subroute}}"></app-route>
     <iron-media-query query="(min-width: 640px)" query-matches="{{queryMatches}}"></iron-media-query>
     <!-- Main content -->
-    <app-header-layout fullbleed has-scrolling-region>
+    <app-header-layout id="layout" fullbleed has-scrolling-region>
       <app-header id="header" slot="header" fixed>
         <app-toolbar>
           <div main-title>
@@ -115,14 +115,14 @@
         </app-toolbar>
       </app-header>
       <div class="content">
-        <mk-animated-pages selected="[[page]]">
+        <mk-animated-pages selected="[[page]]" fallback-page="view404">
           <!--<iron-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main" on-iron-select="_ironPagesChange">-->
           <mk-home route="{{subroute}}" data-page="home" data-title="Home" loading="{{loading}}" query-params="{{queryParams}}"></mk-home>
           <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="blog" data-folder="blog" data-title="Blog"></mk-blog>
           <mk-gallery route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="gallery" data-folder="gallery"
             data-title="Gallery"></mk-gallery>
           <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="contact" data-title="Contact"></mk-contact>
-          <mk-view404 data-page="view404" data-title="404"></mk-view404>
+          <mk-view404 data-page="view404" data-title="404" id="notFound"></mk-view404>
           <!--</iron-pages>-->
         </mk-animated-pages>
       </div>
@@ -174,12 +174,18 @@
       }
       _resetScroll() {
         setTimeout(() => {
-          document.body.scrollTop = 0;
+          this.$.layout.shadowRoot
+            .getElementById('contentContainer')
+            .scrollTop = 0;
         });
       }
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
-        const el = this.shadowRoot.querySelector('[data-page="' + page + '"]');
+        let el = this.shadowRoot.querySelector('[data-page="' + page + '"]');
+        if(!el){
+          el = this.$.notFound;
+          page = 'view404';
+        }
         const folder = el.dataset.folder ? (el.dataset.folder + '/') : '';
         const title = el.dataset.title;
         const hasBeenResolved = el.dataset.resolved;

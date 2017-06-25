@@ -9,23 +9,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 
-<dom-module id="my-view404">
+<dom-module id="mk-view404" include="shared-styles">
   <template>
     <style>
-      :host {
-        display: block;
+      paper-card {
+        width: 100%;
+      }
 
-        padding: 10px 20px;
+      a {
+        text-decoration: none;
+      }
+
+      paper-button{
+         color: var(--app-secondary-color);
+      }
+
+      iron-icon[icon=error-outline] {
+        --iron-icon-height: 128px;
+        --iron-icon-width: 128px;
+        color: var(--app-secondary-color);
       }
     </style>
-
-    Oops you hit a 404. <a href="#/">Head back to home.</a>
+    <paper-card>
+      <div class="card-content">
+        <iron-icon icon="error-outline"></iron-icon>
+        404 (Technical Jargon for "Page not found").
+      </div>
+      <div class="card-actions">
+        <div class="horizontal justified">
+          <a href="/">
+            <paper-button>
+              <iron-icon icon="arrow-back"></iron-icon>
+              Head back to home.
+            </paper-button>
+          </a>
+        </div>
+    </paper-card>
   </template>
 
   <script>
-    Polymer({
-      is: 'my-view404'
-    });
+    class MkView404 extends Polymer.Element {
+      static get is() {
+        return 'mk-view404';
+      }
+    }
+    customElements.define(MkView404.is, MkView404);
   </script>
 </dom-module>

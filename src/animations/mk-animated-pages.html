@@ -42,7 +42,8 @@
                     selected: {
                         type: String,
                         observer: '_onSelectedChange'
-                    }
+                    },
+                    fallbackPage: String
                 };
             }
 
@@ -53,14 +54,20 @@
             _onSelectedChange(nextElement, oldElement) {
                 var animations = [Promise.resolve()];
                 this.classList.add('animating')
+                let foundNext = false;
+                let fallback;
                 this.$.animatables.assignedNodes().forEach(node => {
                     const uid = (node.dataset || { page: undefined }).page;
                     if (!uid) {
                         return;
                     }
+                    if (uid == this.fallbackPage) {
+                        fallback = node;
+                        return;
+                    }
                     if (uid === nextElement) {
                         node.classList.add('selected');
-
+                        foundNext = true;
                         if (!oldElement) {
                             return;
                         }
@@ -88,6 +95,11 @@
                         );
                     }
                 });
+                if (!foundNext && fallback) {
+                    fallback.classList.add('selected');
+                } else if (fallback) {
+                    fallback.classList.remove('selected');
+                }
                 Promise.all(animations).then(() => {
                     this.classList.remove('animating');
                 });

@@ -142,7 +142,7 @@
                 </div>
             </paper-card>
             <ul class="app-grid">
-                <template is="dom-repeat" items="{{photos}}" as="photo">
+                <template is="dom-repeat" items="{{photos}}" as="photo" style="display: none;">
                     <li class="item" data-index$="[[index]]" on-tap="selectPhoto" style$="[[getImageListStyle(photo)]]">
                         <div class="photo-title">
                             [[photo.title]]
@@ -213,7 +213,8 @@
                     { label: 'Portraits', value: 'portrait' },
                     { label: 'Abstract', value: 'abstract' },
                     { label: 'Sunrise', value: 'sunrise' },
-                    { label: 'Sunset', value: 'sunset' }
+                    { label: 'Sunset', value: 'sunset' },
+                    { label: "Michael's Favorites", value: 'for-sale'}
                 ];
                 this._requestPhotos();
             }
@@ -346,7 +347,8 @@
             _requestPhotos() {
                 this._writeMetaToQuery();
                 let queryParams = this.queryParams;
-                this.$.flickrRequest.params = this.getAllPhotoParams(queryParams.page, queryParams.tags, queryParams.text);
+                let tags =  queryParams.tags ? queryParams.tags.split(',').map(s => s.trim()) : [];
+                this.$.flickrRequest.params = this.getAllPhotoParams(queryParams.page, tags, queryParams.text);
                 this.$.flickrRequest.generateRequest();
             }
             _hasNext(meta) {
