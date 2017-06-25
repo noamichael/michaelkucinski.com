@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -168,7 +168,7 @@
 
 
     <script>
-        class MkGallery extends Polymer.mixinBehaviors([BaseBehavior, PhotoViewerBehavior], Polymer.Element) {
+        class MkGallery extends BaseBehavior(PhotoViewerBehavior(Polymer.Element)) {
             static get is() {
                 return 'mk-gallery';
             }

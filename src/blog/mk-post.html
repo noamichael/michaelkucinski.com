@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
@@ -99,7 +99,7 @@
     </template>
 
     <script>
-        class MkPost extends Polymer.mixinBehaviors([ScalerBehavior, DateBehavior], Polymer.Element) {
+        class MkPost extends BaseBehavior(DateBehavior(ScalerElement(Polymer.Element))) {
             static get is() {
                 return 'mk-post';
             }
@@ -174,9 +174,13 @@
                 return this.full ? html : this.limitHtml(html, 350);
             }
             _readMore() {
-                this.fire('read-more', {
-                    post: this.post
-                });
+                this.dispatchEvent(new CustomEvent('read-more', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        post: this.post
+                    }
+                }));
             }
             limitHtml(text, limit) {
                 let changedString = String(text).replace(/<[^>]+>/gm, '');

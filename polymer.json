@@ -16,6 +16,6 @@
   "extraDependencies": [
     "manifest.json",
     "bower_components/webcomponentsjs/webcomponents.min.js",
-    "bower_components/polymer/polymer.html"
+    "bower_components/shadydom/shadydom.min.js"
   ]
 }

@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -9,11 +9,11 @@
 <dom-module id="mk-create-comment">
     <template>
         <style include="shared-styles">
-            :host {
+             :host {
                 display: block;
                 padding: 0px;
             }
-            
+
             .post-comment:not([disabled]) {
                 color: white;
                 background: green;
@@ -23,45 +23,54 @@
         <paper-input label="Email" value="{{author_email}}" required auto-validate></paper-input>
         <paper-textarea label="Comment" value="{{content}}" required auto-validate></paper-textarea>
         <paper-button type="submit" rasied class="post-comment" on-tap="submit" disabled$="{{_isDisabled(content, author_name, author_email)}}">
-           <iron-icon icon="icons:check"></iron-icon> Post Comment
+            <iron-icon icon="icons:check"></iron-icon> Post Comment
         </paper-button>
     </template>
 
     <script>
-    Polymer({
-      is: 'mk-create-comment',
-      behaviors: [ScalerBehavior],
-      properties: {
-          parent: Object
-      },
-      _afterAnimation: function(visible){
-          if(visible){
-              this.scrollIntoView();
-          }
-      },
-      ready: function(){
-          this._reset();
-      },
-      submit: function(){
-          if(this._isDisabled()){
-              return;
-          }
-          this.fire('submit', {
-              parent: this.parent,
-              content: this.content,
-              author_name: this.author_name,
-              author_email: this.author_email
-          });
-          this._reset();
-      },
-      _reset: function(){
-          this.content = '';
-          this.author_name = '';
-          this.author_email = '';
-      },
-      _isDisabled: function(content, author_name, author_email){
-          return !this.content || !this.author_name || !this.author_email;
-      }
-    });
-  </script>
+        class MkCreateComment extends BaseBehavior(ScalerElement(Polymer.Element)) {
+            static get is() {
+                return 'mk-create-comment'
+            }
+            static get properties() {
+                return {
+                    parent: Object
+                };
+            }
+            _afterAnimation(visible) {
+                if (visible) {
+                    this.scrollIntoView();
+                }
+            }
+            ready() {
+                super.ready();
+                this._reset();
+            }
+            submit() {
+                if (this._isDisabled()) {
+                    return;
+                }
+                this.dispatchEvent(new CustomEvent('submit', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        parent: this.parent,
+                        content: this.content,
+                        author_name: this.author_name,
+                        author_email: this.author_email
+                    }
+                }));
+                this._reset();
+            }
+            _reset() {
+                this.content = '';
+                this.author_name = '';
+                this.author_email = '';
+            }
+            _isDisabled(content, author_name, author_email) {
+                return !this.content || !this.author_name || !this.author_email;
+            }
+        }
+        customElements.define(MkCreateComment.is, MkCreateComment);
+    </script>
 </dom-module>

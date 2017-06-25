@@ -1,55 +1,71 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="../bower_components/neon-animation/animations/scale-down-animation.html">
 
 <script>
-    /** @polymerBehavior ScalerBehavior */
-    var ScalerBehaviorImpl = ScalerBehaviorImpl || {
-        properties: {
-            visible: {
-                type: Boolean,
-                notify: true,
-                observer: '_visibleChange'
-            },
-            animationConfig: {
-                value: function () {
-                    return {
-                        entry: {
-                            name: 'scale-up-animation',
-                            node: this
-                        },
-                        exit: {
-                            name: 'scale-down-animation',
-                            node: this
-                        }
-                    };
+    function ScalerElement(SuperClass) {
+        return class extends SuperClass {
+            static get properties() {
+                return {
+                    visible: {
+                        type: Boolean,
+                        notify: true,
+                        observer: '_visibleChange'
+                    }
+                };
+            }
+            _visibleChange(visible) {
+                if (visible) {
+                    this._show();
+                } else {
+                    this._hide();
                 }
             }
-        },
-        listeners: {
-            'neon-animation-finish': '_onAnimationFinish'
-        },
-        _visibleChange: function (visible) {
-            if (visible) {
+            _show() {
                 this.style.display = 'block';
-                this.playAnimation('entry');
-            } else {
-                this.playAnimation('exit');
+                this.__animate(this, [
+                    { 'transform': 'scale(1, 0)' },
+                    { 'transform': 'scale(1, 1)' }
+                ]).then(() => {
+                    this._afterAnimation(this.visible);
+                });
             }
-        },
-        _onAnimationFinish: function () {
-            if (this.visible) {
-                this.style.display = 'block';
-            } else {
-                this.style.display = 'none';
+            _hide() {
+                this.__animate(this, [
+                    { 'transform': 'scale(1, 1)' },
+                    { 'transform': 'scale(1, 0)' }
+                ]).then(() => {
+                    this.style.display = 'none';
+                    this._afterAnimation(this.visible);
+                });
             }
-            this._afterAnimation(this.visible);
-        },
-        _afterAnimation: function (visible) {
-
+            _onAnimationFinish() {
+                if (this.visible) {
+                    this.style.display = 'block';
+                } else {
+                    this.style.display = 'none';
+                }
+                this._afterAnimation(this.visible);
+            }
+            _afterAnimation(visible) {
+                //overridden
+            }
+            __animate(node, keyframes) {
+                node.style.transformOrigin = '0 50%';
+                return new Promise(resolve => {
+                    node.animate(
+                        keyframes,
+                        {
+                            duration: 500,
+                            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                            fill: 'both'
+                        }).onfinish = (e) => {
+                            resolve(e);
+                        };
+                });
+            }
         }
-    };
-    /** @polymerBehavior  */
-    var ScalerBehavior = ScalerBehavior || [Polymer.NeonAnimationRunnerBehavior, ScalerBehaviorImpl];
+    }
+
 </script>

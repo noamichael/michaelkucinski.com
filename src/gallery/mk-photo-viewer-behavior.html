@@ -1,26 +1,14 @@
 <script>
-    (function(){
+    function PhotoViewerBehavior(SuperClass) {
         var API_KEY = 'e64d91b72c3934917da3554a69c98ef3';
-        /**
-        * Common photo functions
-        *
-        * @polymerBehavior PhotoViewerBehavior
-        */
-        window.PhotoViewerBehavior = {
-            properties: {
-                loading: {
-                    type: Boolean,
-                    default: false,
-                    notify: true
-                }
-            },
-            getAllPhotoParams: function(page, tags, text, per_page){
+        return class extends SuperClass {
+            getAllPhotoParams(page, tags, text, per_page) {
                 tags = tags || [];
                 page = page || 1;
                 var params = {
                     method: 'flickr.photos.search',
                     api_key: API_KEY,
-                    user_id:'89564538@N00',
+                    user_id: '89564538@N00',
                     tag_mode: 'all',
                     tags: ['for-sale'].concat(tags).join(','),
                     format: 'json',
@@ -28,42 +16,43 @@
                     per_page: per_page || 36,
                     page: page
                 };
-                if(text){
+                if (text) {
                     params.text = text;
                 }
                 return params;
-            },
-            findSinlgePhotoParams: function(photoId){
-                 return {
+            }
+            findSinlgePhotoParams(photoId) {
+                return {
                     method: 'flickr.photos.getInfo',
                     api_key: API_KEY,
-                    photo_id:photoId,
+                    photo_id: photoId,
                     format: 'json',
                     nojsoncallback: 1
                 };
-            },
-            getImageListStyle: function(image, size){
-                if(!image){
+            }
+            getImageListStyle(image, size) {
+                if (!image) {
                     return '';
                 }
                 return this.getImageStyle(image, size) + 'cursor: pointer;';
-            },
-            getImageStyle: function(image, size){
+            }
+            getImageStyle(image, size) {
                 return 'background-image: url(' + this.getImageUrl(image, size) + ');';
-            },
-            getImageUrl: function(image, size){
-                if(!image){
+            }
+            getImageUrl(image, size) {
+                if (!image) {
                     return '';
                 }
                 size = size || 'z';
-                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.secret +'_' + size + '.jpg';
-            },
-            getOriginalImageUrl: function(image){
-                if(!image){
+                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.secret + '_' + size + '.jpg';
+            }
+            getOriginalImageUrl(image) {
+                if (!image) {
                     return '';
                 }
-                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' +image.id + '_' + image.originalsecret +'_o.' + image.originalformat;
-            },
-        };
-    })();
+                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.originalsecret + '_o.' + image.originalformat;
+            }
+        }
+    }
+
 </script>

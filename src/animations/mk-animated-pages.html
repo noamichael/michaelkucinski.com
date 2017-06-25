@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../shared-styles.html">
+
+<dom-module id="mk-animated-pages">
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
+                position: relative;
+                padding: 0;
+                height: 100%;
+            }
+
+             :host> ::slotted(*) {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+            }
+
+             :host> ::slotted(:not(.selected)) {
+                display: none !important;
+            }
+
+             :host(.animating) {
+                overflow: hidden;
+            }
+        </style>
+        <slot id="animatables"></slot>
+    </template>
+
+    <script>
+        class MkAnimatedPages extends Polymer.Element {
+
+            static get is() {
+                return 'mk-animated-pages';
+            }
+
+            static get properties() {
+                return {
+                    selected: {
+                        type: String,
+                        observer: '_onSelectedChange'
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            _onSelectedChange(nextElement, oldElement) {
+                var animations = [Promise.resolve()];
+                this.classList.add('animating')
+                this.$.animatables.assignedNodes().forEach(node => {
+                    const uid = (node.dataset || { page: undefined }).page;
+                    if (!uid) {
+                        return;
+                    }
+                    if (uid === nextElement) {
+                        node.classList.add('selected');
+
+                        if (!oldElement) {
+                            return;
+                        }
+                        animations.push(
+                            this.__animate(
+                                node,
+                                [
+                                    { 'transform': 'translateX(-100%)' },
+                                    { 'transform': 'none' }
+                                ]
+                            )
+                        );
+                    }
+                    if (uid === oldElement) {
+                        animations.push(
+                            this.__animate(
+                                node,
+                                [
+                                    { 'transform': 'none' },
+                                    { 'transform': 'translateX(100%)' }
+                                ]
+                            ).then(e => {
+                                node.classList.remove('selected');
+                            })
+                        );
+                    }
+                });
+                Promise.all(animations).then(() => {
+                    this.classList.remove('animating');
+                });
+            }
+
+            __animate(node, keyframes, duration) {
+                node.style.transformOrigin = '0 50%';
+                return new Promise(resolve => {
+                    node.animate(
+                        keyframes,
+                        {
+                            duration: 500,
+                            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                            fill: 'both'
+                        }).onfinish = (e) => {
+                            resolve(e);
+                        };
+                });
+            }
+
+        }
+        customElements.define(MkAnimatedPages.is, MkAnimatedPages);
+    </script>
+</dom-module>

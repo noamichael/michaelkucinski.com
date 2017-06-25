@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../mk-base-behavior.html">
 <link rel="import" href="./mk-photo-viewer-behavior.html">
+<link rel="import" href="../mk-scaler-behavior.html">
 <link rel="import" href="../shared-styles.html">
 
 
@@ -141,7 +142,7 @@
     </template>
 
     <script>
-        class MkPhoto extends Polymer.mixinBehaviors([BaseBehavior, PhotoViewerBehavior], Polymer.Element) {
+        class MkPhoto extends BaseBehavior(ScalerElement(PhotoViewerBehavior(Polymer.Element))) {
             static get is() {
                 return 'mk-photo';
             }

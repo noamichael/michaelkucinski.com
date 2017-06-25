@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
@@ -105,9 +105,13 @@
   </template>
 
   <script>
-    class MkContact extends Polymer.mixinBehaviors([BaseBehavior], Polymer.Element) {
+    class MkContact extends BaseBehavior(Polymer.Element) {
       static get is() {
         return 'mk-contact';
+      }
+      ready() {
+        super.ready();
+        this.set('loading', false);
       }
     }
     customElements.define(MkContact.is, MkContact);
