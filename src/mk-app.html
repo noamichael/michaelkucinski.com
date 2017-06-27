@@ -69,6 +69,7 @@
       [main-title] h4 {
         color: var(--app-secondary-color);
         margin: 0px;
+        
       }
 
       app-header {
@@ -116,14 +117,12 @@
       </app-header>
       <div class="content">
         <mk-animated-pages selected="[[page]]" fallback-page="view404">
-          <!--<iron-pages selected="[[page]]" attr-for-selected="data-page" fallback-selection="view404" role="main" on-iron-select="_ironPagesChange">-->
           <mk-home route="{{subroute}}" data-page="home" data-title="Home" loading="{{loading}}" query-params="{{queryParams}}"></mk-home>
           <mk-blog route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="blog" data-folder="blog" data-title="Blog"></mk-blog>
           <mk-gallery route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="gallery" data-folder="gallery"
             data-title="Gallery"></mk-gallery>
           <mk-contact route="{{subroute}}" loading="{{loading}}" query-params="{{queryParams}}" data-page="contact" data-title="Contact"></mk-contact>
           <mk-view404 data-page="view404" data-title="404" id="notFound"></mk-view404>
-          <!--</iron-pages>-->
         </mk-animated-pages>
       </div>
     </app-header-layout>

@@ -52,17 +52,22 @@
                 //overridden
             }
             __animate(node, keyframes) {
+                if (this._lastAnimation) {
+                    this._lastAnimation.cancel();
+                }
                 node.style.transformOrigin = '0 50%';
                 return new Promise(resolve => {
-                    node.animate(
+                    const animation = node.animate(
                         keyframes,
                         {
                             duration: 500,
                             easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
                             fill: 'both'
-                        }).onfinish = (e) => {
-                            resolve(e);
-                        };
+                        });
+                    animation.onfinish = (e) => {
+                        resolve(e);
+                    };
+                    this._lastAnimation = animation;
                 });
             }
         }
