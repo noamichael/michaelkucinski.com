@@ -4,7 +4,7 @@
 <link rel="import" href="../bower_components/neon-animation/animations/scale-down-animation.html">
 
 <script>
-    function ScalerElement(SuperClass) {
+    const ScalerElement = Polymer.dedupingMixin(SuperClass => {
         return class extends SuperClass {
             static get properties() {
                 return {
@@ -71,6 +71,6 @@
                 });
             }
         }
-    }
+    });
 
 </script>

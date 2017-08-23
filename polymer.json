@@ -2,20 +2,42 @@
   "entrypoint": "index.html",
   "shell": "src/mk-app.html",
   "fragments": [
-    "src/blog/mk-blog.html",
-    "src/gallery/mk-gallery.html",
     "src/mk-home.html",
     "src/mk-contact.html",
-    "src/mk-view404.html"
+    "src/mk-view404.html",
+    "src/blog/mk-blog.html",
+    "src/blog/mk-comment.html",
+    "src/blog/mk-create-comment.html",
+    "src/blog/mk-post.html",
+    "src/gallery/mk-gallery.html",
+    "src/gallery/mk-photo.html"
   ],
   "sources": [
-   "src/**/*",
-   "images/**/*",
-   "bower.json"
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "builds": [
+    {
+      "bundle": false,
+      "js": {
+        "minify": true,
+        "compile": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      }
+    }
   ],
   "extraDependencies": [
     "manifest.json",
     "bower_components/web-animations-js/web-animations.min.js",
-    "bower_components/web-animations-js/web-animations-next.min.js"
+    "bower_components/web-animations-js/web-animations-next.min.js",
+    "bower_components/webcomponentsjs/webcomponents-hi.js",
+    "bower_components/webcomponentsjs/**/webcomponents-*.js",
+    "bower_components/core.js/client/core.min.js"
   ]
 }

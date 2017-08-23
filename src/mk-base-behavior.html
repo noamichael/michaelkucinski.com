@@ -1,6 +1,6 @@
 <script>
     /** @polymerBehavior BaseBehavior*/
-    function BaseBehavior(SuperClass) {
+    const BaseBehavior = Polymer.dedupingMixin(SuperClass => {
         return class extends SuperClass {
             static get properties() {
                 return {
@@ -29,9 +29,9 @@
                 );
             }
         }
-    }
+    });
     /** @polymerBehavior DateBehavior*/
-    function DateBehavior(SuperClass) {
+    const DateBehavior = Polymer.dedupingMixin(SuperClass => {
         return class extends SuperClass {
             _formatDate(date) {
                 if (!date) {
@@ -46,6 +46,6 @@
                 ].join('/') + ' @ ' + d.getHours() + ':' + (minutes < 10 ? '0' + minutes : minutes);
             }
         }
-    }
+    });
 
 </script>

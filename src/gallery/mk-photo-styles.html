@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+
+<!-- shared styles for all views -->
+<dom-module id="mk-photo-styles">
+    <template>
+        <style include="app-grid-style">
+             :host {
+                display: block;
+                --app-grid-columns: 3;
+                --app-grid-expandible-item-columns: 3;
+                --app-grid-gutter: 5px;
+                --app-grid-item-height: 250px;
+            }
+
+            @media screen and (max-width: 960px) {
+                 :host {
+                    --app-grid-columns: 2;
+                    --app-grid-expandible-item-columns: 2;
+                }
+            }
+
+            @media screen and (max-width: 799px) {
+                 :host {
+                    --app-grid-columns: 1;
+                    --app-grid-expandible-item-columns: 1;
+                }
+            }
+
+            ul {
+                padding: 0;
+                list-style: none;
+            }
+
+            .item {
+                background-color: white;
+                background-size: cover;
+                background-position: center center;
+            }
+
+            .photo-title {
+                background: rgba(0, 0, 0, 0.75);
+                color: white;
+                font-size: .6em;
+            }
+
+            li .photo-title:hover {
+                display: block !important;
+            }
+        </style>
+    </template>
+</dom-module>

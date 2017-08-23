@@ -1,6 +1,7 @@
 <script>
-    function PhotoViewerBehavior(SuperClass) {
-        var API_KEY = 'e64d91b72c3934917da3554a69c98ef3';
+    const PhotoViewerBehavior = Polymer.dedupingMixin(SuperClass => {
+        const API_KEY = 'e64d91b72c3934917da3554a69c98ef3';
+        const USER_ID = '89564538@N00';
         return class extends SuperClass {
             getAllPhotoParams(page, tags, text, per_page) {
                 tags = tags || [];
@@ -8,7 +9,7 @@
                 var params = {
                     method: 'flickr.photos.search',
                     api_key: API_KEY,
-                    user_id: '89564538@N00',
+                    user_id: USER_ID,
                     tag_mode: 'all',
                     tags: tags.join(','),
                     format: 'json',
@@ -30,6 +31,15 @@
                     nojsoncallback: 1
                 };
             }
+            getAlbumsParams(page) {
+                return {
+                    method: 'flickr.photosets.getList',
+                    api_key: API_KEY,
+                    user_id: USER_ID,
+                    format: 'json',
+                    nojsoncallback: 1
+                };
+            }
             getImageListStyle(image, size) {
                 if (!image) {
                     return '';
@@ -44,7 +54,8 @@
                     return '';
                 }
                 size = size || 'z';
-                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.secret + '_' + size + '.jpg';
+                return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + (image.primary || image.id) + '_' + image.secret + '_' + size + '.jpg';
+
             }
             getOriginalImageUrl(image) {
                 if (!image) {
@@ -53,6 +64,6 @@
                 return 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.originalsecret + '_o.' + image.originalformat;
             }
         }
-    }
+    });
 
 </script>

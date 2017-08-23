@@ -121,6 +121,7 @@
           count: Number,
           categoryCache: Object,
           queryParams: Object,
+          route: Object,
           lastCategory: Object,
           loading: Boolean
         };
@@ -143,7 +144,7 @@
           this.categoryCache[cat.slug] = cat.id;
         });
         if (this.lastCategory) {
-          for (const i = 0; i < this.categories.length; i++) {
+          for (let i = 0; i < this.categories.length; i++) {
             const current = this.categories[i];
             if (current.slug == this.lastCategory) {
               this.$.categoryList.selected = i + 1;
@@ -175,9 +176,8 @@
         if (!id) {
           return;
         }
-        const blog = this;
         setTimeout(() => {
-          blog.$.post.generateRequest();
+          this.$.post.generateRequest();
         });
       }
       getSinglePostParams(id) {
@@ -243,6 +243,6 @@
         return queryParams;
       }
     }
-     customElements.define(MkBlog.is, MkBlog);
+    customElements.define(MkBlog.is, MkBlog);
   </script>
 </dom-module>

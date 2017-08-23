@@ -60,6 +60,9 @@
       [main-title] small {
         font-size: 0.6em;
       }
+      [main-title].mobile small{
+        display: none;
+      }
 
       [main-title] h4,
       small {
@@ -69,7 +72,6 @@
       [main-title] h4 {
         color: var(--app-secondary-color);
         margin: 0px;
-        
       }
 
       app-header {
@@ -99,11 +101,11 @@
     <app-header-layout id="layout" fullbleed has-scrolling-region>
       <app-header id="header" slot="header" fixed>
         <app-toolbar>
-          <div main-title>
+          <div main-title class$="{{_titleStyle(queryMatches)}}">
             <h4>Michael Kucinski</h4>
-            <small>Photographer, Programmer, Percussionist</small>
+            <small>Photographer, Programmer</small>
           </div>
-          <iron-selector selected="[[page]]" attr-for-selected="id" class$="{{_menuStyle(queryMatches)}}" role="navigation">
+          <iron-selector selected="[[page]]" attr-for-selected="id" role="navigation">
             <paper-icon-button id="home" icon="icons:home" alt="Home" data-current-page="home" on-tap="_navigate"></paper-icon-button>
             <paper-icon-button id="gallery" icon="image:photo-camera" alt="Gallery" data-current-page="gallery" on-tap="_navigate"></paper-icon-button>
             <paper-icon-button id="blog" icon="communication:chat" alt="Blog" data-current-page="blog" on-tap="_navigate"></paper-icon-button>
@@ -181,7 +183,7 @@
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
         let el = this.shadowRoot.querySelector('[data-page="' + page + '"]');
-        if(!el){
+        if (!el) {
           el = this.$.notFound;
           page = 'view404';
         }
@@ -212,11 +214,8 @@
           this.set('route.path', page);
         });
       }
-      _toolbarStyle(mobile) {
-        return mobile ? '' : 'medium-tall';
-      }
-      _menuStyle(mobile) {
-        return mobile ? '' : 'middle';
+      _titleStyle(desktop) {
+        return desktop ? '' : 'mobile';
       }
       _queryParamsChange(o) {
         this._resetScroll();

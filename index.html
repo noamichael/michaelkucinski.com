@@ -15,10 +15,31 @@
   <!--<link rel="manifest" href="/manifest.json">-->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway" rel="stylesheet">
   <style>
+    html,
     body {
       font-family: 'Raleway', sans-serif;
+      height: 100%;
+      width: 100%;
     }
   </style>
+  <script>
+    (function (arr) {
+      arr.forEach(function (item) {
+        if (item.hasOwnProperty('remove')) {
+          return;
+        }
+        Object.defineProperty(item, 'remove', {
+          configurable: true,
+          enumerable: true,
+          writable: true,
+          value: function remove() {
+            this.parentNode.removeChild(this);
+          }
+        });
+      });
+    })([Element.prototype, CharacterData.prototype, DocumentType.prototype]);
+
+  </script>
 
   <!-- See https://goo.gl/qRE0vM -->
   <!--<meta name="theme-color" content="#3f51b5">-->
@@ -44,6 +65,7 @@
   <meta name="msapplication-TileImage" content="/images/manifest/site-icon-144x144.png">
   <!--<meta name="msapplication-TileColor" content="#3f51b5">-->
   <meta name="msapplication-tap-highlight" content="no">
+  <script src="bower_components/core.js/client/core.min.js"></script>
   <script src='//widget.fotomoto.com/stores/script/8b7cd976d995f4b705789ca85c609c13619f0031.js?api=true'></script>
   <script src='bower_components/web-animations-js/web-animations.min.js'></script>
   <script src='bower_components/web-animations-js/web-animations-next.min.js'></script>
