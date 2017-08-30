@@ -1,0 +1,33 @@
+<div class="pagination">
+  <button md-raised-button on-tap="goBack" class="back">
+      <md-icon>arrow_back</md-icon>Back
+  </button>
+  <button md-raised-button on-tap="_previousPhoto" disabled="[[!hasPrevious]]">
+      <md-icon>arrow_back</md-icon>Previous
+  </button>
+  <button md-raised-button on-tap="_nextPhoto">
+      <md-icon>arrow_forward</md-icon>Next
+  </button>
+</div>
+<div class="photo-container" *ngIf="fullPhoto">
+  <div class="photo-container-inner">
+    <div class="photo-and-title">
+      <img [src]="getPhotoUrl()" (load)="onImageLoad($event)">
+      <span class="title">{{fullPhoto.title._content}}</span>
+    </div>
+    <div class="description">
+      Taken {{fullPhoto.dates.taken}}
+    </div>
+    <div class="actions">
+      <button md-raised-button  class="print" raised on-tap="_addToCart" data-buy="PRINT">
+        <md-icon>add_shopping_cart</md-icon> Buy Print
+      </button>
+      <button md-raised-button  class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
+        <md-icon>file_download</md-icon> Digital Download
+      </button>
+      <button md-raised-button  class="flickr" raised on-tap="_viewOnFlickr">
+        <md-icon>flickr</md-icon> View on Flickr
+      </button>
+    </div>
+  </div>
+</div>

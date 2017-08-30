@@ -1,0 +1,65 @@
+:host {
+    display: block;
+    padding: 1em;
+}
+
+  md-card {
+    width: 100%;
+  }
+
+  section{
+    font-size: 1.5em;
+    line-height: 1.5em;
+  }
+
+  li.phone > a > i {
+    color: orangered;
+  }
+
+  li.email > a > i {
+    color: seagreen;
+  }
+
+  li.flickr > a > i {
+    color: #ff0084;
+  }
+
+  li.instagram > a > i {
+    color :#8a3ab9;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0px;
+    font-size: 1.5em;
+  }
+
+  li {
+    padding: 0.3em;
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
+    transition: 0.2s linear color;
+  }
+
+  a:hover {
+    color: orangered;
+  }
+
+  img {
+    float: left;
+    margin: 0 1em;
+    box-shadow: 0px 0px 3px black;
+    height: 400px;
+  }
+
+  @media screen and (max-width: 830px) {
+    img {
+      float: none;
+      margin: 0px;
+      height: 100%;
+      width: 100%;
+    }
+  }

@@ -1,0 +1,21 @@
+.search-box {
+    display: flex;
+    justify-content: center
+}
+.search-box paper-input {
+    flex-grow: 1
+}
+.filter-container {
+    width: 100%;
+    padding: 1em;
+}
+.instructions {
+    display: flex;
+    justify-content: center;
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+}

@@ -1,0 +1,25 @@
+<ng-container *ngIf="nextPhoto; else loading">
+  <img style="display: none" [src]="nextPhoto" (load)="onImageLoad()">
+  <!--src$="{{_getImageUrl(nextImageToLoad)}}"-->
+  <div class="container" style.background-image="url({{currentPhoto}})">
+    <!--style$="{{_getImageStyle(currentImage)}}"-->
+    <div class="welcome-message-container">
+      <div class="welcome-message">
+        <h2>Michael Kucinski</h2>
+        <div>
+          <small>Photographer, Programmer</small>
+        </div>
+        <div>
+          <a href="/gallery">
+            <button md-raised-button color="accent">
+              <md-icon>image</md-icon> Gallery
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-template #loading>
+  Please wait...
+</ng-template>

@@ -1,0 +1,19 @@
+<md-card class="filter-container">
+  <md-card-content>
+    <h3 class="fancy-font">Search</h3>
+    <div class="filters">
+      <!-- <template is="dom-repeat" as="catagory" items="{{categories}}" on-dom-change="_onFilterReady">
+        <paper-checkbox data-catagory$="{{catagory.value}}" id="filter_{{catagory.value}}" on-change="onCatagoryChange">[[catagory.label]]</paper-checkbox>
+      </template> -->
+    </div>
+    <div class="search-box">
+      <!-- <md-form-field> -->
+        <input mdInput type="text" placeholder="Search Text" on-input="onSearchTextChange">
+      <!-- </md-form-field> -->
+    </div>
+    <div class="instructions">
+      Click on an photo below to see it in full size with purchasing options.
+    </div>
+  </md-card-content>
+</md-card>
+<mk-photo-list [photos]="photos"></mk-photo-list>

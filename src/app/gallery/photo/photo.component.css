@@ -1,0 +1,84 @@
+:host {
+    display: block;
+}
+
+.viewer {
+    height: auto;
+    width: 100%;
+    display: block;
+}
+
+.title {
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    position: absolute;
+    bottom: 0;
+    padding: 1em;
+    font-size: .7em;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding: 0.2em;
+}
+
+.actions paper-button {
+    flex-grow: 1;
+}
+
+paper-button.print {
+    background: green;
+    color: white;
+}
+
+paper-button.digital-download {
+    background: #09478D;
+    color: white;
+}
+
+.photo-and-title {
+    position: relative;
+}
+
+.description {
+    padding: 1em;
+}
+
+.back {
+    align-self: flex-start;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 0.2em;
+}
+
+.pagination paper-button:not(.back):not([disabled]) {
+    background: #09478D;
+    color: white;
+}
+
+.photo-and-title>img {
+    display: block;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    user-select: none;
+}
+
+.photo-container {
+    margin-top: 0.5em;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    position: relative;
+}
+
+.photo-container-inner {
+    background: white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}

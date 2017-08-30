@@ -1,0 +1,55 @@
+.instructions {
+    display: flex;
+    justify-content: center;
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+}
+
+
+
+h3 {
+    margin: 0px;
+}
+
+paper-dialog {
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    bottom: 25%;
+    right: 25%;
+    margin: 0px;
+}
+
+paper-checkbox {
+    font-size: initial;
+    flex-grow: 1;
+}
+
+
+.filter-container {
+    width: 100%;
+    padding: 1em;
+}
+
+.no-photos {
+    display: flex;
+    justify-content: center;
+}
+
+.no-photos[hidden] {
+    display: none;
+}
+
+.pagination,
+.search-box {
+    display: flex;
+    justify-content: center
+}
+
+.search-box paper-input {
+    flex-grow: 1
+}

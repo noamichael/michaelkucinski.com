@@ -1,0 +1,45 @@
+md-toolbar {
+    background-color: rgba(0, 0, 0, 0.80);
+    font-family: 'Raleway', sans-serif;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+.fancy-font{
+    font-family: 'Raleway', sans-serif;
+}
+.outlet{
+    padding-top: 128px;
+    height: calc(100% - 128px);
+}
+.outlet > * {
+    display: block;
+}
+
+
+md-icon {
+    padding: 0 .5em;
+    color: white;
+    cursor: pointer;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+.title{
+    color: orangered;
+    margin: 0;
+}
+
+small{
+    font-size: 0.6em;
+    color: white;
+    font-family: 'Raleway', sans-serif;
+}
+
+a:hover > md-icon , a.active > md-icon {
+      color:orangered;
+      font-weight: bold;
+}
