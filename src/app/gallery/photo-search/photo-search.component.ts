@@ -10,6 +10,17 @@ import { FlickrService, FlickrPhoto, FlickrResponse } from '../../flickr/flickr.
 })
 export class PhotoSearchComponent implements OnInit {
 
+  filter = {}
+
+  categories = [
+    { label: 'Landscapes', value: 'landscape' },
+    { label: 'Portraits', value: 'portrait' },
+    { label: 'Abstract', value: 'abstract' },
+    { label: 'Sunrise', value: 'sunrise' },
+    { label: 'Sunset', value: 'sunset' },
+    { label: "Michael's Favorites", value: 'for-sale' }
+  ];
+
   photos: FlickrPhoto[]
 
   constructor(
@@ -17,11 +28,14 @@ export class PhotoSearchComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) { }
-  
+
   ngOnInit() {
     this.route.data.subscribe(r => {
       this.photos = r.photos.photos;
     });
+  }
+  onPhotoClick($event: { photo: FlickrPhoto }) {
+    this.router.navigate(['./', $event.photo.id], { relativeTo: this.route });
   }
 
 }
@@ -43,6 +57,5 @@ export class PhotosResolver implements Resolve<FlickrResponse> {
       params.tags
     );
   }
-
 
 }

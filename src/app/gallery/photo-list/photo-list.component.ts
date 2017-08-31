@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Resolve } from '@angular/router';
 
@@ -14,6 +14,8 @@ export class PhotoListComponent implements OnInit {
 
   @Input()
   photos: FlickrPhoto[]
+  @Output()
+  photoClick = new EventEmitter<{ photo: FlickrPhoto }>()
 
   constructor(
     private flickrService: FlickrService,
@@ -24,8 +26,12 @@ export class PhotoListComponent implements OnInit {
 
   }
 
-  getPhotoListStyle(photo: FlickrPhoto){
+  getPhotoListStyle(photo: FlickrPhoto) {
     return this.domSanitizer.bypassSecurityTrustStyle(FlickrService.getPhotoListStyle(photo));
+  }
+
+  selectPhoto(photo: FlickrPhoto) {
+    this.photoClick.emit({ photo });
   }
 
 }

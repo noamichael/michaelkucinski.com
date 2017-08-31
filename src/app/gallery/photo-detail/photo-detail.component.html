@@ -1,0 +1,12 @@
+<div class="pagination">
+  <button md-raised-button (click)="back()" class="back">
+      <md-icon>arrow_back</md-icon>Back
+    </button>
+  <button md-raised-button on-tap="_previousPhoto" disabled="[[!hasPrevious]]">
+      <md-icon>arrow_back</md-icon>Previous
+    </button>
+  <button md-raised-button on-tap="_nextPhoto">
+      <md-icon>arrow_forward</md-icon>Next
+  </button>
+</div>
+<mk-photo [photo]="photo"></mk-photo>

@@ -1,29 +1,36 @@
 import { NgModule } from '@angular/core';
-import { 
-  MdToolbarModule, 
-  MdIconModule, 
-  MdButtonModule, 
+import { FormsModule } from '@angular/forms';
+
+import {
+  MdToolbarModule,
+  MdIconModule,
+  //MdButtonModule,
   MdCardModule,
   MdGridListModule,
-  MdInputModule
- } from '@angular/material';
+  MdInputModule,
+  MdCheckboxModule
+} from '@angular/material';
 
 @NgModule({
   imports: [
     MdToolbarModule,
     MdIconModule,
-    MdButtonModule,
+    //MdButtonModule,
     MdCardModule,
     MdGridListModule,
-    MdInputModule
+    MdInputModule,
+    MdCheckboxModule,
+    FormsModule
   ],
   exports: [
     MdToolbarModule,
     MdIconModule,
-    MdButtonModule,
+    //MdButtonModule,
     MdCardModule,
     MdGridListModule,
-    MdInputModule
+    MdInputModule,
+    MdCheckboxModule,
+    FormsModule
   ]
 })
 export class AngularMdModule { }

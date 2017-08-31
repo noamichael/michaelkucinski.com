@@ -1,5 +1,5 @@
 <ul>
-  <li class="item" *ngFor="let photo of photos.photo" on-tap="selectPhoto" [style]="getPhotoListStyle(photo)">
+  <li class="item" *ngFor="let photo of photos.photo" (click)="selectPhoto(photo)" [style]="getPhotoListStyle(photo)">
     <div class="photo-title">
       {{photo.title}}
     </div>

@@ -46,21 +46,6 @@ paper-button.digital-download {
     padding: 1em;
 }
 
-.back {
-    align-self: flex-start;
-}
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    padding: 0.2em;
-}
-
-.pagination paper-button:not(.back):not([disabled]) {
-    background: #09478D;
-    color: white;
-}
-
 .photo-and-title>img {
     display: block;
     border-top-left-radius: 2px;

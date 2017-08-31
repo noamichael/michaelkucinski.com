@@ -1,0 +1,14 @@
+.back {
+    align-self: flex-start;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 0.2em;
+}
+
+.pagination paper-button:not(.back):not([disabled]) {
+    background: #09478D;
+    color: white;
+}

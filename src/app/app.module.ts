@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMdModule } from './angular-md/angular-md.module';
 import { NgModule } from '@angular/core';
@@ -22,6 +24,7 @@ import { MkHomeComponent } from './home/home.component';
     BrowserAnimationsModule,
     AngularMdModule,
     HttpModule,
+    FormsModule,
     RouterModule.forRoot([
       {
         path: '',

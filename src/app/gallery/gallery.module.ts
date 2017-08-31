@@ -7,6 +7,7 @@ import { GalleryComponent } from './gallery.component';
 import { PhotoListComponent } from './photo-list/photo-list.component';
 import { PhotoComponent } from './photo/photo.component';
 import { PhotoSearchComponent, PhotosResolver } from './photo-search/photo-search.component';
+import { PhotoDetailComponent, PhotoResolver } from './photo-detail/photo-detail.component';
 
 @NgModule({
   imports: [
@@ -22,12 +23,19 @@ import { PhotoSearchComponent, PhotosResolver } from './photo-search/photo-searc
             resolve: {
               photos: PhotosResolver
             }
+          },
+          {
+            path: ':id',
+            component: PhotoDetailComponent,
+            resolve: {
+              photo: PhotoResolver
+            }
           }
         ]
       }
     ])
   ],
-  providers: [PhotosResolver],
-  declarations: [PhotoListComponent, PhotoComponent, PhotoSearchComponent]
+  providers: [PhotosResolver, PhotoResolver],
+  declarations: [PhotoListComponent, PhotoComponent, PhotoSearchComponent, PhotoDetailComponent]
 })
 export class GalleryModule { }

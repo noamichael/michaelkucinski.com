@@ -25,13 +25,6 @@ export class PhotoComponent implements OnInit, OnChanges {
 
   @Output()
   buy: EventEmitter<BuyEvent> = new EventEmitter()
-  @Output()
-  next: EventEmitter<PaginationEvent> = new EventEmitter()
-  @Output()
-  previous: EventEmitter<PaginationEvent> = new EventEmitter()
-  @Output()
-  back: EventEmitter<{}> = new EventEmitter()
-
 
   constructor(
     private flickrService: FlickrService
@@ -50,29 +43,8 @@ export class PhotoComponent implements OnInit, OnChanges {
     }
   }
 
-  @HostListener('keydown')
-  onKeydown(event: KeyboardEvent) {
-    switch (event.key) {
-      case "ArrowLeft":
-        this.previousPhoto();
-        break;
-      case "ArrowRight":
-        this.nextPhoto();
-        break;
-    }
-
-  }
-  onImageMousemove(e) {
-    e.preventDefault();
-  }
   onImageLoad($event) {
     this.loading = false;
-  }
-  previousPhoto() {
-    this.previous.emit({ photo: this.photo });
-  }
-  nextPhoto() {
-    this.next.emit({ photo: this.photo });
   }
   // _handleSwipe(event) {
   //   if (event.detail.direction === 'left') {
@@ -90,12 +62,6 @@ export class PhotoComponent implements OnInit, OnChanges {
       url: this.getPhotoUrl(),
       buy: buyType
     })
-  }
-  goBack() {
-    this.back.emit({});
-  }
-  handleFlickrResponse(event) {
-
   }
 
   viewOnFlickr() {
