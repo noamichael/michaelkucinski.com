@@ -3,6 +3,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Re
 import 'rxjs/add/operator/map';
 
 import { FlickrService, FlickrPhoto, FlickrResponse } from '../../flickr/flickr.service';
+import { PhotoManagerService } from '../photo-manager/photo-manager.service';
 
 @Component({
   selector: 'mk-photo-detail',
@@ -14,7 +15,7 @@ export class PhotoDetailComponent implements OnInit {
   photo: FlickrPhoto
 
   constructor(
-    private flickrService: FlickrService,
+    private photoManagerServicevice: PhotoManagerService,
     private route: ActivatedRoute,
     private router: Router
   ) { }

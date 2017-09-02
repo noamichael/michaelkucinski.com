@@ -1,7 +1,13 @@
 <ul>
-  <li class="item" *ngFor="let photo of photos.photo" (click)="selectPhoto(photo)" [style]="getPhotoListStyle(photo)">
-    <div class="photo-title">
-      {{photo.title}}
-    </div>
-  </li>
+  <ng-container *ngFor="let photo of photos; let odd = odd;">
+    <img style="display:none" [src]="getPhotoUrl(photo)" (load)="onImageLoad(photo)">
+    <li class="item loader" [hidden]="photo.loaded">
+      <md-spinner [color]="odd ? 'accent' : 'primary'"></md-spinner>
+    </li>
+    <li class="item" [hidden]="!photo.loaded" (click)="selectPhoto(photo)" [style]="getPhotoListStyle(photo)">
+      <div class="photo-title">
+        {{photo.title}}
+      </div>
+    </li>
+  </ng-container>
 </ul>

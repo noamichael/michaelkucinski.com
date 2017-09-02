@@ -1,14 +1,17 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Resolve } from '@angular/router';
 
-import { FlickrService, FlickrPhoto, FlickrResponse } from '../../flickr/flickr.service';
+import { FlickrPhoto, FlickrResponse } from '../../flickr/flickr.service';
+import { PhotoManagerService } from '../photo-manager/photo-manager.service';
 
 @Component({
   selector: 'mk-photo-search',
   templateUrl: './photo-search.component.html',
   styleUrls: ['./photo-search.component.css']
 })
-export class PhotoSearchComponent implements OnInit {
+export class PhotoSearchComponent implements OnInit, OnDestroy {
+
+  private queryParams: any;
 
   filter = {}
 
@@ -21,21 +24,52 @@ export class PhotoSearchComponent implements OnInit {
     { label: "Michael's Favorites", value: 'for-sale' }
   ];
 
+
   photos: FlickrPhoto[]
 
   constructor(
-    private flickrService: FlickrService,
+    private photoManagerService: PhotoManagerService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
 
+
+
   ngOnInit() {
-    this.route.data.subscribe(r => {
-      this.photos = r.photos.photos;
+    this.route.data.subscribe(data => {
+      this.photos = data.photosResponse.photos.photo;
+      setTimeout(() => {
+        document.body.scrollTop = 0;
+      });
+    });
+    this.route.params.subscribe(params => {
+      this.queryParams = params;
     });
   }
+
+
+  ngOnDestroy() {
+
+  }
+
+  next() {
+    const params = shallowClone(this.queryParams);
+    params['page'] = Number(params['page'] || 1) + 1;
+    this.router.navigate(['./', params], { relativeTo: this.route })
+  }
+
+  previous() {
+    const params = shallowClone(this.queryParams);
+    params['page'] = Number(params['page'] || 1) - 1;
+    this.router.navigate(['./', params], { relativeTo: this.route })
+  }
+
   onPhotoClick($event: { photo: FlickrPhoto }) {
-    this.router.navigate(['./', $event.photo.id], { relativeTo: this.route });
+    const url = ['./', $event.photo.id];
+    if (this.queryParams) {
+      url.push(this.queryParams);
+    }
+    this.router.navigate(url, { relativeTo: this.route });
   }
 
 }
@@ -44,18 +78,21 @@ export class PhotoSearchComponent implements OnInit {
 export class PhotosResolver implements Resolve<FlickrResponse> {
 
   constructor(
-    private flickrService: FlickrService
+    private photoManagerService: PhotoManagerService
   ) { }
 
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const params = route.params;
-    return this.flickrService.getPhotos(
-      params.page,
-      36,
-      params.text,
-      params.tags
-    );
+    const params = shallowClone(route.params);
+    return this.photoManagerService.getPhotos(params);
   }
 
+}
+
+function shallowClone(obj: any) {
+  const clone = {};
+  for (let key in obj) {
+    clone[key] = obj[key];
+  }
+  return clone;
 }

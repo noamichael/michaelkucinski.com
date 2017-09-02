@@ -65,7 +65,7 @@ export class PhotoComponent implements OnInit, OnChanges {
   }
 
   viewOnFlickr() {
-    var urls = this.photo.url;
+    var urls = this.photo.urls.url;
     var photopage;
     for (var i = 0; i < urls.length; i++) {
       var url = urls[i];

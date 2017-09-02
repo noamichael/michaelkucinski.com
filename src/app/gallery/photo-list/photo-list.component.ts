@@ -26,12 +26,20 @@ export class PhotoListComponent implements OnInit {
 
   }
 
+  getPhotoUrl(photo: FlickrPhoto) {
+    return FlickrService.getPhotoUrl(photo);
+  }
+
   getPhotoListStyle(photo: FlickrPhoto) {
     return this.domSanitizer.bypassSecurityTrustStyle(FlickrService.getPhotoListStyle(photo));
   }
 
   selectPhoto(photo: FlickrPhoto) {
     this.photoClick.emit({ photo });
+  }
+
+  onImageLoad(photo: FlickrPhoto){
+    photo['loaded'] = true;
   }
 
 }

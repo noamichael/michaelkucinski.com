@@ -14,7 +14,7 @@
       <button md-raised-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
         <md-icon>file_download</md-icon> Digital Download
       </button>
-      <button md-raised-button class="flickr" raised on-tap="_viewOnFlickr">
+      <button md-raised-button class="flickr" raised (click)="viewOnFlickr()">
         <i class="fa fa-flickr" aria-hidden="true"></i> View on Flickr
       </button>
     </div>

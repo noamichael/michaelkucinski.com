@@ -4,33 +4,36 @@ import { FormsModule } from '@angular/forms';
 import {
   MdToolbarModule,
   MdIconModule,
-  //MdButtonModule,
+  MdButtonModule,
   MdCardModule,
   MdGridListModule,
   MdInputModule,
-  MdCheckboxModule
+  MdCheckboxModule,
+  MdProgressSpinnerModule
 } from '@angular/material';
 
 @NgModule({
   imports: [
     MdToolbarModule,
     MdIconModule,
-    //MdButtonModule,
+    MdButtonModule,
     MdCardModule,
     MdGridListModule,
     MdInputModule,
     MdCheckboxModule,
-    FormsModule
+    FormsModule,
+    MdProgressSpinnerModule
   ],
   exports: [
     MdToolbarModule,
     MdIconModule,
-    //MdButtonModule,
+    MdButtonModule,
     MdCardModule,
     MdGridListModule,
     MdInputModule,
     MdCheckboxModule,
-    FormsModule
+    FormsModule,
+    MdProgressSpinnerModule
   ]
 })
 export class AngularMdModule { }

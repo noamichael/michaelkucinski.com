@@ -15,3 +15,13 @@
   </md-card-content>
 </md-card>
 <mk-photo-list [photos]="photos" (photoClick)="onPhotoClick($event)"></mk-photo-list>
+<div class="pagination">
+  <button md-raised-button (click)="previous()">
+      <md-icon>arrow_back</md-icon>
+      Prev
+  </button>
+  <button md-raised-button (click)="next()">
+      <md-icon>arrow_forward</md-icon>
+      Next
+  </button>
+</div>

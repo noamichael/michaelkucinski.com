@@ -9,5 +9,5 @@ export interface FlickrPhoto {
     server: string
     title: string
     primary: string
-    url?: { _content: any, type: any }[]
+    urls?: { url: { _content: any, type: any }[] }
 }

@@ -15,3 +15,8 @@
     justify-content: space-between;
     flex-flow: row wrap;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center
+}

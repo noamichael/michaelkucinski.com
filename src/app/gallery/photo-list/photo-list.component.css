@@ -24,6 +24,15 @@ ul {
     flex-wrap: wrap;
 }
 
+.loader{
+    display: flex;
+    justify-content: center;
+}
+
+.loader[hidden]{
+    display: none;
+}
+
 .item {
     background-color: white;
     background-size: cover;
