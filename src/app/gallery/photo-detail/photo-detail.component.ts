@@ -15,7 +15,7 @@ export class PhotoDetailComponent implements OnInit {
   photo: FlickrPhoto
 
   constructor(
-    private photoManagerServicevice: PhotoManagerService,
+    private photoManagerService: PhotoManagerService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -37,6 +37,18 @@ export class PhotoDetailComponent implements OnInit {
         //this.nextPhoto();
         break;
     }
+  }
+
+  hasPhotos(){
+    return this.photoManagerService.hasPhotos();
+  }
+
+  next(){
+    this.photoManagerService.navigateNext(this.photo); 
+  }
+
+  previous(){
+    this.photoManagerService.navigatePrevious(this.photo)
   }
 
   back() {

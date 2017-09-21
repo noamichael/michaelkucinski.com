@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Resolve } from '@angular/router';
 
 import { FlickrPhoto, FlickrResponse } from '../../flickr/flickr.service';
-import { PhotoManagerService } from '../photo-manager/photo-manager.service';
+import { PhotoManagerService, shallowClone } from '../photo-manager/photo-manager.service';
 
 @Component({
   selector: 'mk-photo-search',
@@ -65,11 +65,7 @@ export class PhotoSearchComponent implements OnInit, OnDestroy {
   }
 
   onPhotoClick($event: { photo: FlickrPhoto }) {
-    const url = ['./', $event.photo.id];
-    if (this.queryParams) {
-      url.push(this.queryParams);
-    }
-    this.router.navigate(url, { relativeTo: this.route });
+    this.router.navigate(['./', $event.photo.id], { relativeTo: this.route });
   }
 
 }
@@ -89,10 +85,3 @@ export class PhotosResolver implements Resolve<FlickrResponse> {
 
 }
 
-function shallowClone(obj: any) {
-  const clone = {};
-  for (let key in obj) {
-    clone[key] = obj[key];
-  }
-  return clone;
-}

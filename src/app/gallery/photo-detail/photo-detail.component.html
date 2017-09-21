@@ -2,10 +2,10 @@
   <button md-raised-button (click)="back()" class="back">
       <md-icon>arrow_back</md-icon>Back
     </button>
-  <button md-raised-button on-tap="_previousPhoto" disabled="[[!hasPrevious]]">
+  <button md-raised-button (click)="previous()" *ngIf="hasPhotos()">
       <md-icon>arrow_back</md-icon>Previous
     </button>
-  <button md-raised-button on-tap="_nextPhoto">
+  <button md-raised-button (click)="next()" *ngIf="hasPhotos()">
       <md-icon>arrow_forward</md-icon>Next
   </button>
 </div>
