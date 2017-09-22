@@ -31,10 +31,10 @@ export class PhotoDetailComponent implements OnInit {
   onKeydown(event: KeyboardEvent) {
     switch (event.key) {
       case "ArrowLeft":
-        //this.previousPhoto();
+        this.previous();
         break;
       case "ArrowRight":
-        //this.nextPhoto();
+        this.next();
         break;
     }
   }

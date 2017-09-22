@@ -1,0 +1,2 @@
+<img style="display:none" [src]="url" (load)="onImageLoad(photo)">
+<md-spinner [color]="odd ? 'accent' : 'primary'" *ngIf="!photo.loaded"></md-spinner>

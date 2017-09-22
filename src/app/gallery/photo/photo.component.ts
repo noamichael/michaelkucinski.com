@@ -1,4 +1,5 @@
 import { Component, OnInit, OnChanges, Input, Output, HostListener, EventEmitter } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FlickrPhoto, FlickrService } from '../../flickr/flickr.service';
 
@@ -13,11 +14,21 @@ interface BuyEvent extends PaginationEvent {
 @Component({
   selector: 'mk-photo',
   templateUrl: './photo.component.html',
-  styleUrls: ['./photo.component.css']
+  styleUrls: ['./photo.component.css'],
+  animations: [
+    trigger('scaleIn', [
+      transition(':enter', [   // :enter is alias to 'void => *'
+        style({ transform: 'scale(0)' }),
+        animate(250, style({ transform: 'scale(1)' }))
+      ])
+      // transition(':leave', [   // :leave is alias to '* => void'
+      //   animate(500, style({ opacity: 0 }))
+      // ])
+    ])
+  ]
 })
 export class PhotoComponent implements OnInit, OnChanges {
 
-  loading: boolean
   fullPhoto: FlickrPhoto
 
   @Input()
@@ -36,16 +47,13 @@ export class PhotoComponent implements OnInit, OnChanges {
   ngOnChanges(changes) {
     //TODO: Load full photo details
     if (changes.photo && this.photo) {
-      this.loading = true;
       this.flickrService.getPhoto(this.photo.id).subscribe(r => {
         this.fullPhoto = r['photo'];
       });
     }
   }
 
-  onImageLoad($event) {
-    this.loading = false;
-  }
+
   // _handleSwipe(event) {
   //   if (event.detail.direction === 'left') {
   //     this.nextPhoto();

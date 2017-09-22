@@ -2,7 +2,7 @@
   <md-card-content>
     <h3 class="fancy-font">Search</h3>
     <div class="filters">
-      <md-checkbox *ngFor="let category of categories" [(ngModel)]="filter[category.value]" [name]="category.value">{{category.label}}</md-checkbox>
+      <md-checkbox *ngFor="let category of categories" (ngModelChange)="onFilterChange($event)" [(ngModel)]="filter[category.value]" [name]="category.value">{{category.label}}</md-checkbox>
     </div>
     <div class="search-box">
       <md-form-field>

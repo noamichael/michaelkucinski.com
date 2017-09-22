@@ -1,8 +1,7 @@
 <ul>
   <ng-container *ngFor="let photo of photos; let odd = odd;">
-    <img style="display:none" [src]="getPhotoUrl(photo)" (load)="onImageLoad(photo)">
     <li class="item loader" [hidden]="photo.loaded">
-      <md-spinner [color]="odd ? 'accent' : 'primary'"></md-spinner>
+      <mk-photo-loader [photo]="photo" [odd]="odd" [url]="getPhotoUrl(photo)"></mk-photo-loader>
     </li>
     <li class="item" [hidden]="!photo.loaded" (click)="selectPhoto(photo)" [style]="getPhotoListStyle(photo)">
       <div class="photo-title">

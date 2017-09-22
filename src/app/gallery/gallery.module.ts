@@ -8,6 +8,7 @@ import { PhotoComponent } from './photo/photo.component';
 import { PhotoSearchComponent,PhotosResolver } from './photo-search/photo-search.component';
 import { PhotoDetailComponent, PhotoResolver } from './photo-detail/photo-detail.component';
 import { PhotoManagerService } from './photo-manager/photo-manager.service';
+import { PhotoLoaderComponent } from './photo-loader/photo-loader.component';
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import { PhotoManagerService } from './photo-manager/photo-manager.service';
     PhotoListComponent,
     PhotoComponent,
     PhotoSearchComponent,
-    PhotoDetailComponent
+    PhotoDetailComponent,
+    PhotoLoaderComponent
   ]
 })
 export class GalleryModule { }

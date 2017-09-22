@@ -68,6 +68,10 @@ export class PhotoSearchComponent implements OnInit, OnDestroy {
     this.router.navigate(['./', $event.photo.id], { relativeTo: this.route });
   }
 
+  onFilterChange($event) {
+    console.log($event);
+  }
+
 }
 
 @Injectable()

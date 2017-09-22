@@ -67,3 +67,8 @@ paper-button.digital-download {
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
 }
+
+mk-photo-loader:not([hidden]){
+    display: flex;
+    justify-content: center;
+}

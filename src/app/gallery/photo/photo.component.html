@@ -1,22 +1,25 @@
-<div class="photo-container" *ngIf="fullPhoto">
-  <div class="photo-container-inner">
-    <div class="photo-and-title">
-      <img [src]="getPhotoUrl()" (load)="onImageLoad($event)">
-      <span class="title">{{fullPhoto.title._content}}</span>
-    </div>
-    <div class="description">
-      Taken {{fullPhoto.dates.taken}}
-    </div>
-    <div class="actions">
-      <button md-raised-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
+<ng-container *ngIf="fullPhoto">
+  <mk-photo-loader [photo]="photo" [odd]="odd" [url]="getPhotoUrl()" [hidden]="photo.loaded"></mk-photo-loader>
+  <div class="photo-container" *ngIf="photo.loaded" @scaleIn>
+    <div class="photo-container-inner">
+      <div class="photo-and-title">
+        <img [src]="getPhotoUrl()">
+        <span class="title">{{fullPhoto.title._content}}</span>
+      </div>
+      <div class="description">
+        Taken {{fullPhoto.dates.taken}}
+      </div>
+      <div class="actions">
+        <button md-raised-button class="print" raised on-tap="_addToCart" data-buy="PRINT">
         <md-icon>add_shopping_cart</md-icon> Buy Print
       </button>
-      <button md-raised-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
+        <button md-raised-button class="digital-download" raised on-tap="_addToCart" data-buy="FILE">
         <md-icon>file_download</md-icon> Digital Download
       </button>
-      <button md-raised-button class="flickr" raised (click)="viewOnFlickr()">
+        <button md-raised-button class="flickr" raised (click)="viewOnFlickr()">
         <i class="fa fa-flickr" aria-hidden="true"></i> View on Flickr
       </button>
+      </div>
     </div>
   </div>
-</div>
+</ng-container>
