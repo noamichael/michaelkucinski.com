@@ -2,8 +2,11 @@ import { Component, OnInit, Injectable, HostListener } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Resolve } from '@angular/router';
 import 'rxjs/add/operator/map';
 
+import { BuyEvent } from '../photo/photo.component';
 import { FlickrService, FlickrPhoto, FlickrResponse } from '../../flickr/flickr.service';
 import { PhotoManagerService } from '../photo-manager/photo-manager.service';
+
+declare const FOTOMOTO;
 
 @Component({
   selector: 'mk-photo-detail',
@@ -27,7 +30,7 @@ export class PhotoDetailComponent implements OnInit {
       this.photo = r.photo;
     });
   }
-  @HostListener('keydown')
+  @HostListener('keydown', ['$event'])
   onKeydown(event: KeyboardEvent) {
     switch (event.key) {
       case "ArrowLeft":
@@ -39,20 +42,25 @@ export class PhotoDetailComponent implements OnInit {
     }
   }
 
-  hasPhotos(){
+  hasPhotos() {
     return this.photoManagerService.hasPhotos();
   }
 
-  next(){
-    this.photoManagerService.navigateNext(this.photo); 
+  next() {
+    this.photoManagerService.navigateNext(this.photo);
   }
 
-  previous(){
+  previous() {
     this.photoManagerService.navigatePrevious(this.photo)
   }
 
   back() {
     this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
+  onBuy($event: BuyEvent) {
+    let windowToOpen = FOTOMOTO.API[$event.buy];
+    FOTOMOTO.API.showWindow(windowToOpen, $event.url);
   }
 
 }

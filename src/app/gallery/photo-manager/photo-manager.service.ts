@@ -50,10 +50,18 @@ export class PhotoManagerService {
 
 
   canGoNext() {
-    return this.lastSearch && this.lastSearch.page < this.lastSearch.page;
+    if (!this.lastSearch || !this.lastResponse) {
+      return;
+    }
+    const lastPage = this.lastSearch.page || 1;
+    return lastPage <= this.lastResponse.photos.pages;
   }
   canGoPrevious() {
-    return this.lastSearch && this.lastSearch.page > 1;
+    if (!this.lastSearch || !this.lastResponse) {
+      return;
+    }
+    const lastPage = this.lastSearch.page || 1;
+    return this.lastSearch && lastPage > 1;
   }
 
   hasPhotos() {

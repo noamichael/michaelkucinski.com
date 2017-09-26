@@ -9,7 +9,8 @@ import {
   MdGridListModule,
   MdInputModule,
   MdCheckboxModule,
-  MdProgressSpinnerModule
+  MdProgressSpinnerModule,
+  MdListModule
 } from '@angular/material';
 
 @NgModule({
@@ -22,7 +23,8 @@ import {
     MdInputModule,
     MdCheckboxModule,
     FormsModule,
-    MdProgressSpinnerModule
+    MdProgressSpinnerModule,
+    MdListModule
   ],
   exports: [
     MdToolbarModule,
@@ -33,7 +35,8 @@ import {
     MdInputModule,
     MdCheckboxModule,
     FormsModule,
-    MdProgressSpinnerModule
+    MdProgressSpinnerModule,
+    MdListModule
   ]
 })
 export class AngularMdModule { }

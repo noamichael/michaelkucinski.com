@@ -1,0 +1,40 @@
+:host {
+    display: block;
+  }
+
+  .post-list-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .post-list {
+    width: 75%;
+  }
+
+  .post-list-filter {
+    width: 25%;
+  }
+
+  .post-list-container[hidden] {
+    display: none;
+  }
+
+  .clear-post {
+    margin-bottom: 1em;
+  }
+
+  paper-item {
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .post-list {
+      order: 2;
+      width: 100%;
+    }
+    .post-list-filter {
+      order: 1;
+      width: 100%;
+      margin-bottom: .5em;
+    }
+  }

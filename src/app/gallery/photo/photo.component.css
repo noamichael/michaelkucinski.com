@@ -15,6 +15,7 @@
     bottom: 0;
     padding: 1em;
     font-size: .7em;
+    left: 0;
 }
 
 .actions {
@@ -40,6 +41,8 @@ paper-button.digital-download {
 
 .photo-and-title {
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 .description {
@@ -72,3 +75,7 @@ mk-photo-loader:not([hidden]){
     display: flex;
     justify-content: center;
 }
+/* 
+img {
+    cursor: zoom-in;
+} */

@@ -2,11 +2,14 @@
   <md-card-content>
     <h3 class="fancy-font">Search</h3>
     <div class="filters">
-      <md-checkbox *ngFor="let category of categories" (ngModelChange)="onFilterChange($event)" [(ngModel)]="filter[category.value]" [name]="category.value">{{category.label}}</md-checkbox>
+      <md-checkbox *ngFor="let category of categories" aria-label="Filter Photos By {{category.value}}" (ngModelChange)="onFilterChange($event)"
+        [(ngModel)]="filter[category.value]" [name]="category.value">{{category.label}}
+      </md-checkbox>
     </div>
     <div class="search-box">
       <md-form-field>
-        <input mdInput type="text" placeholder="Search Text" on-input="onSearchTextChange">
+        <input mdInput #searchInput="ngModel" type="text" [(ngModel)]="text" aria-label="Photo Search Text" placeholder="Search Text"
+          on-input="onSearchTextChange">
       </md-form-field>
     </div>
     <div class="instructions fancy-font">
@@ -16,11 +19,11 @@
 </md-card>
 <mk-photo-list [photos]="photos" (photoClick)="onPhotoClick($event)"></mk-photo-list>
 <div class="pagination">
-  <button md-raised-button (click)="previous()">
+  <button md-raised-button (click)="previous()" [disabled]="!canGoPrevious()">
       <md-icon>arrow_back</md-icon>
       Prev
   </button>
-  <button md-raised-button (click)="next()">
+  <button md-raised-button (click)="next()" [disabled]="!canGoNext()">
       <md-icon>arrow_forward</md-icon>
       Next
   </button>

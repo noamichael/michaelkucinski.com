@@ -2,6 +2,7 @@
   <h1 class="title fancy-font">
     Michael Kucinski
   </h1>
+  <small class="fancy-font"> &nbsp;Photographer/Programmer</small>
 
   <span class="spacer"></span>
 
@@ -11,15 +12,12 @@
   <a [routerLink]="['gallery']" routerLinkActive="active">
     <md-icon>image</md-icon>
   </a>
-  <a>
+  <a [routerLink]="['blog']" routerLinkActive="active">
     <md-icon>comment</md-icon>
   </a>
   <a [routerLink]="['contact']" routerLinkActive="active">
     <md-icon>contact_phone</md-icon>
   </a>
-  <md-toolbar-row>
-    <small class="fancy-font">Photographer/Programmer</small>
-  </md-toolbar-row>
 </md-toolbar>
 <div class="outlet">
   <router-outlet></router-outlet>

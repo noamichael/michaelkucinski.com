@@ -15,6 +15,11 @@ h3 {
     display: flex;
     justify-content: center
 }
+.empty-message{
+    width: 100%;
+    text-align: center;
+    padding: 3em;
+}
 
 ul {
     padding: 0;

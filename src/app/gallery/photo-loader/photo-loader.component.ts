@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { FlickrPhoto } from '../../flickr/flickr-photo';
 
@@ -15,6 +15,8 @@ export class PhotoLoaderComponent implements OnInit {
   odd: boolean
   @Input()
   url
+  @Output()
+  ready = new EventEmitter<FlickrPhoto>()
 
   constructor() { }
 
@@ -23,6 +25,7 @@ export class PhotoLoaderComponent implements OnInit {
 
   onImageLoad(photo: FlickrPhoto) {
     photo['loaded'] = true;
+    this.ready.emit(photo);
   }
 
 }

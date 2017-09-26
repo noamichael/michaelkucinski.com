@@ -46,10 +46,4 @@ md-card .mat-card {
     :host {
       padding: 0;
     }
-    img {
-      float: none;
-      margin: 0px;
-      height: auto;
-      width: 100%;
-    }
 }

@@ -42,6 +42,10 @@ import { MkHomeComponent } from './home/home.component';
       {
         path: 'gallery',
         loadChildren: 'app/gallery/gallery.module#GalleryModule'
+      },
+      {
+        path: 'blog',
+        loadChildren: 'app/blog/blog.module#BlogModule'
       }
     ])
   ],

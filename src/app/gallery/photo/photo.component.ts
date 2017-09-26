@@ -1,4 +1,8 @@
-import { Component, OnInit, OnChanges, Input, Output, HostListener, EventEmitter } from '@angular/core';
+import {
+  Component, OnInit, OnChanges, Input,
+  Output, HostListener, EventEmitter,
+  ViewChild, ElementRef
+} from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FlickrPhoto, FlickrService } from '../../flickr/flickr.service';
@@ -6,7 +10,7 @@ import { FlickrPhoto, FlickrService } from '../../flickr/flickr.service';
 type BuyType = 'FILE' | 'PRINT';
 interface PaginationEvent { photo: FlickrPhoto }
 
-interface BuyEvent extends PaginationEvent {
+export interface BuyEvent extends PaginationEvent {
   buy: BuyType,
   url: string
 }
@@ -17,13 +21,10 @@ interface BuyEvent extends PaginationEvent {
   styleUrls: ['./photo.component.css'],
   animations: [
     trigger('scaleIn', [
-      transition(':enter', [   // :enter is alias to 'void => *'
+      transition(':enter', [
         style({ transform: 'scale(0)' }),
         animate(250, style({ transform: 'scale(1)' }))
       ])
-      // transition(':leave', [   // :leave is alias to '* => void'
-      //   animate(500, style({ opacity: 0 }))
-      // ])
     ])
   ]
 })
@@ -36,6 +37,9 @@ export class PhotoComponent implements OnInit, OnChanges {
 
   @Output()
   buy: EventEmitter<BuyEvent> = new EventEmitter()
+
+  @ViewChild('image')
+  image: ElementRef
 
   constructor(
     private flickrService: FlickrService
@@ -85,5 +89,14 @@ export class PhotoComponent implements OnInit, OnChanges {
     if (photopage) {
       window.open(photopage);
     }
+  }
+  @HostListener('window:resize')
+  onWindowResize() {
+    setTimeout(() => {
+      if (!this.image) {
+        return;
+      }
+      this.image.nativeElement.style.height = (window.innerHeight - 256) + 'px';
+    });
   }
 }

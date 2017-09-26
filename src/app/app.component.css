@@ -11,8 +11,8 @@ md-toolbar {
     font-family: 'Raleway', sans-serif;
 }
 .outlet{
-    padding-top: 128px;
-    height: calc(100% - 128px);
+    padding-top: 64px;
+    height: calc(100% - 64px);
 }
 .outlet > * {
     display: block;
@@ -42,4 +42,10 @@ small{
 a:hover > md-icon , a.active > md-icon {
       color:orangered;
       font-weight: bold;
+}
+
+@media screen and (max-width: 600px){
+    small{
+        display: none;
+    }
 }

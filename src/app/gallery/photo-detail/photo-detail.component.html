@@ -1,12 +1,12 @@
 <div class="pagination">
-  <button md-raised-button (click)="back()" class="back">
+  <button md-raised-button class="back" (click)="back()">
       <md-icon>arrow_back</md-icon>Back
     </button>
-  <button md-raised-button (click)="previous()" *ngIf="hasPhotos()">
+  <button md-raised-button class="previous" (click)="previous()" *ngIf="hasPhotos()">
       <md-icon>arrow_back</md-icon>Previous
     </button>
-  <button md-raised-button (click)="next()" *ngIf="hasPhotos()">
+  <button md-raised-button class="next" (click)="next()" *ngIf="hasPhotos()">
       <md-icon>arrow_forward</md-icon>Next
   </button>
 </div>
-<mk-photo [photo]="photo"></mk-photo>
+<mk-photo [photo]="photo" (buy)="onBuy($event)"></mk-photo>
