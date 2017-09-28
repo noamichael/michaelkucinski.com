@@ -1,0 +1,19 @@
+<md-card class="comment" [ngClass]="even ? 'even' : 'odd'">
+  <md-card-header>
+      <div md-card-avatar class="author-image" style.background="url({{comment.author_avatar_urls[48]}})"></div>
+      <md-card-title>{{comment.author_name}}</md-card-title>
+      <md-card-subtitle>on {{comment.date | date: "yyyy/MM/dd '@' hh:mm"}}</md-card-subtitle>  
+  </md-card-header>
+  <md-card-content class="card-content">
+      <div [innerHTML]="comment.content.rendered"></div>
+      <div class="replies" *ngIf="comment.children?.length">
+        <mk-comment [post]="post" *ngFor="let child of comment.children; let index = index;" [comment]="child" [parent]="comment" [even]="getChildEvenOrOdd(index)"></mk-comment>
+      </div>
+      <!-- <mk-create-comment visible="{{shouldReply}}" parent="{{comment}}" on-submit="_onCommentSubmit"></mk-create-comment> -->
+  </md-card-content>
+  <md-card-actions class="card-actions">
+      [<a class="reply" [attr.data-reply]="shouldReply" (click)="toggleReply()" role="button">
+         <!-- <md-icon>{{replyIcon()}}</md-icon>--> {{replyTitle()}} 
+      </a>]
+  </md-card-actions>
+</md-card>

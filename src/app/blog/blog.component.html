@@ -1,7 +1,6 @@
 <div class="post-list-container">
   <div class="post-list">
-    {{posts}}
-     <!-- <mk-post *ngFor="let post of posts" [post]="post" (readMore)="readMore($event)"></mk-post> -->
+     <mk-post *ngFor="let post of posts" [post]="post" (readMore)="readMore($event)"></mk-post>
     <div style="display: flex; justify-content: center;">
       <button md-raised-button class="previous">
           <md-icon>arrow_back</md-icon> Previous

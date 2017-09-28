@@ -28,10 +28,14 @@ export class BlogComponent implements OnInit {
     });
   }
 
+  readMore(post: BlogPost) {
+    this.router.navigate(['./', post.slug], { relativeTo: this.route });
+  }
+
 }
 
 @Injectable()
-export class PostsResolver implements Resolve<BlogPost> {
+export class PostsResolver implements Resolve<BlogPost[]> {
 
   constructor(
     private blogService: BlogService
@@ -43,7 +47,7 @@ export class PostsResolver implements Resolve<BlogPost> {
 }
 
 @Injectable()
-export class CategoriesResolver implements Resolve<BlogCategory> {
+export class CategoriesResolver implements Resolve<BlogCategory[]> {
 
   constructor(
     private blogService: BlogService

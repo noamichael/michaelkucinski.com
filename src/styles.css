@@ -10,10 +10,10 @@ md-card .mat-card {
     font-family: 'Raleway', sans-serif;
 }
 
-
-.fancy-font {
-    font-family: 'Raleway', sans-serif;
+:host ::ng-deep fancy-font {
+  font-family: 'Raleway', sans-serif;
 }
+
   
   paper-card {
     font-family: 'Raleway', sans-serif;

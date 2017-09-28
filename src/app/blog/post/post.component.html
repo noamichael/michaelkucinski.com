@@ -1,0 +1,29 @@
+<md-card class="post" *ngIf="post">
+  <md-card-header>
+    <div md-card-avatar class="author-image" style.background="url({{post._embedded.author[0].avatar_urls[48]}})"></div>
+    <md-card-title>{{post.title.rendered}}</md-card-title>
+    <md-card-subtitle>by {{getAuthor(post)}} on {{post.date | date: "yyyy/MM/dd '@' hh:mm"}}</md-card-subtitle>
+  </md-card-header>
+  <md-card-content class="card-content">
+    <div [innerHTML]="_getPostContent(post)"></div>
+    <ng-container *ngIf="full">
+      <h3>Comments</h3>
+      <mk-comment *ngFor="let comment of post.comments; let even = even;" [comment]="comment" [post]="post" [even]="even"></mk-comment>
+      <div *ngIf="!post.comments?.length" class="no-comments">
+        No Comments.
+      </div>
+      <!-- <mk-create-comment on-submit="onCommentSubmit"></mk-create-comment>
+              <template is="dom-repeat" as="comment" items="{{comments}}" index-as="index">
+                  <mk-comment comment="{{comment}}" post="{{post}}" on-submit="onCommentSubmit" style-class="{{_getCommentStyle(index)}}"></mk-comment>
+              </template>
+              <span class="no-comments" hidden$="{{!noComments(comments)}}">
+                  No comments
+              </span> -->
+    </ng-container>
+  </md-card-content>
+  <md-card-actions class="card-actions" [hidden]="full">
+    <button (click)="bubbleReadMore()" md-raised-button class="read-more">
+          <md-icon>more</md-icon> &nbsp;Read More
+    </button>
+  </md-card-actions>
+</md-card>

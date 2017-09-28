@@ -1,6 +1,7 @@
 :host {
     display: block;
-  }
+    padding: 1em;
+}
 
   .post-list-container {
     display: flex;

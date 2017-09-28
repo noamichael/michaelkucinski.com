@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import 'rxjs/add/operator/mergeMap';
 import { Http } from '@angular/http';
 
 import { BlogPost } from './blog-post';
 import { BlogCategory } from './blog-category';
+import { BlogComment } from './blog-comment';
 
 @Injectable()
 export class BlogService {
@@ -25,10 +27,6 @@ export class BlogService {
   get path() {
     return 'http://www.michaelkucinski.com/wp-blog/wp-json/wp/v2/';
   }
-  getSinglePostParams(id) {
-    return { slug: id, _embed: true };
-  }
-
 
   canGoNext(meta) {
     //return !meta ? false : meta.pages > this.page;
@@ -48,17 +46,55 @@ export class BlogService {
     const params = this.getPostsParams(this.page, this.count, this.category);
 
   }
+
+  getPost(id: string) {
+    return this.http.get(this.path + 'posts', {
+      search: {
+        slug: id,
+        _embed: true
+      }
+    })
+      .map(r => r.json()[0] as BlogPost)
+      .mergeMap(post => this.fetchAndAddCommentsToPost(post));
+  }
+
+ private fetchAndAddCommentsToPost(post: BlogPost) {
+    return this.http.get(this.path + 'comments', { search: { post: post.id } })
+      .map(r => {
+        let comments = r.json() as BlogComment[];
+        let commentCache = {};
+        let rootComments: BlogComment[] = [];
+        let childComments: BlogComment[] = [];
+
+        comments.forEach(function (comment) {
+            comment.children = [];
+            commentCache[comment.id] = comment;
+            if (comment.parent) {
+                childComments.push(comment);
+            } else {
+                rootComments.push(comment);
+            }
+        });
+        childComments.forEach(function (comment) {
+            commentCache[comment.parent].children.push(comment);
+        });
+        post.comments = rootComments;
+        return post;
+      });
+  }
+
   getPosts(page: number) {
     this.page = page;
     return this.http.get(this.path + 'posts', {
       search: {
         page,
-        count: this.count
+        count: this.count,
+        _embed: true
       }
-    }).map(r => r.json() as BlogPost);
+    }).map(r => r.json() as BlogPost[]);
   }
-  getCategories(){
-    return this.http.get(this.path + 'categories').map(r => r.json() as BlogCategory);
+  getCategories() {
+    return this.http.get(this.path + 'categories').map(r => r.json() as BlogCategory[]);
   }
   searchForPosts(searchText, page, count) {
     return this.http.get(this.path + `get_search_results`, {

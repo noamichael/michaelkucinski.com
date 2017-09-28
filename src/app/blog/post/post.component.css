@@ -1,0 +1,40 @@
+:host {
+    display: block;
+    padding: 0 0 1em 0;
+}
+
+
+.card-actions[hidden] {
+    display: none;
+}
+
+.no-comments:not([hidden]) {
+    display: flex;
+    justify-content: center;
+}
+
+mk-create-comment {
+    margin-bottom: 1em;
+}
+
+small {
+    margin-bottom: 1em;
+    font-style: italic;
+    font-size: initial;
+    display: block;
+}
+
+.read-more {
+    background: #09478D;
+    color: white;
+}
+
+
+.post img {
+    height: 100%;
+    width: 100%;
+}
+
+.create-comment {
+    margin-bottom: 1em;
+}

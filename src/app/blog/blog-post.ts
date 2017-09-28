@@ -1,6 +1,9 @@
-export interface BlogPost{
+import { BlogComment } from './blog-comment';
+
+export interface BlogPost {
     id: number
     categories: number[]
+    comments: BlogComment[]
     comment_status: string
     content: {}
     date: string
@@ -11,19 +14,19 @@ export interface BlogPost{
     }
     featured_media: number
     format: string
-    guid: {rendered: string}
+    guid: { rendered: string }
     link: string
-    meta:any[]
+    meta: any[]
     modified: string
     modified_gmt: string
     ping_status: string
-    slug:string 
+    slug: string
     sticky: boolean
     tags: string[]
     template: string
-    title: {rendered: string}
+    title: { rendered: string }
     type: 'post'
-    _embeded?:{
+    _embeded?: {
         id: number
         description: string
         name: string
@@ -33,7 +36,7 @@ export interface BlogPost{
             96: string
         }
         slug: string
-        
+
     }
-    
+
 }

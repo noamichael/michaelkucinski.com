@@ -1,0 +1,40 @@
+     :host {
+        display: block;
+        width: 100%;
+        padding: 0px 0px 1em 0px;
+    }
+    .reply{
+        cursor: pointer;
+    }
+
+    .reply:hover{
+        background: orangered;
+    }
+
+    md-card.odd {
+        background: #f4f4f4;
+    }
+
+    small {
+        margin-bottom: 1em;
+        font-style: italic;
+        font-size: initial;
+        display: block;
+    }
+
+    /* md-card {
+        width: 100%;
+    } */
+
+    button {
+        background: #09478D;
+        color: white;
+    }
+
+    button[data-reply] {
+        background: orange;
+    }
+
+    h6 {
+        margin: 0;
+    }
