@@ -10,6 +10,25 @@ md-toolbar {
 .fancy-font{
     font-family: 'Raleway', sans-serif;
 }
+.loader {
+    background: rgba(0,0,0,0.75);
+    z-index: 2;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: row;
+}
+.loader > *{
+    flex-grow: 1;
+}
+.loader[hidden]{
+    display: none;
+}
 .outlet{
     padding-top: 64px;
     height: calc(100% - 64px);

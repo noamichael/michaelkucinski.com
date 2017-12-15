@@ -1,0 +1,16 @@
+<div class="comment-form" #form="ngForm" ngForm>
+  <md-form-field>
+    <input mdInput placeholder="Name" name="name_{{id}}" [(ngModel)]="comment.author.name" required>
+  </md-form-field>
+  <md-form-field>
+    <input mdInput placeholder="Email" name="email_{{id}}" [(ngModel)]="comment.author.email" required>
+  </md-form-field>
+  <md-form-field>
+    <textarea mdInput placeholder="Comment" name="comment_{{id}}" [(ngModel)]="comment.content" required></textarea>
+  </md-form-field>
+  <div class="actions">
+    <button class="post-comment" [disabled]="!form.valid" color="primary" md-raised-button>
+      <md-icon>check</md-icon> Post
+    </button>
+  </div>
+</div>

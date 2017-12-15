@@ -58,8 +58,12 @@ export class BlogService {
       .mergeMap(post => this.fetchAndAddCommentsToPost(post));
   }
 
- private fetchAndAddCommentsToPost(post: BlogPost) {
-    return this.http.get(this.path + 'comments', { search: { post: post.id } })
+  commentPath() {
+    return this.path + 'comments';
+  }
+
+  private fetchAndAddCommentsToPost(post: BlogPost) {
+    return this.http.get(this.commentPath(), { search: { post: post.id } })
       .map(r => {
         let comments = r.json() as BlogComment[];
         let commentCache = {};
@@ -67,16 +71,16 @@ export class BlogService {
         let childComments: BlogComment[] = [];
 
         comments.forEach(function (comment) {
-            comment.children = [];
-            commentCache[comment.id] = comment;
-            if (comment.parent) {
-                childComments.push(comment);
-            } else {
-                rootComments.push(comment);
-            }
+          comment.children = [];
+          commentCache[comment.id] = comment;
+          if (comment.parent) {
+            childComments.push(comment);
+          } else {
+            rootComments.push(comment);
+          }
         });
         childComments.forEach(function (comment) {
-            commentCache[comment.parent].children.push(comment);
+          commentCache[comment.parent].children.push(comment);
         });
         post.comments = rootComments;
         return post;
@@ -95,6 +99,17 @@ export class BlogService {
   }
   getCategories() {
     return this.http.get(this.path + 'categories').map(r => r.json() as BlogCategory[]);
+  }
+
+  comment(comment: {
+    post: number,
+    parent?: number,
+    content: string,
+    author_name: string,
+    author_email: string
+  }) {
+    this.http.post(this.commentPath(), comment);
+
   }
   searchForPosts(searchText, page, count) {
     return this.http.get(this.path + `get_search_results`, {

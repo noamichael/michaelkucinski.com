@@ -96,7 +96,11 @@ export class PhotoComponent implements OnInit, OnChanges {
       if (!this.image) {
         return;
       }
-      this.image.nativeElement.style.height = (window.innerHeight - 256) + 'px';
+      const img: HTMLImageElement = this.image.nativeElement;
+      if (img.naturalWidth > img.naturalHeight) {
+      }
+      img.style['max-height'] = (window.innerHeight - 256) + 'px';
+      img.style['max-width'] = (window.innerWidth) + 'px';
     });
   }
 }

@@ -91,7 +91,9 @@ export class PhotoSearchComponent implements OnInit, OnDestroy, AfterViewInit {
           tags.push(tagName);
         }
       }
-
+      if(!tags.length){
+        return;
+      }
       this.navigateByParams(this.text, tags);
     });
   }

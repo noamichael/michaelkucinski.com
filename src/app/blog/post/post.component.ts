@@ -6,10 +6,7 @@ import { BlogComment } from '../blog-comment';
 @Component({
   selector: 'mk-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css'],
-  host:{
-    style: 'fancy-font'
-  }
+  styleUrls: ['./post.component.css']
 })
 export class PostComponent implements OnInit {
 

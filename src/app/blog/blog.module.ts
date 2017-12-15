@@ -8,6 +8,7 @@ import { BlogService } from './blog.service';
 import { PostComponent } from './post/post.component';
 import { CommentComponent } from './post/comment/comment.component';
 import { FullPostComponent, PostResolver } from './full-post/full-post.component';
+import { CreateCommentComponent } from './post/comment/create-comment/create-comment.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { FullPostComponent, PostResolver } from './full-post/full-post.component
     BlogComponent,
     PostComponent,
     CommentComponent,
-    FullPostComponent
+    FullPostComponent,
+    CreateCommentComponent
   ]
 })
 export class BlogModule { }
