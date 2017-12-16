@@ -1,4 +1,4 @@
-md-toolbar {
+mat-toolbar {
     background-color: rgba(0, 0, 0, 0.80);
     font-family: 'Raleway', sans-serif;
     position: fixed;
@@ -38,7 +38,7 @@ md-toolbar {
 }
 
 
-md-icon {
+mat-icon {
     padding: 0 .5em;
     color: white;
     cursor: pointer;
@@ -58,7 +58,7 @@ small{
     font-family: 'Raleway', sans-serif;
 }
 
-a:hover > md-icon , a.active > md-icon {
+a:hover > mat-icon , a.active > mat-icon {
       color:orangered;
       font-weight: bold;
 }

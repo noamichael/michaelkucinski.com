@@ -2,41 +2,41 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
-  MdToolbarModule,
-  MdIconModule,
-  MdButtonModule,
-  MdCardModule,
-  MdGridListModule,
-  MdInputModule,
-  MdCheckboxModule,
-  MdProgressSpinnerModule,
-  MdListModule
+  MatToolbarModule,
+  MatIconModule,
+  MatButtonModule,
+  MatCardModule,
+  MatGridListModule,
+  MatInputModule,
+  MatCheckboxModule,
+  MatProgressSpinnerModule,
+  MatListModule
 } from '@angular/material';
 
 @NgModule({
   imports: [
-    MdToolbarModule,
-    MdIconModule,
-    MdButtonModule,
-    MdCardModule,
-    MdGridListModule,
-    MdInputModule,
-    MdCheckboxModule,
-    FormsModule,
-    MdProgressSpinnerModule,
-    MdListModule
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+    MatGridListModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatListModule,
+    FormsModule
   ],
   exports: [
-    MdToolbarModule,
-    MdIconModule,
-    MdButtonModule,
-    MdCardModule,
-    MdGridListModule,
-    MdInputModule,
-    MdCheckboxModule,
-    FormsModule,
-    MdProgressSpinnerModule,
-    MdListModule
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+    MatGridListModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatListModule,
+    FormsModule
   ]
 })
 export class AngularMdModule { }

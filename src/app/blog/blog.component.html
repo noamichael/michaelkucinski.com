@@ -2,18 +2,18 @@
   <div class="post-list">
      <mk-post *ngFor="let post of posts" [post]="post" (readMore)="readMore($event)"></mk-post>
     <div style="display: flex; justify-content: center;">
-      <button md-raised-button class="previous">
-          <md-icon>arrow_back</md-icon> Previous
+      <button mat-raised-button class="previous">
+          <mat-icon>arrow_back</mat-icon> Previous
       </button>
-      <button md-raised-button class="next">
-          <md-icon>arrow_forward</md-icon> Next
+      <button mat-raised-button class="next">
+          <mat-icon>arrow_forward</mat-icon> Next
       </button>
     </div>
   </div>
   <div class="post-list-filter">
-    <md-nav-list> <!--[[category.slug]]-->
-      <a md-list-item>All</a>
-      <a md-list-item *ngFor="let category of categories">{{category.name}} ({{category.count}})</a>
-    </md-nav-list>
+    <mat-nav-list> <!--[[category.slug]]-->
+      <a mat-list-item>All</a>
+      <a mat-list-item *ngFor="let category of categories">{{category.name}} ({{category.count}})</a>
+    </mat-nav-list>
   </div>
 </div>

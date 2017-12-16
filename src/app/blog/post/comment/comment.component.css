@@ -11,7 +11,7 @@
         background: orangered;
     }
 
-    md-card.odd {
+    mat-card.odd {
         background: #f4f4f4;
     }
 
@@ -22,7 +22,7 @@
         display: block;
     }
 
-    /* md-card {
+    /* mat-card {
         width: 100%;
     } */
 

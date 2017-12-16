@@ -1,30 +1,30 @@
-<md-card>
-  <md-card-content>
+<mat-card>
+  <mat-card-content>
     <h3 class="fancy-font">Search</h3>
     <div class="filters">
-      <md-checkbox *ngFor="let category of categories" aria-label="Filter Photos By {{category.value}}" (ngModelChange)="onFilterChange($event)"
+      <mat-checkbox *ngFor="let category of categories" aria-label="Filter Photos By {{category.value}}" (ngModelChange)="onFilterChange($event)"
         [(ngModel)]="filter[category.value]" [name]="category.value">{{category.label}}
-      </md-checkbox>
+      </mat-checkbox>
     </div>
     <div class="search-box">
-      <md-form-field>
-        <input mdInput #searchInput="ngModel" type="text" [(ngModel)]="text" aria-label="Photo Search Text" placeholder="Search Text"
+      <mat-form-field>
+        <input matInput #searchInput="ngModel" type="text" [(ngModel)]="text" aria-label="Photo Search Text" placeholder="Search Text"
           on-input="onSearchTextChange">
-      </md-form-field>
+      </mat-form-field>
     </div>
     <div class="instructions fancy-font">
       Click on an photo below to see it in full size with purchasing options.
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>
 <mk-photo-list [photos]="photos" (photoClick)="onPhotoClick($event)"></mk-photo-list>
 <div class="pagination">
-  <button md-raised-button (click)="previous()" [disabled]="!canGoPrevious()">
-      <md-icon>arrow_back</md-icon>
+  <button mat-raised-button (click)="previous()" [disabled]="!canGoPrevious()">
+      <mat-icon>arrow_back</mat-icon>
       Prev
   </button>
-  <button md-raised-button (click)="next()" [disabled]="!canGoNext()">
-      <md-icon>arrow_forward</md-icon>
+  <button mat-raised-button (click)="next()" [disabled]="!canGoNext()">
+      <mat-icon>arrow_forward</mat-icon>
       Next
   </button>
 </div>

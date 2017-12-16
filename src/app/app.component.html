@@ -1,4 +1,4 @@
-<md-toolbar>
+<mat-toolbar>
   <h1 class="title fancy-font">
     Michael Kucinski
   </h1>
@@ -7,21 +7,21 @@
   <span class="spacer"></span>
 
   <a [routerLink]="['home']" routerLinkActive="active">
-    <md-icon>home</md-icon>
+    <mat-icon>home</mat-icon>
   </a>
   <a [routerLink]="['gallery']" routerLinkActive="active">
-    <md-icon>image</md-icon>
+    <mat-icon>image</mat-icon>
   </a>
   <a [routerLink]="['blog']" routerLinkActive="active">
-    <md-icon>comment</md-icon>
+    <mat-icon>comment</mat-icon>
   </a>
   <a [routerLink]="['contact']" routerLinkActive="active">
-    <md-icon>contact_phone</md-icon>
+    <mat-icon>contact_phone</mat-icon>
   </a>
-</md-toolbar>
+</mat-toolbar>
 <div class="outlet">
   <router-outlet></router-outlet>
 </div>
 <div class="loader" [hidden]="!loading">
-    <md-spinner color="accent"></md-spinner>
+    <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
 </div>

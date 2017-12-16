@@ -3,7 +3,7 @@
     padding: 0px;
 }
 
-md-form-field{
+mat-form-field{
     display: block;
     width: 35%;
 }
@@ -14,7 +14,7 @@ md-form-field{
 }
 
 @media screen and (max-width: 800px){
-    md-form-field{
+    mat-form-field{
         width: 100%;
     }
 }

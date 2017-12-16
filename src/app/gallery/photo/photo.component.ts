@@ -92,15 +92,25 @@ export class PhotoComponent implements OnInit, OnChanges {
   }
   @HostListener('window:resize')
   onWindowResize() {
+    const leftAndRightPadding = 64;
     setTimeout(() => {
       if (!this.image) {
         return;
       }
       const img: HTMLImageElement = this.image.nativeElement;
-      if (img.naturalWidth > img.naturalHeight) {
-      }
-      img.style['max-height'] = (window.innerHeight - 256) + 'px';
-      img.style['max-width'] = (window.innerWidth) + 'px';
+      let aspectRatio = img.naturalWidth / img.naturalHeight;
+      let requestedHeight = window.innerHeight - leftAndRightPadding;
+      let requestedWidth = window.innerWidth - leftAndRightPadding;
+      let newWidth, newHeight;
+      if (aspectRatio == 1) {//with one to one ratios, use whichever side is smaller
+        newWidth = Math.min(requestedHeight, requestedWidth);
+        newHeight = newWidth;
+      } else { //https://math.stackexchange.com/questions/180804/how-to-get-the-aspect-ratio-of-an-image
+        newWidth = requestedHeight * aspectRatio;
+        newHeight = requestedWidth / aspectRatio;
+      };
+      img.style['max-height'] = newHeight + 'px';
+      img.style['max-width'] = newWidth + 'px';
     });
   }
 }
